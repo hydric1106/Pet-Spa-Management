@@ -70,42 +70,32 @@ CREATE DATABASE pbl3;
 
 2. Create the configuration file `src/main/resources/application.properties`:
 ```properties
-# =================================================================================
 # PET SPA DESKTOP APPLICATION CONFIGURATION
-# =================================================================================
 
 # Application Info
 spring.application.name=PetSpaDesktop
 
-# =================================================================================
 # DATABASE CONFIGURATION (MySQL)
-# =================================================================================
 spring.datasource.url=jdbc:mysql://localhost:3306/pbl3?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&characterEncoding=UTF-8
 spring.datasource.username=YOUR_USERNAME
 spring.datasource.password=YOUR_PASSWORD
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
-# =================================================================================
 # JPA / HIBERNATE CONFIGURATION
-# =================================================================================
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format_sql=true
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
 spring.jpa.properties.hibernate.jdbc.time_zone=UTC
 
-# =================================================================================
 # CONNECTION POOL (HikariCP)
-# =================================================================================
 spring.datasource.hikari.connection-timeout=20000
 spring.datasource.hikari.minimum-idle=5
 spring.datasource.hikari.maximum-pool-size=12
 spring.datasource.hikari.idle-timeout=300000
 spring.datasource.hikari.max-lifetime=1200000
 
-# =================================================================================
 # LOGGING CONFIGURATION
-# =================================================================================
 logging.level.root=INFO
 logging.level.com.petspa=DEBUG
 logging.level.org.hibernate.SQL=DEBUG
