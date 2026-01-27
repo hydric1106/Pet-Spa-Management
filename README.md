@@ -1,4 +1,4 @@
-# 🐾 Paws & Bubbles - Pet Spa Management System
+# 🐾 Pawradise Spa - Pet Spa Management System
 
 A modern desktop application for managing pet spa operations, built with **JavaFX** and **Spring Boot**.
 
@@ -9,7 +9,7 @@ A modern desktop application for managing pet spa operations, built with **JavaF
 
 ## 📋 Overview
 
-Paws & Bubbles is a comprehensive management system designed for pet spa businesses. It provides a centralized dashboard for managing bookings, staff schedules, services, and customer records — all in one place.
+Pawradise Spa is a comprehensive management system designed for pet spa businesses. It provides a centralized dashboard for managing bookings, staff schedules, services, and customer records — all in one place.
 
 ### Key Features
 
@@ -68,12 +68,51 @@ PetSpaDesktop/
 CREATE DATABASE pbl3;
 ```
 
-2. Update the database credentials in `src/main/resources/application.properties`:
+2. Create the configuration file `src/main/resources/application.properties`:
 ```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/pbl3
-spring.datasource.username=your_username
-spring.datasource.password=your_password
+# =================================================================================
+# PET SPA DESKTOP APPLICATION CONFIGURATION
+# =================================================================================
+
+# Application Info
+spring.application.name=PetSpaDesktop
+
+# =================================================================================
+# DATABASE CONFIGURATION (MySQL)
+# =================================================================================
+spring.datasource.url=jdbc:mysql://localhost:3306/pbl3?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&characterEncoding=UTF-8
+spring.datasource.username=YOUR_USERNAME
+spring.datasource.password=YOUR_PASSWORD
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# =================================================================================
+# JPA / HIBERNATE CONFIGURATION
+# =================================================================================
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+spring.jpa.properties.hibernate.jdbc.time_zone=UTC
+
+# =================================================================================
+# CONNECTION POOL (HikariCP)
+# =================================================================================
+spring.datasource.hikari.connection-timeout=20000
+spring.datasource.hikari.minimum-idle=5
+spring.datasource.hikari.maximum-pool-size=12
+spring.datasource.hikari.idle-timeout=300000
+spring.datasource.hikari.max-lifetime=1200000
+
+# =================================================================================
+# LOGGING CONFIGURATION
+# =================================================================================
+logging.level.root=INFO
+logging.level.com.petspa=DEBUG
+logging.level.org.hibernate.SQL=DEBUG
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
 ```
+
+> **Note:** Replace `YOUR_USERNAME` and `YOUR_PASSWORD` with your MySQL credentials. This file is not included in the repository for security reasons.
 
 ### Running the Application
 
@@ -86,17 +125,6 @@ cd PetSpaDesktop
 mvn clean javafx:run
 ```
 
-### Building a JAR
-
-```bash
-mvn clean package
-java -jar target/petspa-desktop-1.0.0-SNAPSHOT.jar
-```
-
-## 🖥️ Screenshots
-
-*Coming soon...*
-
 ## 📝 Architecture
 
 This is a **hybrid application** that combines:
@@ -106,27 +134,9 @@ This is a **hybrid application** that combines:
 
 The application uses a **JavaBridge** to enable communication between the JavaScript frontend and Java backend services.
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## 👥 Authors
 
-- **Your Name** - *Initial work*
-
-## 🙏 Acknowledgments
-
-- Spring Boot Team
-- JavaFX Community
-- Tailwind CSS
+- Tran Minh Quang - Hydric
 
 ---
 
