@@ -1,8 +1,15 @@
 /* =================================================================================
-   PET SPA DESKTOP APPLICATION - STYLESHEET
+   PET SPA DESKTOP APPLICATION - GLOBAL STYLESHEET
+   Contains: Variables, Reset, Base, Global Utilities, Buttons, App Layout, Modal, Forms
    ================================================================================= */
 
-/* CSS Variables */
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+/* =================================================================================
+   CSS VARIABLES
+   ================================================================================= */
+
 :root {
     --primary-color: #4a90d9;
     --primary-dark: #357abd;
@@ -27,7 +34,10 @@
     --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Reset & Base */
+/* =================================================================================
+   RESET & BASE
+   ================================================================================= */
+
 * {
     margin: 0;
     padding: 0;
@@ -42,102 +52,50 @@ body {
 }
 
 /* =================================================================================
-   LOGIN PAGE
+   GLOBAL UTILITY CLASSES
    ================================================================================= */
 
-.login-page {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+/* Frosted Glass Effect */
+.frosted-glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.login-container {
-    width: 100%;
-    max-width: 400px;
-    padding: 20px;
+.dark .frosted-glass {
+    background: rgba(16, 34, 32, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.login-card {
-    background: var(--card-bg);
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
-    padding: 40px;
+/* Glass Card Effect */
+.glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.login-header {
-    text-align: center;
-    margin-bottom: 30px;
+.dark .glass-card {
+    background: rgba(16, 34, 32, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
+/* SVG Icon Sizes */
+.icon-svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
 }
 
-.logo-icon {
-    font-size: 40px;
+.icon-svg-sm {
+    width: 20px;
+    height: 20px;
 }
 
-.logo h1 {
-    font-size: 28px;
-    color: var(--primary-color);
-    margin: 0;
-}
-
-.subtitle {
-    color: var(--text-muted);
-    margin-top: 5px;
-}
-
-.login-form .form-group {
-    margin-bottom: 20px;
-}
-
-.login-form label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 500;
-    color: var(--text-color);
-}
-
-.login-form input {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    font-size: 14px;
-    transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-.login-form input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.1);
-}
-
-.error-message {
-    background: #fce4e4;
-    color: var(--danger-color);
-    padding: 10px 15px;
-    border-radius: var(--border-radius);
-    margin-bottom: 15px;
-    font-size: 14px;
-}
-
-.login-footer {
-    text-align: center;
-    margin-top: 30px;
-    color: var(--text-muted);
-    font-size: 12px;
-}
-
-.login-footer .version {
-    margin-top: 5px;
-    opacity: 0.7;
+.icon-svg-lg {
+    width: 32px;
+    height: 32px;
 }
 
 /* =================================================================================
@@ -205,7 +163,139 @@ body {
 }
 
 /* =================================================================================
-   APP LAYOUT
+   STATUS BADGES
+   ================================================================================= */
+
+.badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.badge-pending {
+    background: var(--warning-color);
+    color: #212529;
+}
+
+.badge-confirmed {
+    background: var(--info-color);
+    color: white;
+}
+
+.badge-completed {
+    background: var(--success-color);
+    color: white;
+}
+
+.badge-cancelled {
+    background: var(--danger-color);
+    color: white;
+}
+
+/* =================================================================================
+   MODAL
+   ================================================================================= */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: 0;
+    line-height: 1;
+}
+
+.modal-close:hover {
+    color: var(--text-color);
+}
+
+.modal-body {
+    padding: 20px;
+    overflow-y: auto;
+}
+
+/* =================================================================================
+   FORMS (Global)
+   ================================================================================= */
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+/* =================================================================================
+   APP LAYOUT (Shared across dashboards)
    ================================================================================= */
 
 .app-container {
@@ -359,152 +449,6 @@ body {
 }
 
 /* =================================================================================
-   DASHBOARD
-   ================================================================================= */
-
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
-}
-
-.stat-card {
-    background: var(--card-bg);
-    border-radius: var(--border-radius);
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    box-shadow: var(--box-shadow);
-}
-
-.stat-icon {
-    font-size: 40px;
-    opacity: 0.8;
-}
-
-.stat-info {
-    display: flex;
-    flex-direction: column;
-}
-
-.stat-value {
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--primary-color);
-}
-
-.stat-label {
-    font-size: 13px;
-    color: var(--text-muted);
-}
-
-.dashboard-sections {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 20px;
-}
-
-.dashboard-section {
-    background: var(--card-bg);
-    border-radius: var(--border-radius);
-    padding: 20px;
-    box-shadow: var(--box-shadow);
-}
-
-.dashboard-section h3 {
-    margin-bottom: 15px;
-    font-size: 16px;
-    color: var(--text-color);
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 10px;
-}
-
-.quick-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.quick-actions .btn {
-    justify-content: flex-start;
-}
-
-/* =================================================================================
-   SCHEDULE & TASKS
-   ================================================================================= */
-
-.schedule-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 15px;
-}
-
-.schedule-day {
-    background: var(--card-bg);
-    border-radius: var(--border-radius);
-    padding: 15px;
-    box-shadow: var(--box-shadow);
-}
-
-.schedule-day h4 {
-    font-size: 14px;
-    color: var(--primary-color);
-    margin-bottom: 10px;
-    text-align: center;
-}
-
-.day-shifts {
-    font-size: 13px;
-}
-
-.no-shift {
-    color: var(--text-muted);
-    font-style: italic;
-}
-
-.shift-item {
-    background: var(--primary-color);
-    color: white;
-    padding: 5px 10px;
-    border-radius: 4px;
-    margin-bottom: 5px;
-    font-size: 12px;
-}
-
-.tasks-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.tasks-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.task-card {
-    background: var(--card-bg);
-    border-radius: var(--border-radius);
-    padding: 20px;
-    box-shadow: var(--box-shadow);
-    border-left: 4px solid var(--primary-color);
-}
-
-.task-card.completed {
-    border-left-color: var(--success-color);
-    opacity: 0.7;
-}
-
-.task-card.cancelled {
-    border-left-color: var(--danger-color);
-    opacity: 0.5;
-}
-
-/* =================================================================================
    EMPTY STATE
    ================================================================================= */
 
@@ -522,183 +466,8 @@ body {
 }
 
 /* =================================================================================
-   MODAL
+   RESPONSIVE (Global Layout)
    ================================================================================= */
-
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.modal {
-    background: var(--card-bg);
-    border-radius: var(--border-radius);
-    width: 90%;
-    max-width: 500px;
-    max-height: 80vh;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.modal-header h3 {
-    margin: 0;
-    font-size: 18px;
-}
-
-.modal-close {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: var(--text-muted);
-    padding: 0;
-    line-height: 1;
-}
-
-.modal-close:hover {
-    color: var(--text-color);
-}
-
-.modal-body {
-    padding: 20px;
-    overflow-y: auto;
-}
-
-/* =================================================================================
-   FORMS
-   ================================================================================= */
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 500;
-    font-size: 14px;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    font-size: 14px;
-    font-family: inherit;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    outline: none;
-    border-color: var(--primary-color);
-}
-
-.form-actions {
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-    margin-top: 20px;
-}
-
-/* =================================================================================
-   TABLES
-   ================================================================================= */
-
-.data-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: var(--card-bg);
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    box-shadow: var(--box-shadow);
-}
-
-.data-table th,
-.data-table td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.data-table th {
-    background: var(--bg-color);
-    font-weight: 600;
-    font-size: 13px;
-    text-transform: uppercase;
-    color: var(--text-muted);
-}
-
-.data-table tbody tr:hover {
-    background: rgba(74, 144, 217, 0.05);
-}
-
-.data-table tbody tr:last-child td {
-    border-bottom: none;
-}
-
-/* Status Badges */
-.badge {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 500;
-}
-
-.badge-pending {
-    background: var(--warning-color);
-    color: #212529;
-}
-
-.badge-confirmed {
-    background: var(--info-color);
-    color: white;
-}
-
-.badge-completed {
-    background: var(--success-color);
-    color: white;
-}
-
-.badge-cancelled {
-    background: var(--danger-color);
-    color: white;
-}
-
-/* =================================================================================
-   RESPONSIVE
-   ================================================================================= */
-
-@media (max-width: 1024px) {
-    .schedule-grid {
-        grid-template-columns: repeat(4, 1fr);
-    }
-    
-    .dashboard-sections {
-        grid-template-columns: 1fr;
-    }
-}
 
 @media (max-width: 768px) {
     .sidebar {
@@ -713,9 +482,5 @@ body {
     
     .main-content {
         margin-left: 60px;
-    }
-    
-    .schedule-grid {
-        grid-template-columns: repeat(2, 1fr);
     }
 }
