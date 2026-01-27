@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetSpa - Staff Dashboard</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation (Simplified for Staff) -->
+        <aside class="sidebar sidebar-staff">
+            <div class="sidebar-header">
+                <span class="logo-icon">🐾</span>
+                <h2>PetSpa</h2>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item active" data-page="my-tasks">
+                        <span class="nav-icon">📋</span>
+                        <span class="nav-text">My Tasks</span>
+                    </li>
+                    <li class="nav-item" data-page="my-schedule">
+                        <span class="nav-icon">📅</span>
+                        <span class="nav-text">My Schedule</span>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <span class="user-name" id="currentUserName">Staff</span>
+                    <span class="user-role">Staff Member</span>
+                </div>
+                <button class="btn-logout" id="logoutBtn">
+                    <span>🚪</span> Logout
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="content-header">
+                <h1 id="pageTitle">My Tasks</h1>
+                <div class="header-actions">
+                    <span class="current-date" id="currentDate"></span>
+                </div>
+            </header>
+            
+            <div class="content-body" id="contentArea">
+                <!-- My Tasks Page -->
+                <div id="myTasksPage" class="page-content">
+                    <div class="tasks-header">
+                        <h2>Today's Bookings</h2>
+                        <div class="date-selector">
+                            <input type="date" id="taskDate" />
+                        </div>
+                    </div>
+                    
+                    <div id="tasksList" class="tasks-list">
+                        <div class="empty-state">
+                            <span class="empty-icon">📭</span>
+                            <p>No tasks assigned for today</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- My Schedule Page -->
+                <div id="mySchedulePage" class="page-content" style="display: none;">
+                    <h2>Weekly Schedule</h2>
+                    
+                    <div class="schedule-grid">
+                        <div class="schedule-day" data-day="1">
+                            <h4>Monday</h4>
+                            <div class="day-shifts" id="monday-shifts">
+                                <span class="no-shift">No shift</span>
+                            </div>
+                        </div>
+                        <div class="schedule-day" data-day="2">
+                            <h4>Tuesday</h4>
+                            <div class="day-shifts" id="tuesday-shifts">
+                                <span class="no-shift">No shift</span>
+                            </div>
+                        </div>
+                        <div class="schedule-day" data-day="3">
+                            <h4>Wednesday</h4>
+                            <div class="day-shifts" id="wednesday-shifts">
+                                <span class="no-shift">No shift</span>
+                            </div>
+                        </div>
+                        <div class="schedule-day" data-day="4">
+                            <h4>Thursday</h4>
+                            <div class="day-shifts" id="thursday-shifts">
+                                <span class="no-shift">No shift</span>
+                            </div>
+                        </div>
+                        <div class="schedule-day" data-day="5">
+                            <h4>Friday</h4>
+                            <div class="day-shifts" id="friday-shifts">
+                                <span class="no-shift">No shift</span>
+                            </div>
+                        </div>
+                        <div class="schedule-day" data-day="6">
+                            <h4>Saturday</h4>
+                            <div class="day-shifts" id="saturday-shifts">
+                                <span class="no-shift">No shift</span>
+                            </div>
+                        </div>
+                        <div class="schedule-day" data-day="7">
+                            <h4>Sunday</h4>
+                            <div class="day-shifts" id="sunday-shifts">
+                                <span class="no-shift">No shift</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="assets/js/common.js"></script>
+    <script src="assets/js/dashboard-staff.js"></script>
+</body>
+</html>
