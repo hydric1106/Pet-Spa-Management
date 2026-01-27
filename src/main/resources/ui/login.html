@@ -6,8 +6,7 @@
 <title>Login - Pet Spa</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- SVG Icons (inline for JavaFX WebView compatibility) -->
 <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -44,89 +43,76 @@
             background: rgba(16, 34, 32, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
+        .icon-svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+        .icon-svg-sm {
+            width: 20px;
+            height: 20px;
+        }
+        .icon-svg-lg {
+            width: 32px;
+            height: 32px;
+        }
     </style>
 </head>
 <body class="bg-background-light dark:bg-background-dark font-display min-h-screen flex flex-col overflow-x-hidden selection:bg-primary/30">
 <!-- Top Navigation Bar -->
 <header class="w-full px-6 lg:px-40 py-5 flex items-center justify-between border-b border-solid border-[#e7f3f2] dark:border-white/10">
-<div class="flex items-center gap-3 text-[#0d1b1a] dark:text-white">
+<a href="index.html" class="flex items-center gap-3 text-[#0d1b1a] dark:text-white hover:opacity-80 transition-opacity">
 <div class="text-primary size-8 flex items-center justify-center">
-<span class="material-symbols-outlined text-3xl">pets</span>
+<svg class="icon-svg" viewBox="0 0 1024 1024" fill="currentColor"><path d="M792.5 558.4c-46.8-27-44-118.7-14-170.7 26.9-46.6 86.5-62.6 133.1-35.7s62.6 86.5 35.7 133.1c-30.1 52.1-108 100.4-154.8 73.3zM623.4 390c-60.7-16.3-86.1-124.4-67.4-194 16.5-61.5 79.7-98.1 141.3-81.6 61.5 16.5 98.1 79.7 81.6 141.3-18.7 69.6-94.8 150.6-155.5 134.3zM233.5 558.7c-46.9 27.1-125.1-21.3-155.2-73.4-27-46.7-11-106.4 35.8-133.4 46.7-27 106.5-11 133.4 35.7 30 52.2 32.9 144-14 171.1zM374.6 390c-60.7 16.3-136.8-64.7-155.4-134.3-16.5-61.5 20-124.8 81.6-141.3S425.6 134.4 442.1 196c18.6 69.6-6.8 177.7-67.5 194zM513 436.3c111.7 0 279.9 170.1 279.9 307.6 0 91.3-28.3 143.3-79.1 161.4-17.5 6.2-32 7.4-54.3 6.7-4.4-0.1-5.2-0.2-6.5-0.2-11.7 0-23.4-3.8-39.7-11.2-5.4-2.5-11.1-5.3-19.2-9.4 5.8 2.9-15.2-7.7-20.1-10.1-16.3-8.1-28.8-13.7-40.5-17.8-9-3.2-17.2-5.3-24.5-6.3h8c-7.3 1.1-15.4 3.2-24.5 6.4-11.8 4.2-24.2 9.7-40.5 17.9-4.9 2.4-25.8 13.1-20.1 10.2-8.1 4.1-13.8 6.9-19.2 9.4-16.2 7.5-28 11.3-39.7 11.3-1.3 0-2.1 0-6.5 0.2-22.3 0.7-36.8-0.5-54.3-6.7-50.8-18.1-79.1-70.1-79.1-161.4 0-137.5 168.2-308 279.9-308z"/></svg>
 </div>
-<h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">Pet Spa</h2>
-</div>
-<div class="flex items-center gap-8">
-<div class="hidden md:flex items-center gap-9">
-<a class="text-[#0d1b1a] dark:text-white/80 text-sm font-medium hover:text-primary transition-colors" href="#">Home</a>
-<a class="text-[#0d1b1a] dark:text-white/80 text-sm font-medium hover:text-primary transition-colors" href="#">Services</a>
-<a class="text-[#0d1b1a] dark:text-white/80 text-sm font-medium hover:text-primary transition-colors" href="#">About</a>
-</div>
-<button class="bg-primary text-[#0d1b1a] px-5 py-2 rounded-xl text-sm font-bold tracking-wide hover:brightness-105 transition-all">
-                Book Now
-            </button>
-</div>
+<h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">Pawradise Spa</h2>
+</a>
 </header>
 <!-- Main Content Area with Background Accents -->
 <main class="relative flex-1 flex items-center justify-center p-6 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-background-light to-spa-cream dark:from-primary/5 dark:via-background-dark dark:to-background-dark">
-<!-- Background Decorative Elements -->
-<div class="absolute top-20 left-20 text-primary/10 select-none hidden lg:block">
-<span class="material-symbols-outlined text-[120px]">bubble_chart</span>
-</div>
-<div class="absolute bottom-20 right-20 text-primary/10 select-none hidden lg:block">
-<span class="material-symbols-outlined text-[120px]">potted_plant</span>
-</div>
 <!-- Centered Login Card -->
 <div class="frosted-glass w-full max-w-[440px] p-8 md:p-12 rounded-xl shadow-2xl flex flex-col items-center">
 <!-- Headline & Meta -->
 <div class="text-center mb-8">
 <div class="bg-primary/20 w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
-<span class="material-symbols-outlined text-primary text-3xl">lock_open</span>
+<svg class="icon-svg-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.00098 11.999L16.001 11.999M16.001 11.999L12.501 8.99902M16.001 11.999L12.501 14.999"/><path d="M9.00195 7C9.01406 4.82497 9.11051 3.64706 9.87889 2.87868C10.7576 2 12.1718 2 15.0002 2L16.0002 2C18.8286 2 20.2429 2 21.1215 2.87868C22.0002 3.75736 22.0002 5.17157 22.0002 8L22.0002 16C22.0002 18.8284 22.0002 20.2426 21.1215 21.1213C20.3531 21.8897 19.1752 21.9862 17 21.9983M9.00195 17C9.01406 19.175 9.11051 20.3529 9.87889 21.1213C10.5202 21.7626 11.4467 21.9359 13 21.9827"/></svg>
 </div>
-<h1 class="text-[#0d1b1a] dark:text-white text-3xl font-bold leading-tight mb-2">Welcome Back!</h1>
-<p class="text-spa-teal dark:text-primary/70 text-sm font-normal">Enter your details to care for your furry friend.</p>
+<h1 class="text-[#0d1b1a] dark:text-white text-3xl font-bold leading-tight mb-2">Welcome!</h1>
+<p class="text-spa-teal dark:text-primary/70 text-sm font-normal">Sign in to access the store management dashboard.</p>
 </div>
 <!-- Login Form -->
 <form class="w-full space-y-5">
 <!-- Username Field -->
 <div class="flex flex-col gap-2">
-<label class="text-[#0d1b1a] dark:text-white/90 text-sm font-semibold px-1">User</label>
+<label class="text-[#0d1b1a] dark:text-white/90 text-sm font-semibold px-1">Email</label>
 <div class="relative">
-<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-spa-teal/50 text-xl">person</span>
-<input class="w-full h-14 pl-12 pr-4 bg-white/50 dark:bg-white/5 border border-[#cfe7e5] dark:border-white/10 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all placeholder:text-spa-teal/40 dark:text-white" placeholder="Username or email" type="text"/>
+<svg class="icon-svg-sm absolute left-4 top-1/2 -translate-y-1/2 text-spa-teal/50" viewBox="-3 0 19 19" fill="currentColor"><path d="M12.517 12.834v1.9a1.27 1.27 0 0 1-1.267 1.267h-9.5a1.27 1.27 0 0 1-1.267-1.267v-1.9A3.176 3.176 0 0 1 3.65 9.667h5.7a3.176 3.176 0 0 1 3.167 3.167zM3.264 5.48A3.236 3.236 0 1 1 6.5 8.717a3.236 3.236 0 0 1-3.236-3.236z"/></svg>
+<input class="w-full h-14 pl-12 pr-4 bg-white/50 dark:bg-white/5 border border-[#cfe7e5] dark:border-white/10 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all placeholder:text-spa-teal/40 dark:text-white" placeholder="Enter your email..." type="text"/>
 </div>
 </div>
 <!-- Password Field -->
 <div class="flex flex-col gap-2">
 <label class="text-[#0d1b1a] dark:text-white/90 text-sm font-semibold px-1">Password</label>
 <div class="relative">
-<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-spa-teal/50 text-xl">lock</span>
+<svg class="icon-svg-sm absolute left-4 top-1/2 -translate-y-1/2 text-spa-teal/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14.5V16.5M7 10.0288C7.47142 10 8.05259 10 8.8 10H15.2C15.9474 10 16.5286 10 17 10.0288M7 10.0288C6.41168 10.0647 5.99429 10.1455 5.63803 10.327C5.07354 10.6146 4.6146 11.0735 4.32698 11.638C4 12.2798 4 13.1198 4 14.8V16.2C4 17.8802 4 18.7202 4.32698 19.362C4.6146 19.9265 5.07354 20.3854 5.63803 20.673C6.27976 21 7.11984 21 8.8 21H15.2C16.8802 21 17.7202 21 18.362 20.673C18.9265 20.3854 19.3854 19.9265 19.673 19.362C20 18.7202 20 17.8802 20 16.2V14.8C20 13.1198 20 12.2798 19.673 11.638C19.3854 11.0735 18.9265 10.6146 18.362 10.327C18.0057 10.1455 17.5883 10.0647 17 10.0288M7 10.0288V8C7 5.23858 9.23858 3 12 3C14.7614 3 17 5.23858 17 8V10.0288"/></svg>
 <input class="w-full h-14 pl-12 pr-4 bg-white/50 dark:bg-white/5 border border-[#cfe7e5] dark:border-white/10 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all placeholder:text-spa-teal/40 dark:text-white" placeholder="••••••••" type="password"/>
 </div>
 </div>
 <!-- Forgot Password / Not Have Account Link -->
 <div class="flex justify-end pt-1">
-<a class="text-spa-teal dark:text-primary text-xs font-semibold hover:underline" href="#">Not have an account? Sign up</a>
+<a class="text-spa-teal dark:text-primary text-xs font-semibold hover:underline" href="register.html">Not have an account? Sign up</a>
 </div>
 <!-- Login Button -->
 <div class="pt-4">
 <button class="w-full h-14 bg-primary text-[#0d1b1a] font-bold text-lg rounded-xl shadow-[0_8px_20px_-4px_rgba(19,236,218,0.4)] hover:shadow-none hover:translate-y-0.5 transition-all flex items-center justify-center gap-2 group" type="submit">
 <span>Login</span>
-<span class="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
 </button>
 </div>
 </form>
-<!-- Card Bottom Illustration -->
-<div class="mt-10 opacity-30">
-<div class="flex gap-2">
-<span class="material-symbols-outlined text-spa-teal">spa</span>
-<span class="material-symbols-outlined text-spa-teal">water_drop</span>
-<span class="material-symbols-outlined text-spa-teal">content_cut</span>
-</div>
-</div>
 </div>
 </main>
 <!-- Simple Footer -->
 <footer class="w-full py-6 px-10 text-center text-spa-teal/60 dark:text-white/40 text-xs">
-        © 2024 Pet Spa Wellness Center. All rights reserved.
+        © 2026 Pawradise Spa Management System. All rights reserved. Built for professional groomers.
     </footer>
 </body></html>
