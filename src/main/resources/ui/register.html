@@ -1,99 +1,227 @@
-<!DOCTYPE html>
+<!doctype html>
 
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Register - Pet Spa</title>
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<!-- CSS Files -->
-<link rel="stylesheet" href="assets/css/output.css"/>
-<link rel="stylesheet" href="assets/css/styles.css"/>
-<link rel="stylesheet" href="assets/css/register.css"/>
-</head>
-<body class="bg-background-light dark:bg-background-dark font-display min-h-screen flex flex-col overflow-x-hidden">
-<!-- Top Navigation Bar -->
-<header class="w-full px-6 lg:px-40 py-5 flex items-center justify-between border-b border-solid border-[#e7f3f2] dark:border-white/10">
-<a href="index.html" class="flex items-center gap-3 text-[#0d1b1a] dark:text-white hover:opacity-80 transition-opacity">
-<div class="text-primary size-8 flex items-center justify-center">
-<svg class="w-6 h-6" viewBox="0 0 1024 1024" fill="currentColor"><path d="M792.5 558.4c-46.8-27-44-118.7-14-170.7 26.9-46.6 86.5-62.6 133.1-35.7s62.6 86.5 35.7 133.1c-30.1 52.1-108 100.4-154.8 73.3zM623.4 390c-60.7-16.3-86.1-124.4-67.4-194 16.5-61.5 79.7-98.1 141.3-81.6 61.5 16.5 98.1 79.7 81.6 141.3-18.7 69.6-94.8 150.6-155.5 134.3zM233.5 558.7c-46.9 27.1-125.1-21.3-155.2-73.4-27-46.7-11-106.4 35.8-133.4 46.7-27 106.5-11 133.4 35.7 30 52.2 32.9 144-14 171.1zM374.6 390c-60.7 16.3-136.8-64.7-155.4-134.3-16.5-61.5 20-124.8 81.6-141.3S425.6 134.4 442.1 196c18.6 69.6-6.8 177.7-67.5 194zM513 436.3c111.7 0 279.9 170.1 279.9 307.6 0 91.3-28.3 143.3-79.1 161.4-17.5 6.2-32 7.4-54.3 6.7-4.4-0.1-5.2-0.2-6.5-0.2-11.7 0-23.4-3.8-39.7-11.2-5.4-2.5-11.1-5.3-19.2-9.4 5.8 2.9-15.2-7.7-20.1-10.1-16.3-8.1-28.8-13.7-40.5-17.8-9-3.2-17.2-5.3-24.5-6.3h8c-7.3 1.1-15.4 3.2-24.5 6.4-11.8 4.2-24.2 9.7-40.5 17.9-4.9 2.4-25.8 13.1-20.1 10.2-8.1 4.1-13.8 6.9-19.2 9.4-16.2 7.5-28 11.3-39.7 11.3-1.3 0-2.1 0-6.5 0.2-22.3 0.7-36.8-0.5-54.3-6.7-50.8-18.1-79.1-70.1-79.1-161.4 0-137.5 168.2-308 279.9-308z"/></svg>
-</div>
-<h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">Pawradise Spa</h2>
-</a>
-</header>
-<!-- Main Content with Background Gradient -->
-<main class="flex-1 flex items-center justify-center p-6 relative">
-<!-- Sign Up Card -->
-<div class="glass-card w-full max-w-[480px] p-8 md:p-12 rounded-xl shadow-2xl relative z-10">
-<!-- Header Text -->
-<div class="text-center mb-8">
-<div class="bg-primary/20 w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
-<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4H3v1h2V2h1v20H5v-1H4v2h18V1H4zm3-2h14v20H7zM5 20H3v-1h1v-1h1zm0-6H3v-1h1v-1h1zm0-6H3V7h1V6h1zm0 3H3v-1h1V9h1zm0 6H3v-1h1v-1h1zm10.5-5h-3A3.504 3.504 0 0 0 9 15.5V18h10v-2.5a3.504 3.504 0 0 0-3.5-3.5zm2.5 5h-8v-1.5a2.503 2.503 0 0 1 2.5-2.5h3a2.503 2.503 0 0 1 2.5 2.5zm-4-6a3 3 0 1 0-3-3 3.003 3.003 0 0 0 3 3zm0-5a2 2 0 1 1-2 2 2.002 2.002 0 0 1 2-2z"></path></svg>
-</div>
-<h1 class="text-[#0d1b1a] dark:text-white text-3xl font-bold leading-tight mb-2">New Staff Registration</h1>
-<p class="text-[#4c9a93] dark:text-primary/70 text-sm font-normal">Enter your details to gain access to the system.</p>
-</div>
-<!-- Form -->
-<form id="registerForm" class="flex flex-col gap-5">
-<!-- Name Field -->
-<div class="flex flex-col gap-2">
-<label class="text-[#0d1b1a] dark:text-white text-base font-medium leading-normal px-1">Name</label>
-<div class="relative">
-<svg class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-[#4c9a93]/50" viewBox="-3 0 19 19" fill="currentColor"><path d="M12.517 12.834v1.9a1.27 1.27 0 0 1-1.267 1.267h-9.5a1.27 1.27 0 0 1-1.267-1.267v-1.9A3.176 3.176 0 0 1 3.65 9.667h5.7a3.176 3.176 0 0 1 3.167 3.167zM3.264 5.48A3.236 3.236 0 1 1 6.5 8.717a3.236 3.236 0 0 1-3.236-3.236z"/></svg>
-<input id="name" class="form-input w-full rounded-xl text-[#0d1b1a] dark:text-white border border-[#cfe7e5] dark:border-gray-700 bg-white/50 dark:bg-black/20 focus:outline-0 focus:ring-2 focus:ring-primary/50 focus:border-primary h-14 placeholder:text-[#4c9a93]/60 pl-12 pr-4 py-[15px] text-base font-normal leading-normal" placeholder="Enter your full name" type="text"/>
-</div>
-</div>
-<!-- Email Field -->
-<div class="flex flex-col gap-2">
-<label class="text-[#0d1b1a] dark:text-white text-base font-medium leading-normal px-1">Email</label>
-<div class="relative">
-<svg class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-[#4c9a93]/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.00005L10.2 11.65C11.2667 12.45 12.7333 12.45 13.8 11.65L20 7"></path><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="2" stroke-linecap="round"></rect></svg>
-<input id="email" class="form-input w-full rounded-xl text-[#0d1b1a] dark:text-white border border-[#cfe7e5] dark:border-gray-700 bg-white/50 dark:bg-black/20 focus:outline-0 focus:ring-2 focus:ring-primary/50 focus:border-primary h-14 placeholder:text-[#4c9a93]/60 pl-12 pr-4 py-[15px] text-base font-normal leading-normal" placeholder="Enter your email address" type="email"/>
-</div>
-</div>
-<!-- Password Field -->
-<div class="flex flex-col gap-2">
-<label class="text-[#0d1b1a] dark:text-white text-base font-medium leading-normal px-1">Password</label>
-<div class="relative">
-<svg class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-[#4c9a93]/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14.5V16.5M7 10.0288C7.47142 10 8.05259 10 8.8 10H15.2C15.9474 10 16.5286 10 17 10.0288M7 10.0288C6.41168 10.0647 5.99429 10.1455 5.63803 10.327C5.07354 10.6146 4.6146 11.0735 4.32698 11.638C4 12.2798 4 13.1198 4 14.8V16.2C4 17.8802 4 18.7202 4.32698 19.362C4.6146 19.9265 5.07354 20.3854 5.63803 20.673C6.27976 21 7.11984 21 8.8 21H15.2C16.8802 21 17.7202 21 18.362 20.673C18.9265 20.3854 19.3854 19.9265 19.673 19.362C20 18.7202 20 17.8802 20 16.2V14.8C20 13.1198 20 12.2798 19.673 11.638C19.3854 11.0735 18.9265 10.6146 18.362 10.327C18.0057 10.1455 17.5883 10.0647 17 10.0288M7 10.0288V8C7 5.23858 9.23858 3 12 3C14.7614 3 17 5.23858 17 8V10.0288"/></svg>
-<input id="password" class="form-input w-full rounded-xl text-[#0d1b1a] dark:text-white border border-[#cfe7e5] dark:border-gray-700 bg-white/50 dark:bg-black/20 focus:outline-0 focus:ring-2 focus:ring-primary/50 focus:border-primary h-14 placeholder:text-[#4c9a93]/60 pl-12 pr-4 py-[15px] text-base font-normal leading-normal" placeholder="Create a password" type="password"/>
-</div>
-</div>
-<!-- Confirm Password Field -->
-<div class="flex flex-col gap-2">
-<label class="text-[#0d1b1a] dark:text-white text-base font-medium leading-normal px-1">Confirm Password</label>
-<div class="relative">
-<svg class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-[#4c9a93]/50" viewBox="0 0 32 32" fill="currentColor"><path d="m16 0c8.836556 0 16 7.163444 16 16s-7.163444 16-16 16-16-7.163444-16-16 7.163444-16 16-16zm0 2c-7.7319865 0-14 6.2680135-14 14s6.2680135 14 14 14 14-6.2680135 14-14-6.2680135-14-14-14zm6.6208153 9.8786797c.3905243.3905242.3905243 1.0236892 0 1.4142135l-7.0710678 7.0710678c-.3626297.3626297-.9344751.3885319-1.3269928.0777064l-.0872208-.0777064-4.24264068-4.2426407c-.39052429-.3905242-.39052429-1.0236892 0-1.4142135.39052428-.3905243 1.02368928-.3905243 1.41421358 0l3.5348268 3.5348268 6.3646681-6.3632539c.3905243-.3905243 1.0236893-.3905243 1.4142136 0z"/></svg>
-<input id="confirmPassword" class="form-input w-full rounded-xl text-[#0d1b1a] dark:text-white border border-[#cfe7e5] dark:border-gray-700 bg-white/50 dark:bg-black/20 focus:outline-0 focus:ring-2 focus:ring-primary/50 focus:border-primary h-14 placeholder:text-[#4c9a93]/60 pl-12 pr-4 py-[15px] text-base font-normal leading-normal" placeholder="Confirm your password" type="password"/>
-</div>
-</div>
-<!-- Login Redirect Link -->
-<div class="flex justify-end pt-1">
-<a class="text-[#4c9a93] dark:text-primary text-xs font-semibold hover:underline" href="login.html">Already have an account? Log In</a>
-</div>
-<!-- Sign Up Button -->
-<button class="mt-4 flex w-full items-center justify-center rounded-xl h-14 bg-primary text-[#0d1b1a] text-base font-bold leading-normal tracking-[0.015em] hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-[0.98]" type="submit">
-                    Sign Up
-                </button>
-</form>
-<!-- Trust Footer -->
-<div class="mt-8 flex items-center justify-center gap-2 text-xs text-[#4c9a93] dark:text-gray-500 uppercase tracking-widest font-semibold">
-<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14.5V16.5M7 10.0288C7.47142 10 8.05259 10 8.8 10H15.2C15.9474 10 16.5286 10 17 10.0288M7 10.0288C6.41168 10.0647 5.99429 10.1455 5.63803 10.327C5.07354 10.6146 4.6146 11.0735 4.32698 11.638C4 12.2798 4 13.1198 4 14.8V16.2C4 17.8802 4 18.7202 4.32698 19.362C4.6146 19.9265 5.07354 20.3854 5.63803 20.673C6.27976 21 7.11984 21 8.8 21H15.2C16.8802 21 17.7202 21 18.362 20.673C18.9265 20.3854 19.3854 19.9265 19.673 19.362C20 18.7202 20 17.8802 20 16.2V14.8C20 13.1198 20 12.2798 19.673 11.638C19.3854 11.0735 18.9265 10.6146 18.362 10.327C18.0057 10.1455 17.5883 10.0647 17 10.0288M7 10.0288V8C7 5.23858 9.23858 3 12 3C14.7614 3 17 5.23858 17 8V10.0288"/></svg>
-<span>Secure &amp; Private</span>
-</div>
-</div>
-</main>
-<!-- Simple Footer -->
-<footer class="w-full py-6 px-10 border-t border-white/10 flex justify-center">
-<div class="max-w-[1200px] w-full flex flex-col md:flex-row justify-between items-center gap-4 text-[#4c9a93] text-xs">
-<p>© 2026 Pawradise Spa Management System. All rights reserved. Built for professional groomers.</p>
-<div class="flex gap-6">
-<a class="hover:text-primary" href="#">Terms</a>
-<a class="hover:text-primary" href="#">Privacy</a>
-<a class="hover:text-primary" href="#">Cookies</a>
-</div>
-</div>
-</footer>
-<!-- JavaScript -->
-<script src="assets/js/register.js"></script>
-</body></html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Register</title>
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="assets/css/output.css" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark font-display min-h-screen flex flex-col overflow-x-hidden"
+  >
+    <!-- Top Navigation Bar -->
+    <header
+      class="w-full px-6 lg:px-40 py-5 flex items-center justify-between border-b border-solid border-[#e7f3f2] dark:border-white/10"
+    >
+      <a
+        href="index.html"
+        class="flex items-center gap-3 text-[#0d1b1a] dark:text-white hover:opacity-80 transition-opacity"
+      >
+        <div class="text-primary size-8 flex items-center justify-center">
+          <svg class="w-6 h-6" viewBox="0 0 1024 1024" fill="currentColor">
+            <path
+              d="M792.5 558.4c-46.8-27-44-118.7-14-170.7 26.9-46.6 86.5-62.6 133.1-35.7s62.6 86.5 35.7 133.1c-30.1 52.1-108 100.4-154.8 73.3zM623.4 390c-60.7-16.3-86.1-124.4-67.4-194 16.5-61.5 79.7-98.1 141.3-81.6 61.5 16.5 98.1 79.7 81.6 141.3-18.7 69.6-94.8 150.6-155.5 134.3zM233.5 558.7c-46.9 27.1-125.1-21.3-155.2-73.4-27-46.7-11-106.4 35.8-133.4 46.7-27 106.5-11 133.4 35.7 30 52.2 32.9 144-14 171.1zM374.6 390c-60.7 16.3-136.8-64.7-155.4-134.3-16.5-61.5 20-124.8 81.6-141.3S425.6 134.4 442.1 196c18.6 69.6-6.8 177.7-67.5 194zM513 436.3c111.7 0 279.9 170.1 279.9 307.6 0 91.3-28.3 143.3-79.1 161.4-17.5 6.2-32 7.4-54.3 6.7-4.4-0.1-5.2-0.2-6.5-0.2-11.7 0-23.4-3.8-39.7-11.2-5.4-2.5-11.1-5.3-19.2-9.4 5.8 2.9-15.2-7.7-20.1-10.1-16.3-8.1-28.8-13.7-40.5-17.8-9-3.2-17.2-5.3-24.5-6.3h8c-7.3 1.1-15.4 3.2-24.5 6.4-11.8 4.2-24.2 9.7-40.5 17.9-4.9 2.4-25.8 13.1-20.1 10.2-8.1 4.1-13.8 6.9-19.2 9.4-16.2 7.5-28 11.3-39.7 11.3-1.3 0-2.1 0-6.5 0.2-22.3 0.7-36.8-0.5-54.3-6.7-50.8-18.1-79.1-70.1-79.1-161.4 0-137.5 168.2-308 279.9-308z"
+            />
+          </svg>
+        </div>
+        <h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">
+          Pawradise Spa
+        </h2>
+      </a>
+    </header>
+    <!-- Main Content with Background Gradient -->
+    <main class="flex-1 flex items-center justify-center p-6 relative">
+      <!-- Sign Up Card -->
+      <div
+        class="glass-card w-full max-w-[480px] p-8 md:p-12 rounded-xl shadow-2xl relative z-10"
+      >
+        <!-- Header Text -->
+        <div class="text-center mb-8">
+          <div
+            class="bg-primary/20 w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto"
+          >
+            <svg
+              class="w-8 h-8"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+            >
+              <path
+                d="M4 4H3v1h2V2h1v20H5v-1H4v2h18V1H4zm3-2h14v20H7zM5 20H3v-1h1v-1h1zm0-6H3v-1h1v-1h1zm0-6H3V7h1V6h1zm0 3H3v-1h1V9h1zm0 6H3v-1h1v-1h1zm10.5-5h-3A3.504 3.504 0 0 0 9 15.5V18h10v-2.5a3.504 3.504 0 0 0-3.5-3.5zm2.5 5h-8v-1.5a2.503 2.503 0 0 1 2.5-2.5h3a2.503 2.503 0 0 1 2.5 2.5zm-4-6a3 3 0 1 0-3-3 3.003 3.003 0 0 0 3 3zm0-5a2 2 0 1 1-2 2 2.002 2.002 0 0 1 2-2z"
+              ></path>
+            </svg>
+          </div>
+          <h1
+            class="text-[#0d1b1a] dark:text-white text-3xl font-bold leading-tight mb-2"
+          >
+            New Staff Registration
+          </h1>
+          <p class="text-[#4c9a93] dark:text-primary/70 text-sm font-normal">
+            Enter your details to gain access to the system.
+          </p>
+        </div>
+        <!-- Form -->
+        <form id="registerForm" class="flex flex-col gap-5">
+          <!-- Name Field -->
+          <div class="flex flex-col gap-2">
+            <label
+              class="text-[#0d1b1a] dark:text-white text-base font-medium leading-normal px-1"
+              >Name</label
+            >
+            <div class="relative">
+              <svg
+                class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-[#4c9a93]/50"
+                viewBox="-3 0 19 19"
+                fill="currentColor"
+              >
+                <path
+                  d="M12.517 12.834v1.9a1.27 1.27 0 0 1-1.267 1.267h-9.5a1.27 1.27 0 0 1-1.267-1.267v-1.9A3.176 3.176 0 0 1 3.65 9.667h5.7a3.176 3.176 0 0 1 3.167 3.167zM3.264 5.48A3.236 3.236 0 1 1 6.5 8.717a3.236 3.236 0 0 1-3.236-3.236z"
+                />
+              </svg>
+              <input
+                id="name"
+                class="form-input w-full rounded-xl text-[#0d1b1a] dark:text-white border border-[#cfe7e5] dark:border-gray-700 bg-white/50 dark:bg-black/20 focus:outline-0 focus:ring-2 focus:ring-primary/50 focus:border-primary h-14 placeholder:text-[#4c9a93]/60 pl-12 pr-4 py-[15px] text-base font-normal leading-normal"
+                placeholder="Enter your full name"
+                type="text"
+              />
+            </div>
+          </div>
+          <!-- Email Field -->
+          <div class="flex flex-col gap-2">
+            <label
+              class="text-[#0d1b1a] dark:text-white text-base font-medium leading-normal px-1"
+              >Email</label
+            >
+            <div class="relative">
+              <svg
+                class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-[#4c9a93]/50"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M4 7.00005L10.2 11.65C11.2667 12.45 12.7333 12.45 13.8 11.65L20 7"
+                ></path>
+                <rect
+                  x="3"
+                  y="5"
+                  width="18"
+                  height="14"
+                  rx="2"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                ></rect>
+              </svg>
+              <input
+                id="email"
+                class="form-input w-full rounded-xl text-[#0d1b1a] dark:text-white border border-[#cfe7e5] dark:border-gray-700 bg-white/50 dark:bg-black/20 focus:outline-0 focus:ring-2 focus:ring-primary/50 focus:border-primary h-14 placeholder:text-[#4c9a93]/60 pl-12 pr-4 py-[15px] text-base font-normal leading-normal"
+                placeholder="Enter your email address"
+                type="email"
+              />
+            </div>
+          </div>
+          <!-- Password Field -->
+          <div class="flex flex-col gap-2">
+            <label
+              class="text-[#0d1b1a] dark:text-white text-base font-medium leading-normal px-1"
+              >Password</label
+            >
+            <div class="relative">
+              <svg
+                class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-[#4c9a93]/50"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M12 14.5V16.5M7 10.0288C7.47142 10 8.05259 10 8.8 10H15.2C15.9474 10 16.5286 10 17 10.0288M7 10.0288C6.41168 10.0647 5.99429 10.1455 5.63803 10.327C5.07354 10.6146 4.6146 11.0735 4.32698 11.638C4 12.2798 4 13.1198 4 14.8V16.2C4 17.8802 4 18.7202 4.32698 19.362C4.6146 19.9265 5.07354 20.3854 5.63803 20.673C6.27976 21 7.11984 21 8.8 21H15.2C16.8802 21 17.7202 21 18.362 20.673C18.9265 20.3854 19.3854 19.9265 19.673 19.362C20 18.7202 20 17.8802 20 16.2V14.8C20 13.1198 20 12.2798 19.673 11.638C19.3854 11.0735 18.9265 10.6146 18.362 10.327C18.0057 10.1455 17.5883 10.0647 17 10.0288M7 10.0288V8C7 5.23858 9.23858 3 12 3C14.7614 3 17 5.23858 17 8V10.0288"
+                />
+              </svg>
+              <input
+                id="password"
+                class="form-input w-full rounded-xl text-[#0d1b1a] dark:text-white border border-[#cfe7e5] dark:border-gray-700 bg-white/50 dark:bg-black/20 focus:outline-0 focus:ring-2 focus:ring-primary/50 focus:border-primary h-14 placeholder:text-[#4c9a93]/60 pl-12 pr-4 py-[15px] text-base font-normal leading-normal"
+                placeholder="Create a password"
+                type="password"
+              />
+            </div>
+          </div>
+          <!-- Confirm Password Field -->
+          <div class="flex flex-col gap-2">
+            <label
+              class="text-[#0d1b1a] dark:text-white text-base font-medium leading-normal px-1"
+              >Confirm Password</label
+            >
+            <div class="relative">
+              <svg
+                class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-[#4c9a93]/50"
+                viewBox="0 0 32 32"
+                fill="currentColor"
+              >
+                <path
+                  d="m16 0c8.836556 0 16 7.163444 16 16s-7.163444 16-16 16-16-7.163444-16-16 7.163444-16 16-16zm0 2c-7.7319865 0-14 6.2680135-14 14s6.2680135 14 14 14 14-6.2680135 14-14-6.2680135-14-14-14zm6.6208153 9.8786797c.3905243.3905242.3905243 1.0236892 0 1.4142135l-7.0710678 7.0710678c-.3626297.3626297-.9344751.3885319-1.3269928.0777064l-.0872208-.0777064-4.24264068-4.2426407c-.39052429-.3905242-.39052429-1.0236892 0-1.4142135.39052428-.3905243 1.02368928-.3905243 1.41421358 0l3.5348268 3.5348268 6.3646681-6.3632539c.3905243-.3905243 1.0236893-.3905243 1.4142136 0z"
+                />
+              </svg>
+              <input
+                id="confirmPassword"
+                class="form-input w-full rounded-xl text-[#0d1b1a] dark:text-white border border-[#cfe7e5] dark:border-gray-700 bg-white/50 dark:bg-black/20 focus:outline-0 focus:ring-2 focus:ring-primary/50 focus:border-primary h-14 placeholder:text-[#4c9a93]/60 pl-12 pr-4 py-[15px] text-base font-normal leading-normal"
+                placeholder="Confirm your password"
+                type="password"
+              />
+            </div>
+          </div>
+          <!-- Login Redirect Link -->
+          <div class="flex justify-end pt-1">
+            <a
+              class="text-[#4c9a93] dark:text-primary text-xs font-semibold hover:underline"
+              href="login.html"
+              >Already have an account? Log In</a
+            >
+          </div>
+          <!-- Sign Up Button -->
+          <button
+            class="mt-4 flex w-full items-center justify-center rounded-xl h-14 bg-primary text-[#0d1b1a] text-base font-bold leading-normal tracking-[0.015em] hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-[0.98]"
+            type="submit"
+          >
+            Sign Up
+          </button>
+        </form>
+      </div>
+    </main>
+    <!-- Simple Footer -->
+    <footer
+      class="w-full py-6 px-10 border-t border-white/10 flex justify-center"
+    >
+      <div
+        class="max-w-[1200px] w-full flex flex-col md:flex-row justify-between items-center gap-4 text-[#4c9a93] text-xs"
+      >
+        <p>
+          © 2026 Pawradise Spa Management System. All rights reserved. Built for
+          professional groomers.
+        </p>
+        <div class="flex gap-6">
+          <a class="hover:text-primary" href="#">Terms</a>
+          <a class="hover:text-primary" href="#">Privacy</a>
+          <a class="hover:text-primary" href="#">Cookies</a>
+        </div>
+      </div>
+    </footer>
+    <!-- JavaScript -->
+    <script src="assets/js/register.js"></script>
+  </body>
+</html>

@@ -10,14 +10,29 @@
  * Navigate to login page
  */
 function navigateToLogin() {
-    window.location.href = 'login.html';
+    if (typeof javaBridge !== 'undefined') {
+        javaBridge.navigateTo('login.html');
+    } else {
+        window.location.href = 'login.html';
+    }
 }
 
 /**
  * Navigate to register page
  */
 function navigateToRegister() {
-    window.location.href = 'register.html';
+    if (typeof javaBridge !== 'undefined') {
+        javaBridge.navigateTo('register.html');
+    } else {
+        window.location.href = 'register.html';
+    }
+}
+
+/**
+ * Called when JavaBridge is ready
+ */
+function onBridgeReady() {
+    console.log('JavaBridge is ready on index page');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
