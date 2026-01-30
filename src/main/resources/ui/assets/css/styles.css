@@ -1,15 +1,3 @@
-/* =================================================================================
-   PET SPA DESKTOP APPLICATION - GLOBAL STYLESHEET
-   Contains: Variables, Reset, Base, Global Utilities, Buttons, App Layout, Modal, Forms
-   ================================================================================= */
-
-/* Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-
-/* =================================================================================
-   CSS VARIABLES
-   ================================================================================= */
-
 :root {
     --primary-color: #4a90d9;
     --primary-dark: #357abd;

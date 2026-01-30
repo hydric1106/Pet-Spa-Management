@@ -1,0 +1,28 @@
+{
+  "name": "petspadesktop",
+  "version": "1.0.0",
+  "description": "A modern desktop application for managing pet spa operations, built with **JavaFX** and **Spring Boot**.",
+  "main": "tailwind.config.js",
+  "scripts": {
+    "tailwind": "npx tailwindcss -i ./src/main/resources/ui/assets/css/input.css -o ./src/main/resources/ui/assets/css/output.css --watch",
+    "build:css": "npx tailwindcss -i ./src/main/resources/ui/assets/css/input.css -o ./src/main/resources/ui/assets/css/output.css --minify",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hydric1106/Pet-Spa-Management.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/hydric1106/Pet-Spa-Management/issues"
+  },
+  "homepage": "https://github.com/hydric1106/Pet-Spa-Management#readme",
+  "devDependencies": {
+    "@tailwindcss/container-queries": "^0.1.1",
+    "@tailwindcss/forms": "^0.5.11",
+    "tailwindcss": "^3.4.19"
+  }
+}
