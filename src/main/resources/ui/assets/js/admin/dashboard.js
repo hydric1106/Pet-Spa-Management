@@ -1,27 +1,67 @@
-/**
- * PetSpa Desktop Application - Admin Dashboard JavaScript
- */
-
-// =============================================================================
-// GLOBAL STATE
-// =============================================================================
-
 let currentUser = null;
 let currentPage = 'dashboard';
+let componentsInitialized = false;
 
-// =============================================================================
-// INITIALIZATION
-// =============================================================================
-
-document.addEventListener('DOMContentLoaded', async () => {
-    await initializeDashboard();
-    setupNavigation();
-    setupLogout();
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    initAdminDashboard();
 });
 
+// Also initialize when bridge is ready (in case it fires after DOMContentLoaded)
+document.addEventListener('bridgeReady', () => {
+    initAdminDashboard();
+});
+
+async function initAdminDashboard() {
+    if (componentsInitialized) return;
+    if (!window.javaBridge) return;
+    
+    componentsInitialized = true;
+    
+    try {
+        // Load sidebar and header components
+        await loadComponents([
+            { 
+                path: '../components/admin_sidebar.html', 
+                target: 'sidebar',
+                callback: () => initSidebarNavigation('dashboard', handleNavigation)
+            },
+            { 
+                path: '../components/admin_header.html', 
+                target: 'header'
+            }
+        ]);
+        
+        // Initialize dashboard after components are loaded
+        await initializeDashboard();
+        setupLogout();
+        
+    } catch (error) {
+        console.error('Error initializing admin dashboard:', error);
+    }
+}
+
 /**
- * Initializes the admin dashboard.
+ * Handles sidebar navigation clicks.
+ * @param {string} page - The page to navigate to
  */
+function handleNavigation(page) {
+    const pageRoutes = {
+        'dashboard': 'dashboard.html',
+        'bookings': 'bookings.html',
+        'pets': 'pets.html',
+        'services': 'services.html',
+        'clients': 'clients.html',
+        'staff': 'staff.html',
+        'workshifts': 'workshifts.html'
+    };
+    
+    const route = pageRoutes[page];
+    if (route && window.javaBridge) {
+        window.javaBridge.navigateTo(`admin/${route}`);
+    }
+}
+
 async function initializeDashboard() {
     try {
         await waitForBridge();
@@ -45,9 +85,6 @@ async function initializeDashboard() {
     }
 }
 
-/**
- * Updates the user display in the sidebar.
- */
 function updateUserDisplay() {
     const userNameEl = document.getElementById('currentUserName');
     if (userNameEl && currentUser) {
@@ -55,9 +92,6 @@ function updateUserDisplay() {
     }
 }
 
-/**
- * Loads dashboard statistics and today's schedule.
- */
 async function loadDashboardData() {
     try {
         // Load today's bookings
@@ -129,13 +163,6 @@ function updateTodaySchedule(bookings) {
     scheduleEl.innerHTML = html;
 }
 
-// =============================================================================
-// NAVIGATION
-// =============================================================================
-
-/**
- * Sets up sidebar navigation.
- */
 function setupNavigation() {
     const navItems = document.querySelectorAll('.nav-item');
     
@@ -194,33 +221,20 @@ async function loadPageData(pageName) {
             await loadDashboardData();
             break;
         case 'bookings':
-            // Load bookings data
             break;
         case 'customers':
-            // Load customers data
             break;
         case 'pets':
-            // Load pets data
             break;
         case 'services':
-            // Load services data
             break;
         case 'staff':
-            // Load staff data
             break;
         case 'schedules':
-            // Load schedules data
             break;
     }
 }
 
-// =============================================================================
-// LOGOUT
-// =============================================================================
-
-/**
- * Sets up the logout button.
- */
 function setupLogout() {
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
@@ -235,10 +249,6 @@ function setupLogout() {
         });
     }
 }
-
-// =============================================================================
-// EXPOSE FUNCTIONS TO GLOBAL SCOPE
-// =============================================================================
 
 window.showPage = showPage;
 window.closeModal = closeModal;

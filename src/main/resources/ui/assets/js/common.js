@@ -274,6 +274,146 @@ function closeModal() {
 }
 
 // =============================================================================
+// COMPONENT LOADER
+// =============================================================================
+
+/**
+ * Cache for loaded components to avoid multiple fetches
+ */
+const componentCache = {};
+
+/**
+ * Extracts component filename from a path.
+ * @param {string} componentPath - Path like '../components/admin_sidebar.html'
+ * @returns {string} - Filename like 'admin_sidebar.html'
+ */
+function getComponentFilename(componentPath) {
+    const parts = componentPath.split('/');
+    return parts[parts.length - 1];
+}
+
+/**
+ * Loads an HTML component into a target element.
+ * Uses JavaBridge to load components from resources.
+ * @param {string} componentPath - Relative path to the component HTML file
+ * @param {string|Element} targetElement - Target element or its ID
+ * @param {Function} [callback] - Optional callback after component is loaded
+ * @returns {Promise<void>}
+ */
+async function loadComponent(componentPath, targetElement, callback) {
+    try {
+        const target = typeof targetElement === 'string' 
+            ? document.getElementById(targetElement) 
+            : targetElement;
+        
+        if (!target) {
+            console.error(`Target element not found: ${targetElement}`);
+            return;
+        }
+
+        // Check cache first
+        let html = componentCache[componentPath];
+        
+        if (!html) {
+            // Wait for JavaBridge to be available
+            await waitForBridge();
+            
+            // Extract just the filename from the path
+            const filename = getComponentFilename(componentPath);
+            
+            // Use JavaBridge to load component
+            const result = window.javaBridge.loadComponent(filename);
+            const parsed = JSON.parse(result);
+            
+            if (!parsed.success) {
+                throw new Error(parsed.message);
+            }
+            
+            html = parsed.data;
+            componentCache[componentPath] = html;
+        }
+
+        target.innerHTML = html;
+        
+        if (callback && typeof callback === 'function') {
+            callback(target);
+        }
+
+        // Dispatch event for component-specific initialization
+        document.dispatchEvent(new CustomEvent('componentLoaded', { 
+            detail: { path: componentPath, target } 
+        }));
+
+    } catch (error) {
+        console.error(`Error loading component ${componentPath}:`, error);
+    }
+}
+
+/**
+ * Loads multiple components in parallel.
+ * @param {Array<{path: string, target: string|Element, callback?: Function}>} components
+ * @returns {Promise<void>}
+ */
+async function loadComponents(components) {
+    await Promise.all(
+        components.map(({ path, target, callback }) => 
+            loadComponent(path, target, callback)
+        )
+    );
+}
+
+/**
+ * Initializes sidebar navigation with active state management.
+ * @param {string} activePage - The data-page value of the active link
+ * @param {Function} [onNavigate] - Optional callback when a nav item is clicked
+ */
+function initSidebarNavigation(activePage, onNavigate) {
+    const links = document.querySelectorAll('.sidebar-link');
+    
+    links.forEach(link => {
+        const page = link.getAttribute('data-page');
+        
+        // Set active state
+        if (page === activePage) {
+            setLinkActive(link, true);
+        } else {
+            setLinkActive(link, false);
+        }
+        
+        // Add click handler for navigation
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Update active states
+            links.forEach(l => setLinkActive(l, false));
+            setLinkActive(link, true);
+            
+            // Call navigation callback if provided
+            if (onNavigate && typeof onNavigate === 'function') {
+                onNavigate(page);
+            }
+        });
+    });
+}
+
+/**
+ * Sets the active/inactive state for a sidebar link.
+ * @param {Element} link - The link element
+ * @param {boolean} isActive - Whether the link should be active
+ */
+function setLinkActive(link, isActive) {
+    if (isActive) {
+        link.classList.add('bg-sidebar-active-bg', 'text-sidebar-active-text', 'font-bold');
+        link.classList.remove('hover:bg-slate-50', 'dark:hover:bg-gray-800', 'text-slate-500', 
+            'hover:text-sidebar-active-text', 'dark:text-gray-400', 'dark:hover:text-white');
+    } else {
+        link.classList.remove('bg-sidebar-active-bg', 'text-sidebar-active-text', 'font-bold');
+        link.classList.add('hover:bg-slate-50', 'dark:hover:bg-gray-800', 'text-slate-500', 
+            'hover:text-sidebar-active-text', 'dark:text-gray-400', 'dark:hover:text-white');
+    }
+}
+
+// =============================================================================
 // INITIALIZATION
 // =============================================================================
 

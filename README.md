@@ -104,12 +104,37 @@ logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
 
 > **Note:** Replace `YOUR_USERNAME` and `YOUR_PASSWORD` with your MySQL credentials. This file is not included in the repository for security reasons.
 
+### Tailwind CSS Setup
+
+This project uses Tailwind CSS for styling. You need to set it up before running the application:
+
+1. Install Node.js dependencies:
+```bash
+npm install
+```
+
+2. Build CSS (one-time build with minification):
+```bash
+npm run build:css
+```
+
+3. Or run in watch mode during development (auto-rebuilds on changes):
+```bash
+npm run tailwind
+```
+
 ### Running the Application
 
 ```bash
 # Clone the repository
 git clone https://github.com/your-username/PetSpaDesktop.git
 cd PetSpaDesktop
+
+# Install Tailwind CSS dependencies
+npm install
+
+# Build CSS
+npm run build:css
 
 # Build and run with Maven
 mvn clean javafx:run
@@ -127,9 +152,3 @@ The application uses a **JavaBridge** to enable communication between the JavaSc
 ## 👥 Authors
 
 - Tran Minh Quang - Hydric
-
----
-
-<p align="center">
-  Made with ❤️ for pet care professionals
-</p>

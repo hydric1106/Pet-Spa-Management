@@ -390,6 +390,26 @@ public class JavaBridge {
         });
     }
 
+    /**
+     * Loads an HTML component file from the resources/ui/components folder.
+     * @param componentName The name of the component file (e.g., "admin_sidebar.html")
+     * @return The HTML content of the component
+     */
+    public String loadComponent(String componentName) {
+        try {
+            String resourcePath = "/ui/components/" + componentName;
+            java.io.InputStream inputStream = getClass().getResourceAsStream(resourcePath);
+            if (inputStream == null) {
+                return createErrorResponse("Component not found: " + componentName);
+            }
+            String content = new String(inputStream.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+            inputStream.close();
+            return createSuccessResponse(content);
+        } catch (Exception e) {
+            return createErrorResponse("Failed to load component: " + e.getMessage());
+        }
+    }
+
     // =============================================================================
     // UTILITY METHODS
     // =============================================================================

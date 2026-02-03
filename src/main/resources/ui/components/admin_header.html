@@ -1,0 +1,96 @@
+<!-- Admin Header Component -->
+<div class="flex items-center gap-4">
+  <h2 id="pageTitle" class="text-xl font-bold text-text-main dark:text-white hidden md:block">
+    Overview
+  </h2>
+</div>
+
+<div class="flex items-center gap-6">
+  <!-- Search Bar -->
+  <div class="relative hidden md:block">
+    <svg
+      class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.3-4.3" />
+    </svg>
+    <input
+      id="searchInput"
+      class="pl-10 pr-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 w-64 placeholder:text-slate-400 text-text-main dark:text-white transition-all"
+      placeholder="Search pets, owners..."
+      type="text"
+    />
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="flex items-center gap-2">
+    <!-- Notification Button -->
+    <button
+      id="notificationBtn"
+      class="relative p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-gray-700 text-slate-500 hover:text-primary transition-colors"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke="currentColor"
+        class="w-6 h-6"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
+        />
+      </svg>
+      <span
+        id="notificationBadge"
+        class="absolute top-2.5 right-2.5 size-2 bg-red-500 rounded-full border-2 border-white dark:border-gray-800"
+      ></span>
+    </button>
+
+    <!-- Help Button -->
+    <button
+      id="helpBtn"
+      class="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-gray-700 text-slate-500 hover:text-primary transition-colors"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke="currentColor"
+        class="w-6 h-6"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"
+        />
+      </svg>
+    </button>
+  </div>
+
+  <!-- User Profile Section -->
+  <div class="flex items-center gap-3 pl-6 border-l border-slate-200 dark:border-gray-700">
+    <div class="text-right hidden lg:block">
+      <p id="currentUserName" class="text-sm font-bold text-text-main dark:text-white">
+        Loading...
+      </p>
+    </div>
+    <div
+      id="userAvatar"
+      class="size-10 rounded-full bg-primary/20 flex items-center justify-center border-2 border-white dark:border-gray-700 shadow-sm cursor-pointer hover:ring-2 hover:ring-primary transition-all"
+    >
+      <svg class="w-5 h-5 text-primary" viewBox="-3 0 19 19" fill="currentColor">
+        <path d="M12.517 12.834v1.9a1.27 1.27 0 0 1-1.267 1.267h-9.5a1.27 1.27 0 0 1-1.267-1.267v-1.9A3.176 3.176 0 0 1 3.65 9.667h5.7a3.176 3.176 0 0 1 3.167 3.167zM3.264 5.48A3.236 3.236 0 1 1 6.5 8.717a3.236 3.236 0 0 1-3.236-3.236z"/>
+      </svg>
+    </div>
+  </div>
+</div>

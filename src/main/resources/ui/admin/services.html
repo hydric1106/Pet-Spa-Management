@@ -1,0 +1,119 @@
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Manage Services - Pawradise Spa</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="../assets/css/output.css" />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <link rel="stylesheet" href="../assets/css/admin-dashboard.css" />
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark text-text-main dark:text-white transition-colors duration-200"
+  >
+    <div class="flex h-screen w-full overflow-hidden">
+      <!-- Sidebar (loaded dynamically) -->
+      <aside
+        id="sidebar"
+        class="w-64 flex-shrink-0 border-r border-slate-200 dark:border-gray-800 bg-white dark:bg-surface-dark flex flex-col h-full z-20 transition-all duration-300"
+      ></aside>
+
+      <!-- Main Content -->
+      <main
+        class="flex-1 flex flex-col h-full overflow-hidden bg-background-light dark:bg-background-dark relative"
+      >
+        <!-- Header (loaded dynamically) -->
+        <header
+          id="header"
+          class="flex-shrink-0 h-20 bg-white/80 dark:bg-surface-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-gray-800 flex items-center justify-between px-8 z-10 sticky top-0"
+        ></header>
+        <!-- Page Content -->
+        <div class="flex-1 overflow-y-auto p-8 scroll-smooth">
+          <div class="max-w-[1400px] mx-auto flex flex-col gap-8">
+            <!-- Page Header -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+              <div>
+                <h1 class="text-3xl font-bold text-text-main dark:text-white tracking-tight">
+                  Manage Services
+                </h1>
+                <p class="text-text-muted mt-1 font-medium">
+                  Configure and manage spa treatments, grooming, and specialized services.
+                </p>
+              </div>
+              <div class="flex gap-3">
+                <button
+                  id="addServiceBtn"
+                  class="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl font-semibold text-sm hover:bg-primary-content transition-colors shadow-lg shadow-primary/30"
+                >
+                  <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                  </svg>
+                  Add New Service
+                </button>
+              </div>
+            </div>
+
+            <!-- Services Table -->
+            <div class="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-card border border-slate-200/50 dark:border-gray-800 overflow-hidden">
+              <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                  <thead>
+                    <tr class="text-text-muted text-xs uppercase tracking-wider bg-slate-50 dark:bg-gray-800/30">
+                      <th class="px-6 py-5 font-semibold">Service Name</th>
+                      <th class="px-6 py-5 font-semibold">Category</th>
+                      <th class="px-6 py-5 font-semibold">
+                        <button class="flex items-center gap-1 hover:text-primary transition-colors uppercase tracking-wider font-semibold">
+                          Duration
+                          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M7 10l5-5 5 5H7zm0 4h10l-5 5-5-5z"/>
+                          </svg>
+                        </button>
+                      </th>
+                      <th class="px-6 py-5 font-semibold">
+                        <button class="flex items-center gap-1 hover:text-primary transition-colors uppercase tracking-wider font-semibold">
+                          Base Price
+                          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M7 10l5-5 5 5H7zm0 4h10l-5 5-5-5z"/>
+                          </svg>
+                        </button>
+                      </th>
+                      <th class="px-6 py-5 font-semibold">Status</th>
+                      <th class="px-6 py-5 font-semibold text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="servicesTableBody" class="divide-y divide-slate-100 dark:divide-gray-800">
+                    <!-- Services will be loaded dynamically -->
+                  </tbody>
+                </table>
+              </div>
+              
+              <!-- Empty State (shown when no services) -->
+              <div id="emptyState" class="hidden p-12 text-center">
+                <svg class="w-16 h-16 mx-auto text-slate-300 dark:text-gray-600 mb-4" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/>
+                </svg>
+                <h3 class="text-lg font-bold text-text-main dark:text-white mb-2">No services found</h3>
+                <p class="text-text-muted mb-4">Get started by adding your first service.</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Spacer -->
+          <div class="h-10"></div>
+        </div>
+      </main>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="../assets/js/common.js"></script>
+    <script src="../assets/js/admin/services.js"></script>
+  </body>
+</html>
