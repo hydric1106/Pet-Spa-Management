@@ -25,6 +25,7 @@ public class PetService {
     /**
      * Gets all pets.
      */
+    @Transactional(readOnly = true)
     public List<PetDTO> getAllPets() {
         return petRepository.findAll().stream()
                 .map(this::toDTO)
@@ -34,6 +35,7 @@ public class PetService {
     /**
      * Gets all pets for a customer.
      */
+    @Transactional(readOnly = true)
     public List<PetDTO> getPetsByCustomerId(Long customerId) {
         return petRepository.findByOwnerId(customerId).stream()
                 .map(this::toDTO)
@@ -43,6 +45,7 @@ public class PetService {
     /**
      * Gets a pet by ID.
      */
+    @Transactional(readOnly = true)
     public PetDTO getPetById(Long id) {
         return petRepository.findById(id)
                 .map(this::toDTO)

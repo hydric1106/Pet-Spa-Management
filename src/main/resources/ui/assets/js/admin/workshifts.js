@@ -285,46 +285,45 @@ function renderSchedulesOnCalendar() {
     document.querySelectorAll('.shifts-container').forEach(container => {
         container.innerHTML = '';
     });
-    
-    // Group schedules by date
-    schedules.forEach(schedule => {
-        if (!schedule.workDate) return;
-        
-        const scheduleDate = new Date(schedule.workDate);
-        if (scheduleDate.getFullYear() !== currentYear || scheduleDate.getMonth() !== currentMonth) {
-            return;
-        }
-        
-        const day = scheduleDate.getDate();
+
+    if (schedules.length === 0) return;
+
+    // Iterate every day in the current month and match schedules by dayOfWeek
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const jsDoW = new Date(currentYear, currentMonth, day).getDay(); // 0=Sun … 6=Sat
+        const isoDoW = jsDoW === 0 ? 7 : jsDoW; // Mon=1 … Sun=7 (ISO 8601)
+
+        const matching = schedules.filter(s => Number(s.dayOfWeek) === isoDoW);
+        if (matching.length === 0) continue;
+
         const containers = document.querySelectorAll(`.shifts-container[data-day="${day}"]`);
-        
         containers.forEach(container => {
-            if (container.closest('.calendar-day').dataset.otherMonth === 'true') return;
-            
-            const shiftBadge = createShiftBadge(schedule);
-            container.appendChild(shiftBadge);
+            if (container.closest('.calendar-day')?.dataset.otherMonth === 'true') return;
+            matching.forEach(schedule => container.appendChild(createShiftBadge(schedule)));
         });
-    });
+    }
 }
 
 function createShiftBadge(schedule) {
     const badge = document.createElement('div');
-    
+
     // Determine color based on shift type
-    let colorClass = 'bg-blue-500'; // Default morning
-    if (schedule.shiftTypeName) {
-        const shiftName = schedule.shiftTypeName.toLowerCase();
-        if (shiftName.includes('afternoon')) {
+    let colorClass = 'bg-blue-500'; // Default (morning)
+    if (schedule.shiftName) {
+        const name = schedule.shiftName.toLowerCase();
+        if (name.includes('afternoon')) {
             colorClass = 'bg-orange-500';
-        } else if (shiftName.includes('full')) {
+        } else if (name.includes('full')) {
             colorClass = 'bg-green-500';
         }
     }
-    
+
     badge.className = `${colorClass} text-white text-[10px] px-2 py-1 rounded font-semibold truncate cursor-pointer hover:opacity-80 transition-opacity`;
     badge.textContent = schedule.staffName || 'Staff';
-    badge.title = `${schedule.staffName} - ${schedule.shiftTypeName || 'Shift'}`;
-    
+    badge.title = `${schedule.staffName || ''} — ${schedule.shiftName || 'Shift'}`;
+
     return badge;
 }
 
@@ -427,10 +426,15 @@ async function saveShift() {
     }
     
     try {
+        // Convert date string to Java DayOfWeek (1=Mon, 2=Tue, ..., 7=Sun)
+        const dateObj = new Date(shiftDate + 'T00:00:00');
+        const jsDow = dateObj.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
+        const dayOfWeek = jsDow === 0 ? 7 : jsDow;
+
         const scheduleData = {
             staffId: parseInt(staffId),
             shiftTypeId: parseInt(shiftTypeId),
-            workDate: shiftDate
+            dayOfWeek: dayOfWeek
         };
         
         const result = await callBridge('assignShift', JSON.stringify(scheduleData));

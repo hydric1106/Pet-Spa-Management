@@ -148,17 +148,16 @@ function renderServicesTable(servicesList) {
 }
 
 function createServiceRow(service) {
-    const statusClass = service.active !== false
+    const statusClass = service.isActive !== false
         ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
         : 'bg-slate-100 text-slate-600 dark:bg-gray-700 dark:text-gray-400';
     
-    const statusText = service.active !== false ? 'Active' : 'Inactive';
+    const statusText = service.isActive !== false ? 'Active' : 'Inactive';
     
     return `
         <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50 transition-colors" data-service-id="${service.id}">
             <td class="px-6 py-4 font-bold text-sm text-text-main dark:text-white">${escapeHtml(service.name)}</td>
-            <td class="px-6 py-4 text-sm text-text-muted">${escapeHtml(service.category || '-')}</td>
-            <td class="px-6 py-4 text-sm text-text-muted">${service.duration ? service.duration + ' mins' : '-'}</td>
+            <td class="px-6 py-4 text-sm text-text-muted">${service.durationMinutes ? service.durationMinutes + ' mins' : '-'}</td>
             <td class="px-6 py-4 text-sm font-bold text-text-main dark:text-white">${formatCurrency(service.price)}</td>
             <td class="px-6 py-4">
                 <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded ${statusClass}">
@@ -247,7 +246,7 @@ function openServiceModal(service = null) {
     const content = `
         <form id="serviceForm" class="space-y-4">
             <div>
-                <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Service Name</label>
+                <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Service Name <span class="text-red-500">*</span></label>
                 <input 
                     type="text" 
                     id="serviceName" 
@@ -257,25 +256,13 @@ function openServiceModal(service = null) {
                     required
                 />
             </div>
-            <div>
-                <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Category</label>
-                <select 
-                    id="serviceCategory"
-                    class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 text-text-main dark:text-white"
-                >
-                    <option value="Grooming" ${isEdit && service.category === 'Grooming' ? 'selected' : ''}>Grooming</option>
-                    <option value="Spa" ${isEdit && service.category === 'Spa' ? 'selected' : ''}>Spa</option>
-                    <option value="Wellness" ${isEdit && service.category === 'Wellness' ? 'selected' : ''}>Wellness</option>
-                    <option value="Add-on" ${isEdit && service.category === 'Add-on' ? 'selected' : ''}>Add-on</option>
-                </select>
-            </div>
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Duration (mins)</label>
                     <input 
                         type="number" 
                         id="serviceDuration" 
-                        value="${isEdit ? service.duration || '' : ''}"
+                        value="${isEdit ? service.durationMinutes || '' : ''}"
                         class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 text-text-main dark:text-white"
                         placeholder="30"
                         min="1"
@@ -339,11 +326,10 @@ async function handleServiceSubmit(e) {
     
     const serviceId = document.getElementById('serviceId').value;
     const serviceData = {
-        name: document.getElementById('serviceName').value,
-        category: document.getElementById('serviceCategory').value,
-        duration: parseInt(document.getElementById('serviceDuration').value) || null,
+        name: document.getElementById('serviceName').value.trim(),
+        durationMinutes: parseInt(document.getElementById('serviceDuration').value) || 0,
         price: parseFloat(document.getElementById('servicePrice').value) || 0,
-        description: document.getElementById('serviceDescription').value
+        description: document.getElementById('serviceDescription').value.trim()
     };
     
     try {
@@ -375,12 +361,8 @@ async function editService(id) {
 }
 
 async function deleteService(id) {
-    if (!confirm('Are you sure you want to delete this service?')) {
-        return;
-    }
-    
     try {
-        const result = await callBridge('deleteService', id);
+        const result = await callBridge('deleteService', parseInt(id));
         
         if (result.success) {
             await loadServices();

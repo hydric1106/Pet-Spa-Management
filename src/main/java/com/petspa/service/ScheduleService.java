@@ -38,6 +38,7 @@ public class ScheduleService {
     /**
      * Gets all shift types.
      */
+    @Transactional(readOnly = true)
     public List<ShiftTypeDTO> getAllShiftTypes() {
         return shiftTypeRepository.findAll().stream()
                 .map(this::toShiftTypeDTO)
@@ -47,6 +48,7 @@ public class ScheduleService {
     /**
      * Gets schedule for a specific staff member.
      */
+    @Transactional(readOnly = true)
     public List<StaffScheduleDTO> getScheduleByStaffId(Long staffId) {
         return scheduleRepository.findByStaffId(staffId).stream()
                 .map(this::toDTO)
@@ -56,6 +58,7 @@ public class ScheduleService {
     /**
      * Gets available staff for a specific date and time.
      */
+    @Transactional(readOnly = true)
     public List<UserDTO> getAvailableStaff(String dateStr, String timeStr) {
         LocalDate date = LocalDate.parse(dateStr, DateTimeFormatter.ISO_LOCAL_DATE);
         LocalTime time = LocalTime.parse(timeStr, TIME_FORMATTER);
@@ -73,6 +76,7 @@ public class ScheduleService {
     /**
      * Gets all staff working on a specific day.
      */
+    @Transactional(readOnly = true)
     public List<StaffScheduleDTO> getStaffByDay(Integer dayOfWeek) {
         return scheduleRepository.findActiveStaffByDayOfWeek(dayOfWeek).stream()
                 .map(this::toDTO)

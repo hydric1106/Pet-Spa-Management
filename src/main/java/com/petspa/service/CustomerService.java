@@ -23,6 +23,7 @@ public class CustomerService {
     /**
      * Gets all customers.
      */
+    @Transactional(readOnly = true)
     public List<CustomerDTO> getAllCustomers() {
         return customerRepository.findAll().stream()
                 .map(this::toDTO)
@@ -32,6 +33,7 @@ public class CustomerService {
     /**
      * Gets a customer by ID.
      */
+    @Transactional(readOnly = true)
     public CustomerDTO getCustomerById(Long id) {
         return customerRepository.findById(id)
                 .map(this::toDTO)
@@ -41,6 +43,7 @@ public class CustomerService {
     /**
      * Finds a customer by phone number.
      */
+    @Transactional(readOnly = true)
     public CustomerDTO findByPhoneNumber(String phoneNumber) {
         return customerRepository.findByPhoneNumber(phoneNumber)
                 .map(this::toDTO)
@@ -50,6 +53,7 @@ public class CustomerService {
     /**
      * Searches customers by phone number (partial match).
      */
+    @Transactional(readOnly = true)
     public List<CustomerDTO> searchByPhone(String phoneNumber) {
         return customerRepository.findByPhoneNumberContaining(phoneNumber).stream()
                 .map(this::toDTO)
@@ -59,6 +63,7 @@ public class CustomerService {
     /**
      * Searches customers by name.
      */
+    @Transactional(readOnly = true)
     public List<CustomerDTO> searchByName(String name) {
         return customerRepository.findByFullNameContainingIgnoreCase(name).stream()
                 .map(this::toDTO)

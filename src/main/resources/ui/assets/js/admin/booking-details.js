@@ -96,7 +96,7 @@ function handleNavigation(page) {
 // =============================================================================
 
 async function loadBookingDetails() {
-    const bookingId = sessionStorage.getItem('selectedBookingId');
+    const bookingId = window.javaBridge.getCurrentBookingId();
     if (!bookingId) {
         window.javaBridge.navigateTo('admin/bookings.html');
         return;

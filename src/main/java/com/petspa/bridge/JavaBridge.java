@@ -39,6 +39,9 @@ public class JavaBridge {
     // Current logged-in user session
     private UserDTO currentUser;
 
+    // Currently selected booking ID (used for navigation between pages)
+    private Long currentBookingId;
+
     public JavaBridge(Gson gson, 
                       AuthService authService,
                       UserService userService,
@@ -205,6 +208,71 @@ public class JavaBridge {
         }
     }
 
+    /**
+     * Deletes a customer by ID.
+     */
+    public String deleteCustomer(Long customerId) {
+        try {
+            customerService.deleteCustomer(customerId);
+            return createSuccessResponse("Customer deleted successfully");
+        } catch (Exception e) {
+            return createErrorResponse("Failed to delete customer: " + e.getMessage());
+        }
+    }
+
+    // =============================================================================
+    // SERVICE MANAGEMENT
+    // =============================================================================
+
+    /**
+     * Gets all services.
+     */
+    public String getAllServices() {
+        try {
+            return createSuccessResponse(serviceService.getAllServices());
+        } catch (Exception e) {
+            return createErrorResponse("Failed to get services: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Creates a new service.
+     */
+    public String createService(String serviceJson) {
+        try {
+            ServiceDTO serviceDTO = gson.fromJson(serviceJson, ServiceDTO.class);
+            ServiceDTO created = serviceService.createService(serviceDTO);
+            return createSuccessResponse(created);
+        } catch (Exception e) {
+            return createErrorResponse("Failed to create service: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Updates an existing service.
+     */
+    public String updateService(String serviceJson) {
+        try {
+            ServiceDTO serviceDTO = gson.fromJson(serviceJson, ServiceDTO.class);
+            ServiceDTO updated = serviceService.updateService(serviceDTO);
+            return createSuccessResponse(updated);
+        } catch (Exception e) {
+            return createErrorResponse("Failed to update service: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Deletes (deactivates) a service by ID.
+     */
+    public String deleteService(Long serviceId) {
+        try {
+            serviceService.deactivateService(serviceId);
+            return createSuccessResponse("Service deleted successfully");
+        } catch (Exception e) {
+            return createErrorResponse("Failed to delete service: " + e.getMessage());
+        }
+    }
+
     // =============================================================================
     // PET MANAGEMENT
     // =============================================================================
@@ -266,34 +334,6 @@ public class JavaBridge {
             return createSuccessResponse(updated);
         } catch (Exception e) {
             return createErrorResponse("Failed to update pet: " + e.getMessage());
-        }
-    }
-
-    // =============================================================================
-    // SERVICE MANAGEMENT
-    // =============================================================================
-
-    /**
-     * Gets all active services.
-     */
-    public String getAllServices() {
-        try {
-            return createSuccessResponse(serviceService.getAllActiveServices());
-        } catch (Exception e) {
-            return createErrorResponse("Failed to get services: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Creates a new service.
-     */
-    public String createService(String serviceJson) {
-        try {
-            ServiceDTO serviceDTO = gson.fromJson(serviceJson, ServiceDTO.class);
-            ServiceDTO created = serviceService.createService(serviceDTO);
-            return createSuccessResponse(created);
-        } catch (Exception e) {
-            return createErrorResponse("Failed to create service: " + e.getMessage());
         }
     }
 
@@ -434,6 +474,22 @@ public class JavaBridge {
     // =============================================================================
     // NAVIGATION
     // =============================================================================
+
+    /**
+     * Stores a booking ID for retrieval on the booking detail page.
+     * Used to pass context across page navigations without relying on browser localStorage.
+     */
+    public void setCurrentBookingId(long bookingId) {
+        this.currentBookingId = bookingId;
+    }
+
+    /**
+     * Returns the currently selected booking ID as a plain string.
+     * Returns null if none is set.
+     */
+    public String getCurrentBookingId() {
+        return currentBookingId != null ? String.valueOf(currentBookingId) : null;
+    }
 
     /**
      * Navigates to a different page.

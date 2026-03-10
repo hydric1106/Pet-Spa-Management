@@ -32,6 +32,7 @@ public class BookingService {
     /**
      * Gets all bookings.
      */
+    @Transactional(readOnly = true)
     public List<BookingDTO> getAllBookings() {
         return bookingRepository.findAll().stream()
                 .map(this::toDTO)
@@ -41,6 +42,7 @@ public class BookingService {
     /**
      * Gets all bookings for a specific date.
      */
+    @Transactional(readOnly = true)
     public List<BookingDTO> getBookingsByDate(String dateStr) {
         LocalDate date = LocalDate.parse(dateStr, DATE_FORMATTER);
         return bookingRepository.findByBookingDate(date).stream()
@@ -51,6 +53,7 @@ public class BookingService {
     /**
      * Gets bookings for a staff member on a specific date.
      */
+    @Transactional(readOnly = true)
     public List<BookingDTO> getBookingsByStaffAndDate(Long staffId, String dateStr) {
         LocalDate date = LocalDate.parse(dateStr, DATE_FORMATTER);
         return bookingRepository.findByStaffIdAndBookingDate(staffId, date).stream()
@@ -61,6 +64,7 @@ public class BookingService {
     /**
      * Gets bookings for a customer.
      */
+    @Transactional(readOnly = true)
     public List<BookingDTO> getBookingsByCustomer(Long customerId) {
         return bookingRepository.findByCustomerId(customerId).stream()
                 .map(this::toDTO)
@@ -70,6 +74,7 @@ public class BookingService {
     /**
      * Gets a booking by ID.
      */
+    @Transactional(readOnly = true)
     public BookingDTO getBookingById(Long id) {
         return bookingRepository.findById(id)
                 .map(this::toDTO)

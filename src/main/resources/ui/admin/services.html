@@ -68,7 +68,6 @@
                   <thead>
                     <tr class="text-text-muted text-xs uppercase tracking-wider bg-slate-50 dark:bg-gray-800/30">
                       <th class="px-6 py-5 font-semibold">Service Name</th>
-                      <th class="px-6 py-5 font-semibold">Category</th>
                       <th class="px-6 py-5 font-semibold">
                         <button class="flex items-center gap-1 hover:text-primary transition-colors uppercase tracking-wider font-semibold">
                           Duration
@@ -110,6 +109,27 @@
           <div class="h-10"></div>
         </div>
       </main>
+    </div>
+
+    <!-- Modal Container (required by common.js openModal) -->
+    <div
+      id="modalContainer"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+    >
+      <div class="bg-white dark:bg-surface-dark rounded-2xl shadow-2xl w-full max-w-lg border border-slate-200 dark:border-gray-700">
+        <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-gray-800">
+          <h2 id="modalTitle" class="text-lg font-bold text-text-main dark:text-white"></h2>
+          <button
+            onclick="closeModal()"
+            class="size-9 flex items-center justify-center rounded-full text-text-muted hover:bg-slate-100 dark:hover:bg-gray-800 transition-colors"
+          >
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div id="modalBody" class="px-6 py-5"></div>
+      </div>
     </div>
 
     <!-- JavaScript -->
