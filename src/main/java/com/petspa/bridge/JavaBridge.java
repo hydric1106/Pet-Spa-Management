@@ -210,6 +210,29 @@ public class JavaBridge {
     // =============================================================================
 
     /**
+     * Gets all pets.
+     */
+    public String getAllPets() {
+        try {
+            return createSuccessResponse(petService.getAllPets());
+        } catch (Exception e) {
+            return createErrorResponse("Failed to get pets: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Deletes a pet by ID.
+     */
+    public String deletePet(Long petId) {
+        try {
+            petService.deletePet(petId);
+            return createSuccessResponse("Pet deleted successfully");
+        } catch (Exception e) {
+            return createErrorResponse("Failed to delete pet: " + e.getMessage());
+        }
+    }
+
+    /**
      * Gets all pets for a specific customer.
      */
     public String getPetsByCustomer(Long customerId) {

@@ -23,6 +23,15 @@ public class PetService {
     private final CustomerRepository customerRepository;
 
     /**
+     * Gets all pets.
+     */
+    public List<PetDTO> getAllPets() {
+        return petRepository.findAll().stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Gets all pets for a customer.
      */
     public List<PetDTO> getPetsByCustomerId(Long customerId) {

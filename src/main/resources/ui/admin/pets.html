@@ -1,328 +1,281 @@
-<!DOCTYPE html>
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Manage Pets - Paws &amp; Relax</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#13daec",
-                        "primary-content": "#085f67",
-                        "secondary": "#e7f2f3",
-                        "accent": "#f2c94c",
-                        "background-light": "#f6f8f8",
-                        "background-dark": "#102022",
-                        "surface-light": "#ffffff",
-                        "surface-dark": "#1a2c2e",
-                        "text-main": "#0d1a1b",
-                        "text-muted": "#4c939a",
-                        "sidebar-bg": "#ffffff"
-                    },
-                    fontFamily: {
-                        "display": ["Plus Jakarta Sans", "sans-serif"]
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.5rem",
-                        "lg": "1rem",
-                        "xl": "1.5rem",
-                        "2xl": "2rem",
-                        "full": "9999px"
-                    },
-                    boxShadow: {
-                        "soft": "0 4px 20px -2px rgba(19, 218, 236, 0.1), 0 0 0 1px rgba(19, 218, 236, 0.05)",
-                        "card": "0 2px 10px rgba(0, 0, 0, 0.03)"
-                    }
-                },
-            },
-        }
-    </script>
-<style>
-        body {
-            font-family: "Plus Jakarta Sans", sans-serif;
-        }
-        .material-symbols-outlined {
-            font-variation-settings:
-            'FILL' 0,
-            'wght' 400,
-            'GRAD' 0,
-            'opsz' 24;
-            font-size: 24px;
-        }
-        .icon-fill {
-            font-variation-settings: 'FILL' 1;
-        }
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-    </style>
-</head>
-<body class="bg-background-light dark:bg-background-dark text-text-main dark:text-white transition-colors duration-200">
-<div class="flex h-screen w-full overflow-hidden">
-<aside class="w-64 flex-shrink-0 border-r border-secondary dark:border-gray-800 bg-white dark:bg-surface-dark flex flex-col h-full z-20 transition-all duration-300">
-<div class="p-6 flex items-center gap-3">
-<div class="bg-primary/10 p-2 rounded-xl">
-<span class="material-symbols-outlined text-primary icon-fill">pets</span>
-</div>
-<div class="flex flex-col">
-<h1 class="text-lg font-bold leading-none text-text-main dark:text-white">Paws &amp; Relax</h1>
-<p class="text-text-muted text-xs font-medium mt-1">Admin Panel</p>
-</div>
-</div>
-<div class="px-4 py-2 flex flex-col gap-1 overflow-y-auto flex-1">
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-primary/5 text-text-muted font-medium transition-colors group" href="#">
-<span class="material-symbols-outlined group-hover:scale-110 transition-transform">dashboard</span>
-<span>Dashboard</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 text-primary font-bold transition-colors group" href="#">
-<span class="material-symbols-outlined icon-fill group-hover:scale-110 transition-transform">pets</span>
-<span>Pets</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-primary/5 text-text-muted font-medium transition-colors group" href="#">
-<span class="material-symbols-outlined group-hover:scale-110 transition-transform">group</span>
-<span>Clients</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-primary/5 text-text-muted font-medium transition-colors group" href="#">
-<span class="material-symbols-outlined group-hover:scale-110 transition-transform">badge</span>
-<span>Staff</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-primary/5 text-text-muted font-medium transition-colors group" href="#">
-<span class="material-symbols-outlined group-hover:scale-110 transition-transform">calendar_month</span>
-<span>Bookings</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-primary/5 text-text-muted font-medium transition-colors group" href="#">
-<span class="material-symbols-outlined group-hover:scale-110 transition-transform">content_cut</span>
-<span>Services</span>
-</a>
-</div>
-</aside>
-<main class="flex-1 flex flex-col h-full overflow-hidden bg-background-light dark:bg-background-dark relative">
-<header class="flex-shrink-0 h-20 bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-md border-b border-secondary dark:border-gray-800 flex items-center justify-between px-8 z-10 sticky top-0">
-<div class="flex items-center gap-4">
-<div class="relative hidden md:block">
-<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[20px]">search</span>
-<input class="pl-10 pr-4 py-2.5 bg-secondary dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 w-80 placeholder:text-text-muted/70 text-text-main dark:text-white transition-all" placeholder="Search pets..." type="text"/>
-</div>
-</div>
-<div class="flex items-center gap-6">
-<div class="flex items-center gap-3">
-<button class="relative p-2.5 rounded-xl bg-secondary dark:bg-gray-800 hover:bg-primary/20 dark:hover:bg-gray-700 text-text-muted hover:text-primary transition-colors">
-<span class="material-symbols-outlined text-[22px]">notifications</span>
-<span class="absolute top-2.5 right-2.5 size-2 bg-red-500 rounded-full border-2 border-white dark:border-gray-800"></span>
-</button>
-<button class="p-2.5 rounded-xl bg-secondary dark:bg-gray-800 hover:bg-primary/20 dark:hover:bg-gray-700 text-text-muted hover:text-primary transition-colors">
-<span class="material-symbols-outlined text-[22px]">help</span>
-</button>
-</div>
-<div class="flex items-center gap-3 pl-3 border-l border-secondary dark:border-gray-700">
-<div class="text-right hidden lg:block">
-<p class="text-sm font-bold text-text-main dark:text-white">Sarah Jenkins</p>
-<p class="text-xs text-text-muted">Head Admin</p>
-</div>
-<div class="size-10 rounded-full bg-center bg-cover border-2 border-white dark:border-gray-700 shadow-sm cursor-pointer hover:ring-2 hover:ring-primary transition-all" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCe-yaSZh9-z4n1H1dA6AvfEJIfqwdQA3VLMPiqU55LJFNLpo3h6_On0jfFt1keaqTBmDo3Srai9xnkWBw52S6ZTbv4V5g6uJD6Vsbn3rClhqpjQhI4ihWiYiELyRGafmMJUMxz1BP34J3Z1xgcQnnLF9R0acsn_kO0cKNKcWYy2tz4gTHaKBndkW4mw6xu9Yi6B_nY8hKYekNHSko-iEPXU72Wa_b00gNes9fOoG4GcKD37rHmCosUzrgiIpNb_2UmFz0yHzUxgvo");'></div>
-</div>
-</div>
-</header>
-<div class="flex-1 overflow-y-auto p-8 scroll-smooth">
-<div class="max-w-[1400px] mx-auto flex flex-col gap-8">
-<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-<div>
-<h1 class="text-3xl font-bold text-text-main dark:text-white tracking-tight">Manage Pets</h1>
-<p class="text-text-muted mt-1">View and manage the details of all registered pet clients.</p>
-</div>
-<div class="flex gap-3">
-<button class="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl font-semibold text-sm hover:bg-primary-content transition-colors shadow-lg shadow-primary/30">
-<span class="material-symbols-outlined text-[20px]">add</span>
-                                Register New Pet
-                            </button>
-</div>
-</div>
-<div class="flex items-center justify-between mb-[-24px]">
-<div class="text-sm font-semibold text-text-muted bg-surface-light dark:bg-surface-dark px-4 py-2 rounded-lg border border-secondary/50 dark:border-gray-800">
-                            Total Pets: 124
-                        </div>
-</div>
-<div class="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-card border border-secondary/50 dark:border-gray-800 overflow-hidden">
-<div class="overflow-x-auto">
-<table class="w-full text-left border-collapse">
-<thead>
-<tr class="text-text-muted text-xs uppercase tracking-wider bg-secondary/30 dark:bg-gray-800/30">
-<th class="px-6 py-5 font-semibold">Pet Name</th>
-<th class="px-6 py-5 font-semibold">Owner</th>
-<th class="px-6 py-5 font-semibold">Breed</th>
-<th class="px-6 py-5 font-semibold">Age</th>
-<th class="px-6 py-5 font-semibold">
-<button class="flex items-center gap-1 hover:text-primary transition-colors uppercase tracking-wider font-semibold">
-                                                Last Visit
-                                                <span class="material-symbols-outlined text-[16px]">unfold_more</span>
-</button>
-</th>
-<th class="px-6 py-5 font-semibold text-right">Action</th>
-</tr>
-</thead>
-<tbody class="divide-y divide-secondary dark:divide-gray-800">
-<tr class="hover:bg-secondary/10 transition-colors">
-<td class="px-6 py-4">
-<div class="flex items-center gap-3">
-<div class="size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-<span class="material-symbols-outlined text-[20px]">pets</span>
-</div>
-<span class="font-bold text-sm">Cooper</span>
-</div>
-</td>
-<td class="px-6 py-4 text-sm">Mark Thompson</td>
-<td class="px-6 py-4 text-sm text-text-muted">Golden Retriever</td>
-<td class="px-6 py-4 text-sm text-text-muted">3 years</td>
-<td class="px-6 py-4 text-sm">Oct 12, 2023</td>
-<td class="px-6 py-4 text-right">
-<div class="flex justify-end gap-2">
-<button class="size-9 flex items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors" title="Edit">
-<span class="material-symbols-outlined text-[20px]">edit</span>
-</button>
-<button class="size-9 flex items-center justify-center rounded-full bg-red-50 text-red-500 hover:bg-red-100 transition-colors" title="Delete">
-<span class="material-symbols-outlined text-[20px]">delete</span>
-</button>
-</div>
-</td>
-</tr>
-<tr class="hover:bg-secondary/10 transition-colors">
-<td class="px-6 py-4">
-<div class="flex items-center gap-3">
-<div class="size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-<span class="material-symbols-outlined text-[20px]">pets</span>
-</div>
-<span class="font-bold text-sm">Luna</span>
-</div>
-</td>
-<td class="px-6 py-4 text-sm">Jessica Smith</td>
-<td class="px-6 py-4 text-sm text-text-muted">Siamese Cat</td>
-<td class="px-6 py-4 text-sm text-text-muted">2 years</td>
-<td class="px-6 py-4 text-sm">Sep 28, 2023</td>
-<td class="px-6 py-4 text-right">
-<div class="flex justify-end gap-2">
-<button class="size-9 flex items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors" title="Edit">
-<span class="material-symbols-outlined text-[20px]">edit</span>
-</button>
-<button class="size-9 flex items-center justify-center rounded-full bg-red-50 text-red-500 hover:bg-red-100 transition-colors" title="Delete">
-<span class="material-symbols-outlined text-[20px]">delete</span>
-</button>
-</div>
-</td>
-</tr>
-<tr class="hover:bg-secondary/10 transition-colors">
-<td class="px-6 py-4">
-<div class="flex items-center gap-3">
-<div class="size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-<span class="material-symbols-outlined text-[20px]">pets</span>
-</div>
-<span class="font-bold text-sm">Bailey</span>
-</div>
-</td>
-<td class="px-6 py-4 text-sm">Robert Davis</td>
-<td class="px-6 py-4 text-sm text-text-muted">French Bulldog</td>
-<td class="px-6 py-4 text-sm text-text-muted">5 years</td>
-<td class="px-6 py-4 text-sm">Oct 05, 2023</td>
-<td class="px-6 py-4 text-right">
-<div class="flex justify-end gap-2">
-<button class="size-9 flex items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors" title="Edit">
-<span class="material-symbols-outlined text-[20px]">edit</span>
-</button>
-<button class="size-9 flex items-center justify-center rounded-full bg-red-50 text-red-500 hover:bg-red-100 transition-colors" title="Delete">
-<span class="material-symbols-outlined text-[20px]">delete</span>
-</button>
-</div>
-</td>
-</tr>
-<tr class="hover:bg-secondary/10 transition-colors">
-<td class="px-6 py-4">
-<div class="flex items-center gap-3">
-<div class="size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-<span class="material-symbols-outlined text-[20px]">pets</span>
-</div>
-<span class="font-bold text-sm">Milo</span>
-</div>
-</td>
-<td class="px-6 py-4 text-sm">Emma Wilson</td>
-<td class="px-6 py-4 text-sm text-text-muted">Beagle</td>
-<td class="px-6 py-4 text-sm text-text-muted">8 months</td>
-<td class="px-6 py-4 text-sm">Oct 10, 2023</td>
-<td class="px-6 py-4 text-right">
-<div class="flex justify-end gap-2">
-<button class="size-9 flex items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors" title="Edit">
-<span class="material-symbols-outlined text-[20px]">edit</span>
-</button>
-<button class="size-9 flex items-center justify-center rounded-full bg-red-50 text-red-500 hover:bg-red-100 transition-colors" title="Delete">
-<span class="material-symbols-outlined text-[20px]">delete</span>
-</button>
-</div>
-</td>
-</tr>
-<tr class="hover:bg-secondary/10 transition-colors">
-<td class="px-6 py-4">
-<div class="flex items-center gap-3">
-<div class="size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-<span class="material-symbols-outlined text-[20px]">pets</span>
-</div>
-<span class="font-bold text-sm">Daisy</span>
-</div>
-</td>
-<td class="px-6 py-4 text-sm">David Miller</td>
-<td class="px-6 py-4 text-sm text-text-muted">Labrador</td>
-<td class="px-6 py-4 text-sm text-text-muted">4 years</td>
-<td class="px-6 py-4 text-sm">Sep 15, 2023</td>
-<td class="px-6 py-4 text-right">
-<div class="flex justify-end gap-2">
-<button class="size-9 flex items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors" title="Edit">
-<span class="material-symbols-outlined text-[20px]">edit</span>
-</button>
-<button class="size-9 flex items-center justify-center rounded-full bg-red-50 text-red-500 hover:bg-red-100 transition-colors" title="Delete">
-<span class="material-symbols-outlined text-[20px]">delete</span>
-</button>
-</div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="flex items-center justify-between px-6 py-6 border-t border-secondary dark:border-gray-800">
-<div class="text-sm text-text-muted font-medium">
-                                Showing 1 to 5 of 124 entries
-                            </div>
-<div class="flex items-center gap-2">
-<button class="size-10 flex items-center justify-center rounded-full border border-secondary dark:border-gray-700 text-text-muted hover:bg-secondary dark:hover:bg-gray-800 transition-colors">
-<span class="material-symbols-outlined text-[20px]">chevron_left</span>
-</button>
-<button class="size-10 flex items-center justify-center rounded-full bg-primary text-white font-bold shadow-sm">1</button>
-<button class="size-10 flex items-center justify-center rounded-full text-text-muted hover:bg-secondary dark:hover:bg-gray-800 transition-colors font-medium">2</button>
-<button class="size-10 flex items-center justify-center rounded-full text-text-muted hover:bg-secondary dark:hover:bg-gray-800 transition-colors font-medium">3</button>
-<button class="size-10 flex items-center justify-center rounded-full border border-secondary dark:border-gray-700 text-text-muted hover:bg-secondary dark:hover:bg-gray-800 transition-colors">
-<span class="material-symbols-outlined text-[20px]">chevron_right</span>
-</button>
-</div>
-</div>
-</div>
-</div>
-<div class="h-10"></div>
-</div>
-</main>
-</div>
+﻿<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Manage Pets - Pawradise Spa</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="../assets/css/output.css" />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <link rel="stylesheet" href="../assets/css/admin-dashboard.css" />
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark text-text-main dark:text-white transition-colors duration-200"
+  >
+    <div class="flex h-screen w-full overflow-hidden">
 
-</body></html>
+      <!-- Sidebar (loaded dynamically) -->
+      <aside
+        id="sidebar"
+        class="w-64 flex-shrink-0 border-r border-slate-200 dark:border-gray-800 bg-white dark:bg-surface-dark flex flex-col h-full z-20 transition-all duration-300"
+      ></aside>
+
+      <!-- Main Content -->
+      <main
+        class="flex-1 flex flex-col h-full overflow-hidden bg-background-light dark:bg-background-dark relative"
+      >
+        <!-- Header (loaded dynamically) -->
+        <header
+          id="header"
+          class="flex-shrink-0 h-20 bg-white/80 dark:bg-surface-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-gray-800 flex items-center justify-between px-8 z-10 sticky top-0"
+        ></header>
+
+        <!-- Page Content -->
+        <div class="flex-1 overflow-y-auto p-8 scroll-smooth">
+          <div class="max-w-[1400px] mx-auto flex flex-col gap-8">
+
+            <!-- Page Header -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+              <div>
+                <h1 class="text-3xl font-bold text-text-main dark:text-white tracking-tight">
+                  Manage Pets
+                </h1>
+                <p class="text-text-muted mt-1 font-medium">
+                  View and manage the details of all registered pet clients.
+                </p>
+              </div>
+              <div class="flex gap-3">
+                <button
+                  id="registerPetBtn"
+                  class="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl font-semibold text-sm hover:bg-primary-content transition-colors shadow-lg shadow-primary/30"
+                >
+                  <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                  </svg>
+                  Register New Pet
+                </button>
+              </div>
+            </div>
+
+            <!-- Total Count -->
+            <div class="flex items-center justify-between mb-[-24px]">
+              <div
+                id="totalPetsCount"
+                class="text-sm font-semibold text-text-muted bg-surface-light dark:bg-surface-dark px-4 py-2 rounded-lg border border-slate-200/50 dark:border-gray-800"
+              >
+                Total Pets: 0
+              </div>
+            </div>
+
+            <!-- Pets Table -->
+            <div class="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-card border border-slate-200/50 dark:border-gray-800 overflow-hidden">
+              <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                  <thead>
+                    <tr class="text-text-muted text-xs uppercase tracking-wider bg-slate-50 dark:bg-gray-800/30">
+                      <th class="px-6 py-5 font-semibold">Pet Name</th>
+                      <th class="px-6 py-5 font-semibold">Owner</th>
+                      <th class="px-6 py-5 font-semibold">Species</th>
+                      <th class="px-6 py-5 font-semibold">Breed</th>
+                      <th class="px-6 py-5 font-semibold">
+                        <button class="flex items-center gap-1 hover:text-primary transition-colors uppercase tracking-wider font-semibold">
+                          Age
+                          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M7 10l5-5 5 5H7zm0 4h10l-5 5-5-5z"/>
+                          </svg>
+                        </button>
+                      </th>
+                      <th class="px-6 py-5 font-semibold text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="petsTableBody" class="divide-y divide-slate-100 dark:divide-gray-800">
+                    <!-- Pets loaded dynamically -->
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Empty State -->
+              <div id="emptyState" class="hidden p-12 text-center">
+                <svg class="w-16 h-16 mx-auto text-slate-300 dark:text-gray-600 mb-4" viewBox="0 0 1024 1024" fill="currentColor">
+                  <path d="M792.5 558.4c-46.8-27-44-118.7-14-170.7 26.9-46.6 86.5-62.6 133.1-35.7s62.6 86.5 35.7 133.1c-30.1 52.1-108 100.4-154.8 73.3zM623.4 390c-60.7-16.3-86.1-124.4-67.4-194 16.5-61.5 79.7-98.1 141.3-81.6 61.5 16.5 98.1 79.7 81.6 141.3-18.7 69.6-94.8 150.6-155.5 134.3zM233.5 558.7c-46.9 27.1-125.1-21.3-155.2-73.4-27-46.7-11-106.4 35.8-133.4 46.7-27 106.5-11 133.4 35.7 30 52.2 32.9 144-14 171.1zM374.6 390c-60.7 16.3-136.8-64.7-155.4-134.3-16.5-61.5 20-124.8 81.6-141.3S425.6 134.4 442.1 196c18.6 69.6-6.8 177.7-67.5 194zM513 436.3c111.7 0 279.9 170.1 279.9 307.6 0 91.3-28.3 143.3-79.1 161.4-17.5 6.2-32 7.4-54.3 6.7-4.4-0.1-5.2-0.2-6.5-0.2-11.7 0-23.4-3.8-39.7-11.2-5.4-2.5-11.1-5.3-19.2-9.4 5.8 2.9-15.2-7.7-20.1-10.1-16.3-8.1-28.8-13.7-40.5-17.8-9-3.2-17.2-5.3-24.5-6.3h8c-7.3 1.1-15.4 3.2-24.5 6.4-11.8 4.2-24.2 9.7-40.5 17.9-4.9 2.4-25.8 13.1-20.1 10.2-8.1 4.1-13.8 6.9-19.2 9.4-16.2 7.5-28 11.3-39.7 11.3-1.3 0-2.1 0-6.5 0.2-22.3 0.7-36.8-0.5-54.3-6.7-50.8-18.1-79.1-70.1-79.1-161.4 0-137.5 168.2-308 279.9-308z"/>
+                </svg>
+                <h3 class="text-lg font-bold text-text-main dark:text-white mb-2">No pets found</h3>
+                <p class="text-text-muted mb-4">Get started by registering the first pet.</p>
+              </div>
+
+              <!-- Pagination -->
+              <div id="paginationBar" class="hidden flex items-center justify-between px-6 py-6 border-t border-slate-200 dark:border-gray-800">
+                <div id="pageInfo" class="text-sm text-text-muted font-medium">
+                  Showing 1 to 10 of 0 entries
+                </div>
+                <div class="flex items-center gap-2">
+                  <button
+                    id="prevPageBtn"
+                    class="size-10 flex items-center justify-center rounded-full border border-slate-200 dark:border-gray-700 text-text-muted hover:bg-slate-100 dark:hover:bg-gray-800 transition-colors"
+                  >
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                    </svg>
+                  </button>
+                  <div id="pageNumbers" class="flex items-center gap-1">
+                    <!-- Page numbers rendered by JS -->
+                  </div>
+                  <button
+                    id="nextPageBtn"
+                    class="size-10 flex items-center justify-center rounded-full border border-slate-200 dark:border-gray-700 text-text-muted hover:bg-slate-100 dark:hover:bg-gray-800 transition-colors"
+                  >
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Spacer -->
+          <div class="h-10"></div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Pet Modal -->
+    <div
+      id="petModal"
+      class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden"
+    >
+      <div class="bg-white dark:bg-surface-dark rounded-2xl shadow-xl w-full max-w-lg">
+        <div class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-gray-800">
+          <h3 id="petModalTitle" class="text-lg font-bold text-text-main dark:text-white">
+            Register New Pet
+          </h3>
+          <button
+            id="closeModalBtn"
+            class="text-text-muted hover:text-text-main dark:hover:text-white transition-colors"
+          >
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <form id="petForm" class="p-6 space-y-4">
+          <input type="hidden" id="petId" />
+
+          <!-- Owner -->
+          <div>
+            <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Owner (Customer)</label>
+            <select
+              id="petOwnerSelect"
+              class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 text-text-main dark:text-white"
+              required
+            >
+              <option value="">Select owner...</option>
+            </select>
+          </div>
+
+          <!-- Pet Name + Species -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Pet Name</label>
+              <input
+                type="text"
+                id="petName"
+                class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 text-text-main dark:text-white"
+                placeholder="e.g. Buddy"
+                required
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Species</label>
+              <select
+                id="petSpecies"
+                class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 text-text-main dark:text-white"
+              >
+                <option value="Dog">Dog</option>
+                <option value="Cat">Cat</option>
+                <option value="Bird">Bird</option>
+                <option value="Rabbit">Rabbit</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Breed + Age -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Breed</label>
+              <input
+                type="text"
+                id="petBreed"
+                class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 text-text-main dark:text-white"
+                placeholder="e.g. Golden Retriever"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Age (years)</label>
+              <input
+                type="number"
+                id="petAge"
+                min="0"
+                class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 text-text-main dark:text-white"
+                placeholder="0"
+              />
+            </div>
+          </div>
+
+          <!-- Weight -->
+          <div>
+            <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Weight (kg)</label>
+            <input
+              type="number"
+              id="petWeight"
+              min="0"
+              step="0.1"
+              class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 text-text-main dark:text-white"
+              placeholder="0.0"
+            />
+          </div>
+
+          <!-- Notes -->
+          <div>
+            <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Health Notes</label>
+            <textarea
+              id="petNotes"
+              rows="3"
+              class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 text-text-main dark:text-white resize-none"
+              placeholder="Any allergies, medical conditions, or special care instructions..."
+            ></textarea>
+          </div>
+
+          <!-- Buttons -->
+          <div class="flex justify-end gap-3 pt-2">
+            <button
+              type="button"
+              id="cancelModalBtn"
+              class="px-5 py-2.5 bg-slate-100 dark:bg-gray-700 text-text-main dark:text-white rounded-xl font-semibold text-sm hover:bg-slate-200 dark:hover:bg-gray-600 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="px-5 py-2.5 bg-primary text-white rounded-xl font-semibold text-sm hover:bg-primary-content transition-colors"
+            >
+              Save Pet
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="../assets/js/common.js"></script>
+    <script src="../assets/js/admin/pets.js"></script>
+  </body>
+</html>
