@@ -279,6 +279,39 @@ public class JavaBridge {
     // =============================================================================
 
     /**
+     * Gets all bookings.
+     */
+    public String getAllBookings() {
+        try {
+            return createSuccessResponse(bookingService.getAllBookings());
+        } catch (Exception e) {
+            return createErrorResponse("Failed to get bookings: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Gets a booking by ID.
+     */
+    public String getBookingById(Long bookingId) {
+        try {
+            return createSuccessResponse(bookingService.getBookingById(bookingId));
+        } catch (Exception e) {
+            return createErrorResponse("Failed to get booking: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Cancels a booking with an optional reason.
+     */
+    public String cancelBooking(Long bookingId, String reason) {
+        try {
+            return createSuccessResponse(bookingService.cancelBooking(bookingId, reason));
+        } catch (Exception e) {
+            return createErrorResponse("Failed to cancel booking: " + e.getMessage());
+        }
+    }
+
+    /**
      * Gets all bookings for a specific date.
      */
     public String getBookingsByDate(String dateStr) {

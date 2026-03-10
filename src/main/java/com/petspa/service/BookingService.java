@@ -30,6 +30,15 @@ public class BookingService {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
 
     /**
+     * Gets all bookings.
+     */
+    public List<BookingDTO> getAllBookings() {
+        return bookingRepository.findAll().stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Gets all bookings for a specific date.
      */
     public List<BookingDTO> getBookingsByDate(String dateStr) {
