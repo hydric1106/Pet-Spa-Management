@@ -109,6 +109,59 @@ function hideError(elementId = 'errorMessage') {
 }
 
 /**
+ * Shows a confirmation popup and resolves to the user's decision.
+ * This uses an in-app modal to avoid WebView native confirm limitations.
+ * @param {string} message - Confirmation message
+ * @returns {Promise<boolean>}
+ */
+function confirmAction(message) {
+    return new Promise((resolve) => {
+        const existing = document.getElementById('globalConfirmOverlay');
+        if (existing) {
+            existing.remove();
+        }
+
+        const overlay = document.createElement('div');
+        overlay.id = 'globalConfirmOverlay';
+        overlay.className = 'fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4';
+
+        overlay.innerHTML = `
+            <div class="w-full max-w-md rounded-2xl bg-white dark:bg-surface-dark border border-slate-200 dark:border-gray-700 shadow-2xl">
+                <div class="px-6 py-5 border-b border-slate-100 dark:border-gray-800">
+                    <h3 class="text-base font-bold text-text-main dark:text-white">Confirm Action</h3>
+                </div>
+                <div class="px-6 py-5">
+                    <p class="text-sm text-text-muted dark:text-gray-300">${String(message || 'Are you sure?').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>
+                </div>
+                <div class="px-6 pb-5 flex justify-end gap-3">
+                    <button type="button" id="confirmCancelBtn" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-gray-700 text-text-main dark:text-white text-sm font-semibold hover:bg-slate-200 dark:hover:bg-gray-600 transition-colors">Cancel</button>
+                    <button type="button" id="confirmOkBtn" class="px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-content transition-colors">Confirm</button>
+                </div>
+            </div>
+        `;
+
+        const cleanup = (result) => {
+            overlay.remove();
+            resolve(result);
+        };
+
+        overlay.addEventListener('click', (event) => {
+            if (event.target === overlay) {
+                cleanup(false);
+            }
+        });
+
+        document.body.appendChild(overlay);
+
+        const cancelBtn = document.getElementById('confirmCancelBtn');
+        const okBtn = document.getElementById('confirmOkBtn');
+
+        cancelBtn?.addEventListener('click', () => cleanup(false));
+        okBtn?.addEventListener('click', () => cleanup(true));
+    });
+}
+
+/**
  * Sets loading state on a button.
  * @param {string|Element} button - Button element or ID
  * @param {boolean} isLoading - Loading state

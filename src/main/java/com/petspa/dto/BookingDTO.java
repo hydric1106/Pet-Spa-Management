@@ -32,14 +32,18 @@ public class BookingDTO {
     // Staff info
     private Long staffId;
     private String staffName;
+    private List<Long> staffIds;
+    private List<String> staffNames;
     
     // Booking details
     private LocalDate bookingDate;
     private LocalTime bookingTime;
     private String status;
-    private String cancelReason;
     private BigDecimal totalPrice;
     private LocalDateTime createdAt;
+
+    // Primary service selection (exactly one service per booking)
+    private Long serviceId;
     
     // Services included
     private List<BookingDetailDTO> services;

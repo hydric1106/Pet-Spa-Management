@@ -203,6 +203,60 @@
       </div>
     </div>
 
+    <!-- Shift Details Modal -->
+    <div id="shiftDetailModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+      <div class="bg-surface-light dark:bg-surface-dark w-full max-w-md rounded-2xl shadow-xl overflow-hidden">
+        <div class="p-6 border-b border-slate-200 dark:border-gray-800 flex justify-between items-center">
+          <h2 class="text-xl font-bold text-text-main dark:text-white">Shift Details</h2>
+          <button id="closeDetailModalBtn" class="text-text-muted hover:text-text-main dark:hover:text-white transition-colors">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="p-6 space-y-4">
+          <div>
+            <label class="block text-sm font-semibold text-text-main dark:text-white mb-2">Staff Member</label>
+            <input id="detailStaffName" type="text" readonly
+              class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm text-text-main dark:text-white opacity-80" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-semibold text-text-main dark:text-white mb-2">Date</label>
+              <input id="detailDayName" type="text" readonly
+                class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm text-text-main dark:text-white opacity-80" />
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-text-main dark:text-white mb-2">Shift Type</label>
+              <select id="detailShiftType"
+                class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 text-text-main dark:text-white">
+                <option value="">Select shift type...</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-6 bg-slate-50 dark:bg-gray-800/50 flex justify-between gap-3">
+          <button id="deleteShiftBtn"
+            class="px-5 py-2.5 text-sm font-semibold text-red-600 bg-red-50 dark:bg-red-900/20 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors">
+            Remove Shift
+          </button>
+          <div class="flex gap-3">
+            <button id="cancelDetailBtn"
+              class="px-5 py-2.5 text-sm font-semibold text-text-muted hover:bg-slate-200 dark:hover:bg-gray-700 rounded-xl transition-colors">
+              Close
+            </button>
+            <button id="saveDetailBtn"
+              class="bg-primary hover:bg-primary-content text-white px-6 py-2.5 rounded-xl font-bold transition-all">
+              Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- JavaScript -->
     <script src="../assets/js/common.js"></script>
     <script src="../assets/js/admin/workshifts.js"></script>

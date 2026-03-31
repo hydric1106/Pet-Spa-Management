@@ -8,7 +8,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Booking Entity - Represents a service booking/appointment.
@@ -65,9 +67,6 @@ public class Booking {
     @Builder.Default
     private BookingStatus status = BookingStatus.PENDING;
 
-    @Column(name = "cancel_reason", columnDefinition = "TEXT")
-    private String cancelReason;
-
     @Column(name = "total_price", precision = 10, scale = 2)
     @Builder.Default
     private BigDecimal totalPrice = BigDecimal.ZERO;
@@ -82,6 +81,13 @@ public class Booking {
     @Builder.Default
     private List<BookingDetail> bookingDetails = new ArrayList<>();
 
+    /**
+     * Staff assignments for this booking (supports one-to-many staff assignment).
+     */
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<BookingStaffAssignment> staffAssignments = new ArrayList<>();
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -94,6 +100,33 @@ public class Booking {
         bookingDetails.add(detail);
         detail.setBooking(this);
         recalculateTotalPrice();
+    }
+
+    /**
+     * Replaces staff assignments with the given staff list.
+     */
+    public void setAssignedStaff(List<User> staffList) {
+        staffAssignments.clear();
+
+        if (staffList == null || staffList.isEmpty()) {
+            this.staff = null;
+            return;
+        }
+
+        Set<Long> seenIds = new LinkedHashSet<>();
+        for (User assignedStaff : staffList) {
+            if (assignedStaff == null || assignedStaff.getId() == null || !seenIds.add(assignedStaff.getId())) {
+                continue;
+            }
+
+            BookingStaffAssignment assignment = BookingStaffAssignment.builder()
+                    .booking(this)
+                    .staff(assignedStaff)
+                    .build();
+            staffAssignments.add(assignment);
+        }
+
+        this.staff = staffAssignments.isEmpty() ? null : staffAssignments.get(0).getStaff();
     }
 
     /**

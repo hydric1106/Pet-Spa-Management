@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Manage Staff - Cyan Breeze Pet Wellness Spa</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "background": "#f6f8f8",
+                        "surface-container": "#e7f2f3",
+                        "tertiary-fixed-dim": "#735c0f",
+                        "on-tertiary-fixed": "#0d1a1b",
+                        "tertiary-fixed": "#f2c94c",
+                        "on-secondary-fixed": "#0d1a1b",
+                        "secondary": "#e7f2f3",
+                        "inverse-primary": "#13daec",
+                        "surface-container-highest": "#94a3b8",
+                        "surface-variant": "#ffffff",
+                        "primary": "#13daec",
+                        "on-primary-fixed-variant": "#e7f2f3",
+                        "error": "#ef4444",
+                        "surface": "#ffffff",
+                        "on-tertiary-container": "#735c0f",
+                        "on-error-container": "#991b1b",
+                        "error-container": "#fee2e2",
+                        "on-surface": "#0d1a1b",
+                        "surface-tint": "#13daec",
+                        "tertiary-container": "#fff9e6",
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#085f67",
+                        "on-secondary": "#085f67",
+                        "secondary-container": "#f6f8f8",
+                        "on-secondary-fixed-variant": "#0d1a1b",
+                        "surface-container-high": "#cbd5e1",
+                        "secondary-fixed-dim": "#4c939a",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#cbd5e1",
+                        "outline": "#e7f2f3",
+                        "tertiary": "#f2c94c",
+                        "on-secondary-container": "#4c939a",
+                        "surface-dim": "#f6f8f8",
+                        "on-tertiary": "#0d1a1b",
+                        "on-surface-variant": "#4c939a",
+                        "on-primary-fixed": "#ffffff",
+                        "primary-container": "#e7f2f3",
+                        "primary-fixed-dim": "#085f67",
+                        "on-tertiary-fixed-variant": "#0d1a1b",
+                        "surface-bright": "#ffffff",
+                        "inverse-surface": "#102022",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f6f8f8",
+                        "inverse-on-surface": "#ffffff",
+                        "secondary-fixed": "#e7f2f3",
+                        "on-background": "#0d1a1b",
+                        "primary-fixed": "#13daec"
+                    },
+                    fontFamily: {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-icon { font-variation-settings: 'FILL' 1; }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-full w-64 border-r border-slate-100 bg-white dark:bg-slate-900 z-40 shadow-sm flex flex-col">
+<div class="p-8">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-white" data-icon="spa" style="font-variation-settings: 'FILL' 1;">spa</span>
+</div>
+<div>
+<h1 class="text-xl font-bold text-slate-900 dark:text-white leading-none">Cyan Breeze</h1>
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mt-1">Pet Wellness Spa</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-2">
+<!-- Navigation Items -->
+<a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-transform hover:scale-105" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-medium text-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-transform hover:scale-105" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-medium text-sm">Appointments</span>
+</a>
+<a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-transform hover:scale-105" href="#">
+<span class="material-symbols-outlined" data-icon="pets">pets</span>
+<span class="font-medium text-sm">Pets</span>
+</a>
+<a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-transform hover:scale-105" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-medium text-sm">Clients</span>
+</a>
+<!-- Active Tab: Staff/Settings context -->
+<a class="flex items-center gap-3 bg-cyan-50 dark:bg-cyan-900/20 text-cyan-600 dark:text-cyan-400 rounded-xl px-4 py-3 scale-105 transition-transform shadow-sm" href="#">
+<span class="material-symbols-outlined active-icon" data-icon="badge" style="font-variation-settings: 'FILL' 1;">badge</span>
+<span class="font-bold text-sm">Staff</span>
+</a>
+<a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-transform hover:scale-105" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-medium text-sm">Settings</span>
+</a>
+</nav>
+<div class="p-4 mt-auto">
+<button class="w-full bg-primary text-white font-bold py-4 rounded-2xl shadow-lg shadow-primary/30 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+<span>Book Appointment</span>
+</button>
+</div>
+</aside>
+<!-- TopNavBar Shell -->
+<header class="fixed top-0 right-0 left-64 h-16 flex justify-between items-center px-8 z-30 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 shadow-sm">
+<div class="flex items-center flex-1">
+<div class="relative w-96 group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">search</span>
+<input class="w-full bg-secondary-container border-none rounded-xl pl-12 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary/20 transition-all outline-none text-on-surface" placeholder="Search staff or appointments..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-white"></span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<div class="h-8 w-[1px] bg-slate-200 mx-2"></div>
+<div class="flex items-center gap-3">
+<div class="text-right">
+<p class="text-sm font-bold text-slate-800 leading-none">Sarah Jenkins</p>
+<p class="text-[10px] text-on-surface-variant font-medium mt-1">Spa Manager</p>
+</div>
+<img alt="Sarah's profile" class="w-10 h-10 rounded-full border-2 border-white shadow-sm object-cover" data-alt="Professional portrait of a woman in business casual attire with a warm, friendly smile and clean studio lighting background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_RQtp9JAYcHT8gEztSxGA6le23tbqL6hd8cSQxDLBGfQWIlYfP04Lx_2ZRFUf5pPytbefu6YpMdNANQ9TPnifQ93gj3q3Yx1QQy0_Fg_Rlk7toLmsq06yVyAa2iHHBold2YqEEJrmPcahQ4LTzCDtA3UN47u7vtVq41LIf4Nq45PUNE5XyWXpTLYkRQ7q9QctbTNuC4CTFP9Ys4PjkQXfX5dsjl-Q0s0J_Iqa14a3KnRhHbCRUMZyVCm9faTKshwgZCBzywg7LlI"/>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-64 mt-16 p-8 min-h-screen">
+<div class="max-w-7xl mx-auto">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+<div>
+<h2 class="text-[30px] font-extrabold tracking-tight text-on-surface">Staff Management</h2>
+<div class="flex items-center gap-3 mt-4">
+<div class="bg-primary/10 px-4 py-2 rounded-xl flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="badge" style="font-variation-settings: 'FILL' 1;">badge</span>
+<span class="text-sm font-bold text-on-primary-container">Total Staff: 24 Professionals</span>
+</div>
+<div class="bg-tertiary-container px-4 py-2 rounded-xl flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-sm" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-sm font-bold text-on-tertiary-container">18 On Duty</span>
+</div>
+</div>
+</div>
+<button class="bg-primary hover:bg-primary/90 text-white font-bold px-6 py-3.5 rounded-xl shadow-lg shadow-primary/30 flex items-center gap-2 transition-all hover:-translate-y-0.5 active:scale-95">
+<span class="material-symbols-outlined" data-icon="person_add">person_add</span>
+<span>Add New Staff</span>
+</button>
+</div>
+<!-- Staff Table Container -->
+<div class="bg-surface rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-slate-50 overflow-hidden">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-background/50 border-b border-secondary">
+<th class="px-8 py-5 text-[11px] font-bold text-on-surface-variant uppercase tracking-widest">Name</th>
+<th class="px-8 py-5 text-[11px] font-bold text-on-surface-variant uppercase tracking-widest">Role &amp; Specialization</th>
+<th class="px-8 py-5 text-[11px] font-bold text-on-surface-variant uppercase tracking-widest">Email Address</th>
+<th class="px-8 py-5 text-[11px] font-bold text-on-surface-variant uppercase tracking-widest">Phone</th>
+<th class="px-8 py-5 text-[11px] font-bold text-on-surface-variant uppercase tracking-widest text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-secondary">
+<!-- Staff Row 1 -->
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-8 py-6">
+<div class="flex items-center gap-4">
+<img alt="Staff Member" class="w-12 h-12 rounded-xl object-cover shadow-sm" data-alt="Close-up portrait of a cheerful woman with a modern haircut in a light-filled room with plants in the background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB29DmSWUpv_pI1H37Qz1KyI1petZRNNfvWSL8cNmZeTWbU83f44tYxqt4eO8VcODpSEt-yaaOpIvcbmFOuv7h9q5M_KpMZgefrkojNoaD7EZxQ6rZ6IKUwSabqGtTMapbu-WeTkZ-zaFDPMzXf-3EwN-kGTke4zowVnvjDxlfyeKH4KcGjLix-HaE2Ut2RV9zve-46ePEtnCS9JcJONkYq2yBxmKAqOKElEZJ-sepxkEhIWLtB01p5ZNh_xwlbQ4s4I4Zf21U0Ubo"/>
+<div>
+<p class="font-bold text-on-surface">Elena Rodriguez</p>
+<p class="text-xs text-on-surface-variant font-medium">Joined Mar 2022</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-6">
+<span class="bg-cyan-50 text-cyan-700 text-[10px] font-extrabold px-3 py-1 rounded-full border border-cyan-100">SENIOR GROOMER</span>
+</td>
+<td class="px-8 py-6 text-sm font-medium text-on-surface-variant">elena.r@cyanbreeze.com</td>
+<td class="px-8 py-6 text-sm font-medium text-on-surface-variant">(555) 124-9087</td>
+<td class="px-8 py-6">
+<div class="flex items-center justify-end gap-2">
+<button class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg" data-icon="edit">edit</span>
+</button>
+<button class="w-9 h-9 rounded-full bg-error-container text-on-error-container flex items-center justify-center hover:bg-error hover:text-white transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Staff Row 2 -->
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-8 py-6">
+<div class="flex items-center gap-4">
+<img alt="Staff Member" class="w-12 h-12 rounded-xl object-cover shadow-sm" data-alt="Professional headshot of a smiling man with short dark hair and a light blue shirt in a clean office environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBh_ojx6o7Wtq451F32JfM2l-5ZMTayIjrMRw7viq6Yrdpyw5O117gBNR2MeGiQuStf3a09o7ljB4hnulWtsCXwEqZHATLn0yzjXgfFR8VyOrAyx4qwHlKesAI-YDhtB9q8XWo6nVhAz8ywh55h2PQAyGRHn9cUaTjX03DRvwD8lxnpN7jzElfI6RYkQScvpfPgismSPEF30PUTPzFi5xnyQH21bSLIXhmhXuPuulFU-owZo6NbsiO7TRe-5jsrEjRZ6BcRAA_vVXQ"/>
+<div>
+<p class="font-bold text-on-surface">Marcus Chen</p>
+<p class="text-xs text-on-surface-variant font-medium">Joined Oct 2023</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-6">
+<span class="bg-amber-50 text-amber-700 text-[10px] font-extrabold px-3 py-1 rounded-full border border-amber-100">PET THERAPIST</span>
+</td>
+<td class="px-8 py-6 text-sm font-medium text-on-surface-variant">m.chen@cyanbreeze.com</td>
+<td class="px-8 py-6 text-sm font-medium text-on-surface-variant">(555) 882-3412</td>
+<td class="px-8 py-6">
+<div class="flex items-center justify-end gap-2">
+<button class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg" data-icon="edit">edit</span>
+</button>
+<button class="w-9 h-9 rounded-full bg-error-container text-on-error-container flex items-center justify-center hover:bg-error hover:text-white transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Staff Row 3 -->
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-8 py-6">
+<div class="flex items-center gap-4">
+<img alt="Staff Member" class="w-12 h-12 rounded-xl object-cover shadow-sm" data-alt="Middle-aged woman with glasses and a professional demeanor smiling gently in a bright indoor studio" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCM3stKqwDaq1nvxTI5w6ZlBN3k3M6BDp9AvVXtuhMgzBBhcZxBk-PHggDzLgzT0YmhyuNw62KWFA2j2jxmY2UXFZTqJZspj0XkiMilVsl_rBoyhxugXwH2lXRKoEuCEwod9CVz9HvKbbTgAfCFuCyLAGbG2j5aJqfgVylw8lhbsgFXO1mnqXLsybgpVndIBl6SnM-x13eBU8QSLkZ6mmeWcc_QWmV2ANCmtqNf4Ys3fen5zWJXArZDSBjbKOLE9lMhMqWyvoe86QU"/>
+<div>
+<p class="font-bold text-on-surface">Anaya Gupta</p>
+<p class="text-xs text-on-surface-variant font-medium">Joined Jan 2021</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-6">
+<span class="bg-cyan-50 text-cyan-700 text-[10px] font-extrabold px-3 py-1 rounded-full border border-cyan-100">HEAD OF NUTRITION</span>
+</td>
+<td class="px-8 py-6 text-sm font-medium text-on-surface-variant">anaya.g@cyanbreeze.com</td>
+<td class="px-8 py-6 text-sm font-medium text-on-surface-variant">(555) 234-5678</td>
+<td class="px-8 py-6">
+<div class="flex items-center justify-end gap-2">
+<button class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg" data-icon="edit">edit</span>
+</button>
+<button class="w-9 h-9 rounded-full bg-error-container text-on-error-container flex items-center justify-center hover:bg-error hover:text-white transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Staff Row 4 -->
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-8 py-6">
+<div class="flex items-center gap-4">
+<img alt="Staff Member" class="w-12 h-12 rounded-xl object-cover shadow-sm" data-alt="Young man with short hair and a kind expression wearing a neutral colored t-shirt in a bright pet clinic hallway" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAza5wCGeP7bQlNzzss1Aegq3QHDMYQzUWAtfSVQ95i3Y3k7D5-W0FPaiWkRVSnviYalTBWbQCn9kfIcgXLZPUFnU2PP8hl5ssNuSjrcvkpNL20MMxgtfYkmEVBTDd6TpA5J1FaGuHFUrKf5T1MMl5-MXPCtr-ruVCVSoDvKouYaaaoWjOYQxaW7bsjV80qhNTKahXqBdICjHLhcES4l0KdtW8InvhiXfj4E99kG20TTKYNo-erR5vVyrNU2YsqE1XaKUE9qj1KreA"/>
+<div>
+<p class="font-bold text-on-surface">Liam O'Connell</p>
+<p class="text-xs text-on-surface-variant font-medium">Joined June 2024</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-6">
+<span class="bg-slate-100 text-slate-600 text-[10px] font-extrabold px-3 py-1 rounded-full border border-slate-200">JUNIOR STYLIST</span>
+</td>
+<td class="px-8 py-6 text-sm font-medium text-on-surface-variant">liam.o@cyanbreeze.com</td>
+<td class="px-8 py-6 text-sm font-medium text-on-surface-variant">(555) 901-2233</td>
+<td class="px-8 py-6">
+<div class="flex items-center justify-end gap-2">
+<button class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg" data-icon="edit">edit</span>
+</button>
+<button class="w-9 h-9 rounded-full bg-error-container text-on-error-container flex items-center justify-center hover:bg-error hover:text-white transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Pagination Footer -->
+<div class="px-8 py-6 bg-background/30 border-t border-secondary flex items-center justify-between">
+<p class="text-xs font-medium text-on-surface-variant">Showing 1 to 4 of 24 staff members</p>
+<div class="flex items-center gap-2">
+<button class="w-9 h-9 flex items-center justify-center rounded-xl border border-secondary text-on-surface-variant hover:bg-secondary transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-9 h-9 flex items-center justify-center rounded-xl bg-primary text-white font-bold text-sm shadow-md shadow-primary/20">1</button>
+<button class="w-9 h-9 flex items-center justify-center rounded-xl border border-secondary text-on-surface-variant font-bold text-sm hover:bg-secondary transition-colors">2</button>
+<button class="w-9 h-9 flex items-center justify-center rounded-xl border border-secondary text-on-surface-variant font-bold text-sm hover:bg-secondary transition-colors">3</button>
+<span class="px-2 text-on-surface-variant">...</span>
+<button class="w-9 h-9 flex items-center justify-center rounded-xl border border-secondary text-on-surface-variant font-bold text-sm hover:bg-secondary transition-colors">6</button>
+<button class="w-9 h-9 flex items-center justify-center rounded-xl border border-secondary text-on-surface-variant hover:bg-secondary transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Empty State / Floating Tip -->
+<div class="mt-8 bg-gradient-to-r from-primary/5 to-transparent p-6 rounded-2xl border border-primary/10 flex items-start gap-4">
+<div class="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-primary" data-icon="lightbulb" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface text-sm">Manager's Tip</h4>
+<p class="text-sm text-on-surface-variant max-w-2xl mt-1 leading-relaxed">
+                        Regularly update staff certifications and specializations. This helps in assigning the right professional to specific pet needs and improves customer satisfaction.
+                    </p>
+</div>
+</div>
+</div>
+</main>
+</body></html>

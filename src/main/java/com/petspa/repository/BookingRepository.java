@@ -26,14 +26,18 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByCustomerId(Long customerId);
 
     /**
-     * Find bookings by staff ID.
+     * Find bookings assigned to a staff member (legacy staff field or assignment table).
      */
-    List<Booking> findByStaffId(Long staffId);
+    @Query("SELECT DISTINCT b FROM Booking b LEFT JOIN b.staffAssignments sa " +
+            "WHERE (b.staff IS NOT NULL AND b.staff.id = :staffId) OR sa.staff.id = :staffId")
+    List<Booking> findByAssignedStaffId(@Param("staffId") Long staffId);
 
     /**
-     * Find bookings by staff ID and date.
+     * Find bookings by assigned staff and date.
      */
-    List<Booking> findByStaffIdAndBookingDate(Long staffId, LocalDate date);
+    @Query("SELECT DISTINCT b FROM Booking b LEFT JOIN b.staffAssignments sa " +
+            "WHERE b.bookingDate = :date AND ((b.staff IS NOT NULL AND b.staff.id = :staffId) OR sa.staff.id = :staffId)")
+    List<Booking> findByAssignedStaffIdAndBookingDate(@Param("staffId") Long staffId, @Param("date") LocalDate date);
 
     /**
      * Find bookings by status.
@@ -48,6 +52,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     /**
      * Find today's bookings for a staff member.
      */
-    @Query("SELECT b FROM Booking b WHERE b.staff.id = :staffId AND b.bookingDate = :date ORDER BY b.bookingTime")
+    @Query("SELECT DISTINCT b FROM Booking b LEFT JOIN b.staffAssignments sa " +
+           "WHERE b.bookingDate = :date AND ((b.staff IS NOT NULL AND b.staff.id = :staffId) OR sa.staff.id = :staffId) " +
+           "ORDER BY b.bookingTime")
     List<Booking> findTodayBookingsForStaff(@Param("staffId") Long staffId, @Param("date") LocalDate date);
 }

@@ -215,16 +215,288 @@ function createBookingBlock(booking) {
         'text-[11px] font-semibold truncate hover:bg-primary/20 transition-all cursor-pointer';
 
     const petName = booking.petName || booking.pet?.name || '—';
-    const serviceName = booking.serviceName || booking.service?.name || '—';
+    const serviceName = booking.services?.[0]?.serviceName || booking.serviceName || booking.service?.name || '—';
     block.textContent = `${petName} • ${serviceName}`;
 
-    block.addEventListener('click', () => navigateToBookingDetail(booking.id));
+    const bookingId = parseEntityId(booking.id ?? booking.bookingId);
+    if (!bookingId) {
+        console.warn('Skipping booking click binding due to invalid booking ID:', booking);
+        block.classList.add('opacity-50', 'cursor-not-allowed');
+        block.title = 'Invalid booking ID';
+        return block;
+    }
+
+    block.dataset.bookingId = String(bookingId);
+    block.addEventListener('click', () => openBookingDetailsModal(bookingId));
     return block;
 }
 
-function navigateToBookingDetail(bookingId) {
-    window.javaBridge.setCurrentBookingId(bookingId);
-    window.javaBridge.navigateTo('admin/booking_details.html');
+async function openBookingDetailsModal(bookingId) {
+    const normalizedBookingId = parseEntityId(bookingId);
+    if (!normalizedBookingId) {
+        alert('Unable to open booking details: invalid booking ID.');
+        return;
+    }
+
+    try {
+        const [bookingResult, customersResult, usersResult, servicesResult] = await Promise.all([
+            callBridge('getBookingById', String(normalizedBookingId)),
+            callBridge('getAllCustomers'),
+            callBridge('getAllUsers'),
+            callBridge('getAllServices')
+        ]);
+
+        if (!bookingResult.success || !bookingResult.data) {
+            alert('Failed to load booking details: ' + (bookingResult.message || 'Unknown error'));
+            return;
+        }
+
+        const booking = bookingResult.data;
+        const customers = customersResult.success ? (customersResult.data || []) : [];
+        const staffList = usersResult.success
+            ? (usersResult.data || []).filter(u => u.role === 'STAFF' && u.isActive !== false)
+            : [];
+        const servicesList = servicesResult.success
+            ? (servicesResult.data || []).filter(s => s.isActive !== false)
+            : [];
+
+        const selectedCustomerId = parseEntityId(booking.customerId);
+        const selectedPetId = parseEntityId(booking.petId);
+        const selectedServiceId = parseEntityId(booking.serviceId || booking.services?.[0]?.serviceId);
+        const selectedStaffIds = parseEntityIdList(booking.staffIds, booking.staffId);
+
+        const customerOptions = customers.map(customer => {
+            const customerId = parseEntityId(customer.id);
+            const selected = customerId === selectedCustomerId ? 'selected' : '';
+            return `<option value="${customerId}" ${selected}>${escapeHtml(customer.fullName || 'Customer')}</option>`;
+        }).join('');
+
+        const petOptions = renderPetOptionsForCustomer(customers, selectedCustomerId, selectedPetId);
+
+        const serviceOptions = servicesList.map(service => {
+            const serviceId = parseEntityId(service.id);
+            const selected = serviceId === selectedServiceId ? 'selected' : '';
+            const duration = service.durationMinutes ? `${service.durationMinutes} mins` : 'No duration';
+            return `<option value="${serviceId}" ${selected}>${escapeHtml(service.name)} (${duration})</option>`;
+        }).join('');
+
+        const staffCheckboxes = renderStaffCheckboxes(staffList, selectedStaffIds, 'detailStaff');
+
+        const statusOptions = buildBookingStatusOptions(booking.status);
+
+        const content = `
+            <form id="bookingDetailForm" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Customer</label>
+                        <select id="detailCustomer" required
+                            class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 text-text-main dark:text-white">
+                            <option value="">Select customer...</option>
+                            ${customerOptions}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Pet</label>
+                        <select id="detailPet" required
+                            class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 text-text-main dark:text-white">
+                            ${petOptions}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Date</label>
+                        <input type="date" id="detailDate" required value="${escapeHtml(booking.bookingDate || '')}"
+                            class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 text-text-main dark:text-white" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Time</label>
+                        <input type="time" id="detailTime" required value="${escapeHtml(normalizeTimeForInput(booking.bookingTime || ''))}"
+                            class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 text-text-main dark:text-white" />
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Assigned Staff (multi-select)</label>
+                    <div class="space-y-2 max-h-40 overflow-y-auto pr-1">
+                        ${staffCheckboxes || '<p class="text-sm text-text-muted">No active staff available.</p>'}
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Service</label>
+                    <select id="detailService" required
+                        class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 text-text-main dark:text-white">
+                        <option value="">Select service...</option>
+                        ${serviceOptions}
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Status</label>
+                        <select id="detailStatus"
+                            class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 text-text-main dark:text-white">
+                            ${statusOptions}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Total</label>
+                        <input type="text" id="detailTotal" value="${escapeHtml(formatCurrency(booking.totalPrice))}" disabled
+                            class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm text-text-main dark:text-white opacity-80" />
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-gray-800">
+                    <button type="button" onclick="closeModal()"
+                        class="px-5 py-2.5 bg-slate-100 dark:bg-gray-700 text-text-main dark:text-white rounded-xl font-semibold text-sm hover:bg-slate-200 dark:hover:bg-gray-600 transition-colors">
+                        Close
+                    </button>
+                    <button type="submit"
+                        class="px-5 py-2.5 bg-primary text-white rounded-xl font-semibold text-sm hover:bg-primary-content transition-colors">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        `;
+
+        openModal(`Booking #${normalizedBookingId}`, content);
+
+        setTimeout(() => {
+            const form = document.getElementById('bookingDetailForm');
+            const customerSelect = document.getElementById('detailCustomer');
+            const serviceSelect = document.getElementById('detailService');
+
+            customerSelect?.addEventListener('change', () => {
+                const nextCustomerId = parseEntityId(customerSelect.value);
+                const petSelect = document.getElementById('detailPet');
+                if (petSelect) {
+                    petSelect.innerHTML = renderPetOptionsForCustomer(customers, nextCustomerId, null);
+                }
+            });
+
+            serviceSelect?.addEventListener('change', () => {
+                const selectedId = parseEntityId(serviceSelect.value);
+                const selectedService = servicesList.find(service => parseEntityId(service.id) === selectedId);
+                const totalInput = document.getElementById('detailTotal');
+                if (totalInput) {
+                    totalInput.value = formatCurrency(selectedService?.price || 0);
+                }
+            });
+
+            form?.addEventListener('submit', (event) => handleBookingDetailsSubmit(event, normalizedBookingId));
+        }, 50);
+    } catch (error) {
+        console.error('Error opening booking details modal:', error);
+        alert('Failed to open booking details. Please try again.');
+    }
+}
+
+async function handleBookingDetailsSubmit(event, bookingId) {
+    event.preventDefault();
+
+    const normalizedBookingId = parseEntityId(bookingId);
+    if (!normalizedBookingId) {
+        alert('Unable to update booking: invalid booking ID.');
+        return;
+    }
+
+    const customerId = parseEntityId(document.getElementById('detailCustomer')?.value);
+    const petId = parseEntityId(document.getElementById('detailPet')?.value);
+    const bookingDate = document.getElementById('detailDate')?.value;
+    const bookingTime = document.getElementById('detailTime')?.value;
+    const serviceId = parseEntityId(document.getElementById('detailService')?.value);
+    const status = document.getElementById('detailStatus')?.value;
+    const staffIds = Array.from(document.querySelectorAll('input[name="detailStaff"]:checked'))
+        .map(input => parseEntityId(input.value))
+        .filter(Boolean);
+
+    if (!customerId || !petId || !bookingDate || !bookingTime || !serviceId || !status) {
+        alert('Please complete all required booking fields.');
+        return;
+    }
+
+    try {
+        const payload = {
+            id: normalizedBookingId,
+            customerId,
+            petId,
+            bookingDate,
+            bookingTime,
+            serviceId,
+            staffIds,
+            status
+        };
+
+        const result = await callBridge('updateBooking', JSON.stringify(payload));
+
+        if (result.success) {
+            closeModal();
+            await loadBookings();
+        } else {
+            alert('Failed to update booking: ' + (result.message || 'Unknown error'));
+        }
+    } catch (error) {
+        console.error('Error updating booking:', error);
+        alert('Unexpected error while updating booking.');
+    }
+}
+
+function buildBookingStatusOptions(currentStatus) {
+    return ['PENDING', 'CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED']
+        .map(status => {
+            const selected = currentStatus === status ? 'selected' : '';
+            const label = status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
+            return `<option value="${status}" ${selected}>${label}</option>`;
+        })
+        .join('');
+}
+
+function renderPetOptionsForCustomer(customers, customerId, selectedPetId) {
+    const customer = customers.find(item => parseEntityId(item.id) === customerId);
+    const pets = customer?.pets || [];
+
+    if (!customerId) {
+        return '<option value="">Select a customer first...</option>';
+    }
+
+    if (!pets.length) {
+        return '<option value="">No pets found for this customer</option>';
+    }
+
+    return pets.map(pet => {
+        const petId = parseEntityId(pet.id);
+        const selected = petId === selectedPetId ? 'selected' : '';
+        return `<option value="${petId}" ${selected}>${escapeHtml(pet.name)} (${escapeHtml(pet.species || '')})</option>`;
+    }).join('');
+}
+
+function renderStaffCheckboxes(staffList, selectedStaffIds, inputName) {
+    const selectedSet = new Set((selectedStaffIds || []).map(Number));
+    return staffList.map(staff => {
+        const staffId = parseEntityId(staff.id);
+        const checked = selectedSet.has(Number(staffId)) ? 'checked' : '';
+        return `
+            <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-gray-800/50 cursor-pointer hover:bg-slate-100 dark:hover:bg-gray-700/50 transition-colors">
+                <input type="checkbox" name="${inputName}" value="${staffId}" ${checked} class="rounded accent-primary w-4 h-4" />
+                <span class="text-sm text-text-main dark:text-white font-medium">${escapeHtml(staff.fullName || 'Staff')}</span>
+            </label>
+        `;
+    }).join('');
+}
+
+function parseEntityIdList(ids, fallbackId) {
+    if (Array.isArray(ids) && ids.length) {
+        return ids.map(parseEntityId).filter(Boolean);
+    }
+    const singleId = parseEntityId(fallbackId);
+    return singleId ? [singleId] : [];
+}
+
+function normalizeTimeForInput(timeValue) {
+    if (!timeValue) return '';
+    return String(timeValue).slice(0, 5);
 }
 
 // =============================================================================
@@ -287,8 +559,10 @@ function setupLogout() {
 // =============================================================================
 
 async function openBookingModal() {
-    // Load data concurrently
-    let customers = [], staffList = [], servicesList = [];
+    let customers = [];
+    let staffList = [];
+    let servicesList = [];
+
     try {
         const [custRes, usersRes, svcRes] = await Promise.all([
             callBridge('getAllCustomers'),
@@ -309,16 +583,12 @@ async function openBookingModal() {
         `<option value="${c.id}">${escapeHtml(c.fullName)} — ${escapeHtml(c.phoneNumber || '')}</option>`
     ).join('');
 
-    const staffOptions = `<option value="">— No staff assigned —</option>` +
-        staffList.map(s => `<option value="${s.id}">${escapeHtml(s.fullName)}</option>`).join('');
+    const serviceOptions = servicesList.map(service => {
+        const duration = service.durationMinutes ? `${service.durationMinutes} mins` : 'No duration';
+        return `<option value="${service.id}">${escapeHtml(service.name)} (${duration})</option>`;
+    }).join('');
 
-    const servicesCheckboxes = servicesList.map(s => `
-        <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-gray-800/50 cursor-pointer hover:bg-slate-100 dark:hover:bg-gray-700/50 transition-colors">
-            <input type="checkbox" name="bookingService" value="${s.id}" class="rounded accent-primary w-4 h-4" />
-            <span class="flex-1 text-sm text-text-main dark:text-white font-medium">${escapeHtml(s.name)}</span>
-            <span class="text-xs text-text-muted">${s.durationMinutes ? s.durationMinutes + ' mins' : ''}</span>
-            <span class="text-xs font-semibold text-primary">${formatCurrency(s.price)}</span>
-        </label>`).join('');
+    const staffCheckboxes = renderStaffCheckboxes(staffList, [], 'bookingStaff');
 
     const content = `
         <form id="newBookingForm" class="space-y-4">
@@ -350,17 +620,23 @@ async function openBookingModal() {
                 </div>
             </div>
             <div>
-                <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Staff (optional)</label>
-                <select id="bookingStaff"
+                <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Service <span class="text-red-500">*</span></label>
+                <select id="bookingService" required
                     class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 text-text-main dark:text-white">
-                    ${staffOptions}
+                    <option value="">Select service...</option>
+                    ${serviceOptions}
                 </select>
             </div>
             <div>
-                <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Services <span class="text-red-500">*</span></label>
+                <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Assigned Staff (multi-select)</label>
                 <div class="space-y-2 max-h-48 overflow-y-auto pr-1">
-                    ${servicesCheckboxes || '<p class="text-sm text-text-muted">No active services available.</p>'}
+                    ${staffCheckboxes || '<p class="text-sm text-text-muted">No active staff available.</p>'}
                 </div>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Estimated Total</label>
+                <input type="text" id="bookingTotal" value="${escapeHtml(formatCurrency(0))}" disabled
+                    class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm text-text-main dark:text-white opacity-80" />
             </div>
             <div class="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-gray-800">
                 <button type="button" onclick="closeModal()"
@@ -379,25 +655,25 @@ async function openBookingModal() {
     // Cascade: load pets when customer changes
     setTimeout(() => {
         const customerSelect = document.getElementById('bookingCustomer');
+        const serviceSelect = document.getElementById('bookingService');
         if (customerSelect) {
             customerSelect.addEventListener('change', () => {
-                const customerId = customerSelect.value;
+                const customerId = parseEntityId(customerSelect.value);
                 const petSelect = document.getElementById('bookingPet');
-                if (!customerId) {
-                    petSelect.innerHTML = '<option value="">Select a customer first...</option>';
-                    return;
-                }
-                const customer = customers.find(c => String(c.id) === String(customerId));
-                const pets = customer?.pets || [];
-                if (pets.length === 0) {
-                    petSelect.innerHTML = '<option value="">No pets found for this customer</option>';
-                } else {
-                    petSelect.innerHTML = pets.map(p =>
-                        `<option value="${p.id}">${escapeHtml(p.name)} (${escapeHtml(p.species || '')})</option>`
-                    ).join('');
+                if (petSelect) {
+                    petSelect.innerHTML = renderPetOptionsForCustomer(customers, customerId, null);
                 }
             });
         }
+
+        serviceSelect?.addEventListener('change', () => {
+            const selectedServiceId = parseEntityId(serviceSelect.value);
+            const selectedService = servicesList.find(service => parseEntityId(service.id) === selectedServiceId);
+            const totalInput = document.getElementById('bookingTotal');
+            if (totalInput) {
+                totalInput.value = formatCurrency(selectedService?.price || 0);
+            }
+        });
 
         const form = document.getElementById('newBookingForm');
         if (form) {
@@ -409,22 +685,17 @@ async function openBookingModal() {
 async function handleNewBookingSubmit(e) {
     e.preventDefault();
 
-    const customerId = parseInt(document.getElementById('bookingCustomer').value);
-    const petId = parseInt(document.getElementById('bookingPet').value);
+    const customerId = parseEntityId(document.getElementById('bookingCustomer').value);
+    const petId = parseEntityId(document.getElementById('bookingPet').value);
     const bookingDate = document.getElementById('bookingDate').value;
     const bookingTime = document.getElementById('bookingTime').value;
-    const staffId = document.getElementById('bookingStaff').value;
+    const serviceId = parseEntityId(document.getElementById('bookingService').value);
+    const staffIds = Array.from(document.querySelectorAll('input[name="bookingStaff"]:checked'))
+        .map(input => parseEntityId(input.value))
+        .filter(Boolean);
 
-    const selectedServices = Array.from(
-        document.querySelectorAll('input[name="bookingService"]:checked')
-    ).map(cb => ({ serviceId: parseInt(cb.value) }));
-
-    if (!customerId || !petId || !bookingDate || !bookingTime) {
+    if (!customerId || !petId || !bookingDate || !bookingTime || !serviceId) {
         alert('Please fill in all required fields.');
-        return;
-    }
-    if (selectedServices.length === 0) {
-        alert('Please select at least one service.');
         return;
     }
 
@@ -433,8 +704,8 @@ async function handleNewBookingSubmit(e) {
         petId,
         bookingDate,
         bookingTime,
-        staffId: staffId ? parseInt(staffId) : null,
-        services: selectedServices
+        serviceId,
+        staffIds
     };
 
     const submitBtn = e.target.querySelector('button[type="submit"]');
@@ -460,4 +731,9 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = String(text);
     return div.innerHTML;
+}
+
+function parseEntityId(value) {
+    const parsed = Number.parseInt(value, 10);
+    return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
 }

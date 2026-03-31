@@ -314,11 +314,31 @@ function setupEventListeners() {
 
 function attachRowEventListeners() {
     document.querySelectorAll('.edit-btn').forEach(btn => {
-        btn.addEventListener('click', e => editPet(e.currentTarget.dataset.id));
+        btn.addEventListener('click', e => {
+            const rawId = e.currentTarget.dataset.id || e.currentTarget.closest('tr')?.dataset.petId;
+            const petId = parseEntityId(rawId);
+            if (!petId) {
+                alert('Unable to edit pet: invalid ID. Please refresh and try again.');
+                return;
+            }
+            editPet(petId);
+        });
     });
 
     document.querySelectorAll('.delete-btn').forEach(btn => {
-        btn.addEventListener('click', e => deletePet(e.currentTarget.dataset.id));
+        btn.addEventListener('click', async e => {
+            const rawId = e.currentTarget.dataset.id || e.currentTarget.closest('tr')?.dataset.petId;
+            const petId = parseEntityId(rawId);
+            if (!petId) {
+                alert('Unable to delete pet: invalid ID. Please refresh and try again.');
+                return;
+            }
+
+            if (!(await confirmAction('Are you sure you want to delete this pet?'))) {
+                return;
+            }
+            deletePet(petId);
+        });
     });
 }
 
@@ -384,6 +404,9 @@ async function handlePetSubmit(e) {
     try {
         let result;
         if (petId) {
+            if (!(await confirmAction('Save changes to this pet?'))) {
+                return;
+            }
             petData.id = parseInt(petId);
             result = await callBridge('updatePet', JSON.stringify(petData));
         } else {
@@ -403,13 +426,25 @@ async function handlePetSubmit(e) {
 }
 
 function editPet(id) {
-    const pet = allPets.find(p => p.id == id);
+    const petId = parseEntityId(id);
+    if (!petId) {
+        alert('Unable to edit pet: invalid ID.');
+        return;
+    }
+
+    const pet = allPets.find(p => Number(p.id) === petId);
     if (pet) openPetModal(pet);
 }
 
 async function deletePet(id) {
+    const petId = parseEntityId(id);
+    if (!petId) {
+        alert('Unable to delete pet: invalid ID.');
+        return;
+    }
+
     try {
-        const result = await callBridge('deletePet', parseInt(id));
+        const result = await callBridge('deletePet', petId);
         if (result.success) {
             await loadPets();
         } else {
@@ -446,4 +481,9 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+function parseEntityId(value) {
+    const parsed = Number.parseInt(value, 10);
+    return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
 }

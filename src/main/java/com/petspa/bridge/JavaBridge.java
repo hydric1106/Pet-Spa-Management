@@ -39,9 +39,6 @@ public class JavaBridge {
     // Current logged-in user session
     private UserDTO currentUser;
 
-    // Currently selected booking ID (used for navigation between pages)
-    private Long currentBookingId;
-
     public JavaBridge(Gson gson, 
                       AuthService authService,
                       UserService userService,
@@ -147,8 +144,9 @@ public class JavaBridge {
     /**
      * Deactivates a user account (soft delete).
      */
-    public String deactivateUser(Long userId) {
+    public String deactivateUser(Object userIdRaw) {
         try {
+            Long userId = parsePositiveLongId(userIdRaw, "userId");
             userService.deactivateUser(userId);
             return createSuccessResponse("User deactivated successfully");
         } catch (Exception e) {
@@ -211,8 +209,9 @@ public class JavaBridge {
     /**
      * Deletes a customer by ID.
      */
-    public String deleteCustomer(Long customerId) {
+    public String deleteCustomer(Object customerIdRaw) {
         try {
+            Long customerId = parsePositiveLongId(customerIdRaw, "customerId");
             customerService.deleteCustomer(customerId);
             return createSuccessResponse("Customer deleted successfully");
         } catch (Exception e) {
@@ -264,8 +263,9 @@ public class JavaBridge {
     /**
      * Deletes (deactivates) a service by ID.
      */
-    public String deleteService(Long serviceId) {
+    public String deleteService(Object serviceIdRaw) {
         try {
+            Long serviceId = parsePositiveLongId(serviceIdRaw, "serviceId");
             serviceService.deactivateService(serviceId);
             return createSuccessResponse("Service deleted successfully");
         } catch (Exception e) {
@@ -291,8 +291,9 @@ public class JavaBridge {
     /**
      * Deletes a pet by ID.
      */
-    public String deletePet(Long petId) {
+    public String deletePet(Object petIdRaw) {
         try {
+            Long petId = parsePositiveLongId(petIdRaw, "petId");
             petService.deletePet(petId);
             return createSuccessResponse("Pet deleted successfully");
         } catch (Exception e) {
@@ -303,8 +304,9 @@ public class JavaBridge {
     /**
      * Gets all pets for a specific customer.
      */
-    public String getPetsByCustomer(Long customerId) {
+    public String getPetsByCustomer(Object customerIdRaw) {
         try {
+            Long customerId = parsePositiveLongId(customerIdRaw, "customerId");
             return createSuccessResponse(petService.getPetsByCustomerId(customerId));
         } catch (Exception e) {
             return createErrorResponse("Failed to get pets: " + e.getMessage());
@@ -355,8 +357,9 @@ public class JavaBridge {
     /**
      * Gets a booking by ID.
      */
-    public String getBookingById(Long bookingId) {
+    public String getBookingById(Object bookingIdRaw) {
         try {
+            Long bookingId = parsePositiveLongId(bookingIdRaw, "bookingId");
             return createSuccessResponse(bookingService.getBookingById(bookingId));
         } catch (Exception e) {
             return createErrorResponse("Failed to get booking: " + e.getMessage());
@@ -364,11 +367,12 @@ public class JavaBridge {
     }
 
     /**
-     * Cancels a booking with an optional reason.
+     * Cancels a booking.
      */
-    public String cancelBooking(Long bookingId, String reason) {
+    public String cancelBooking(Object bookingIdRaw) {
         try {
-            return createSuccessResponse(bookingService.cancelBooking(bookingId, reason));
+            Long bookingId = parsePositiveLongId(bookingIdRaw, "bookingId");
+            return createSuccessResponse(bookingService.cancelBooking(bookingId));
         } catch (Exception e) {
             return createErrorResponse("Failed to cancel booking: " + e.getMessage());
         }
@@ -388,8 +392,9 @@ public class JavaBridge {
     /**
      * Gets bookings assigned to a specific staff member.
      */
-    public String getBookingsByStaff(Long staffId, String dateStr) {
+    public String getBookingsByStaff(Object staffIdRaw, String dateStr) {
         try {
+            Long staffId = parsePositiveLongId(staffIdRaw, "staffId");
             return createSuccessResponse(bookingService.getBookingsByStaffAndDate(staffId, dateStr));
         } catch (Exception e) {
             return createErrorResponse("Failed to get staff bookings: " + e.getMessage());
@@ -410,10 +415,24 @@ public class JavaBridge {
     }
 
     /**
+     * Updates booking details.
+     */
+    public String updateBooking(String bookingJson) {
+        try {
+            BookingDTO bookingDTO = gson.fromJson(bookingJson, BookingDTO.class);
+            BookingDTO updated = bookingService.updateBooking(bookingDTO);
+            return createSuccessResponse(updated);
+        } catch (Exception e) {
+            return createErrorResponse("Failed to update booking: " + e.getMessage());
+        }
+    }
+
+    /**
      * Updates booking status.
      */
-    public String updateBookingStatus(Long bookingId, String status) {
+    public String updateBookingStatus(Object bookingIdRaw, String status) {
         try {
+            Long bookingId = parsePositiveLongId(bookingIdRaw, "bookingId");
             BookingDTO updated = bookingService.updateStatus(bookingId, status);
             return createSuccessResponse(updated);
         } catch (Exception e) {
@@ -439,8 +458,9 @@ public class JavaBridge {
     /**
      * Gets schedule for a specific staff member.
      */
-    public String getStaffSchedule(Long staffId) {
+    public String getStaffSchedule(Object staffIdRaw) {
         try {
+            Long staffId = parsePositiveLongId(staffIdRaw, "staffId");
             return createSuccessResponse(scheduleService.getScheduleByStaffId(staffId));
         } catch (Exception e) {
             return createErrorResponse("Failed to get schedule: " + e.getMessage());
@@ -461,6 +481,19 @@ public class JavaBridge {
     }
 
     /**
+     * Removes a schedule entry by schedule ID.
+     */
+    public String removeSchedule(Object scheduleIdRaw) {
+        try {
+            Long scheduleId = parsePositiveLongId(scheduleIdRaw, "scheduleId");
+            scheduleService.removeSchedule(scheduleId);
+            return createSuccessResponse("Schedule removed successfully");
+        } catch (Exception e) {
+            return createErrorResponse("Failed to remove schedule: " + e.getMessage());
+        }
+    }
+
+    /**
      * Gets all shift types.
      */
     public String getAllShiftTypes() {
@@ -474,22 +507,6 @@ public class JavaBridge {
     // =============================================================================
     // NAVIGATION
     // =============================================================================
-
-    /**
-     * Stores a booking ID for retrieval on the booking detail page.
-     * Used to pass context across page navigations without relying on browser localStorage.
-     */
-    public void setCurrentBookingId(long bookingId) {
-        this.currentBookingId = bookingId;
-    }
-
-    /**
-     * Returns the currently selected booking ID as a plain string.
-     * Returns null if none is set.
-     */
-    public String getCurrentBookingId() {
-        return currentBookingId != null ? String.valueOf(currentBookingId) : null;
-    }
 
     /**
      * Navigates to a different page.
@@ -532,6 +549,51 @@ public class JavaBridge {
     private String createSuccessResponse(Object data) {
         ApiResponse response = new ApiResponse(true, "Success", data);
         return gson.toJson(response);
+    }
+
+    /**
+     * Safely parses an ID value received from JavaScript into a positive Long.
+     * JavaFX bridge values may arrive as Number, String, or other JS-backed objects.
+     */
+    private Long parsePositiveLongId(Object rawId, String fieldName) {
+        if (rawId == null) {
+            throw new IllegalArgumentException(fieldName + " is required");
+        }
+
+        long parsed;
+
+        if (rawId instanceof Number number) {
+            double asDouble = number.doubleValue();
+            if (!Double.isFinite(asDouble) || Math.floor(asDouble) != asDouble) {
+                throw new IllegalArgumentException("Invalid " + fieldName + ": " + rawId);
+            }
+            parsed = number.longValue();
+        } else {
+            String rawText = String.valueOf(rawId).trim();
+            if (rawText.isEmpty()) {
+                throw new IllegalArgumentException(fieldName + " is required");
+            }
+
+            try {
+                if (rawText.contains(".")) {
+                    double asDouble = Double.parseDouble(rawText);
+                    if (!Double.isFinite(asDouble) || Math.floor(asDouble) != asDouble) {
+                        throw new IllegalArgumentException("Invalid " + fieldName + ": " + rawText);
+                    }
+                    parsed = (long) asDouble;
+                } else {
+                    parsed = Long.parseLong(rawText);
+                }
+            } catch (NumberFormatException ex) {
+                throw new IllegalArgumentException("Invalid " + fieldName + ": " + rawText);
+            }
+        }
+
+        if (parsed <= 0) {
+            throw new IllegalArgumentException(fieldName + " must be a positive number");
+        }
+
+        return parsed;
     }
 
     /**

@@ -1,0 +1,117 @@
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Manage Staff - Pawradise Spa</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/css/output.css" />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <link rel="stylesheet" href="../assets/css/admin-dashboard.css" />
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark text-text-main dark:text-white transition-colors duration-200"
+  >
+    <div class="flex h-screen w-full overflow-hidden">
+      <aside
+        id="sidebar"
+        class="w-64 flex-shrink-0 border-r border-slate-200 dark:border-gray-800 bg-white dark:bg-surface-dark flex flex-col h-full z-20 transition-all duration-300"
+      ></aside>
+
+      <main
+        class="flex-1 flex flex-col h-full overflow-hidden bg-background-light dark:bg-background-dark relative"
+      >
+        <header
+          id="header"
+          class="flex-shrink-0 h-20 bg-white/80 dark:bg-surface-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-gray-800 flex items-center justify-between px-8 z-10 sticky top-0"
+        ></header>
+
+        <div class="flex-1 overflow-y-auto p-8 scroll-smooth">
+          <div class="max-w-[1400px] mx-auto flex flex-col gap-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+              <div>
+                <h1 class="text-3xl font-bold text-text-main dark:text-white tracking-tight">
+                  Staff Management
+                </h1>
+                <p class="text-text-muted mt-1 font-medium">
+                  Manage staff accounts, roles, and availability status.
+                </p>
+                <div class="flex flex-wrap items-center gap-3 mt-4">
+                  <div
+                    id="totalStaffBadge"
+                    class="text-sm font-semibold text-text-muted bg-surface-light dark:bg-surface-dark px-4 py-2 rounded-lg border border-slate-200/50 dark:border-gray-800"
+                  >
+                    Total Staff: 0
+                  </div>
+                  <div
+                    id="activeStaffBadge"
+                    class="text-sm font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-4 py-2 rounded-lg border border-emerald-100 dark:border-emerald-900/40"
+                  >
+                    Active: 0
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-card border border-slate-200/50 dark:border-gray-800 overflow-hidden">
+              <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                  <thead>
+                    <tr class="text-text-muted text-[11px] uppercase tracking-wider bg-slate-50/80 dark:bg-gray-800/40 border-b border-slate-100 dark:border-gray-800">
+                      <th class="px-6 py-4 font-bold">Name</th>
+                      <th class="px-6 py-4 font-bold">Role</th>
+                      <th class="px-6 py-4 font-bold">Email</th>
+                      <th class="px-6 py-4 font-bold">Phone</th>
+                      <th class="px-6 py-4 font-bold">Status</th>
+                      <th class="px-6 py-4 font-bold text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="staffTableBody" class="divide-y divide-slate-100 dark:divide-gray-800"></tbody>
+                </table>
+              </div>
+
+              <div id="emptyState" class="hidden py-20 flex flex-col items-center justify-center text-center">
+                <div class="size-16 rounded-full bg-slate-100 dark:bg-gray-800 flex items-center justify-center mb-4">
+                  <svg class="w-8 h-8 text-text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3-6.72c0-4.97-4.03-9-9-9a9 9 0 0 0-9 9c0 2.63 1.13 5 2.94 6.65M15 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm-9 9h12a2 2 0 0 0 2-2v-.5A4.5 4.5 0 0 0 15.5 13h-7A4.5 4.5 0 0 0 4 17.5V18a2 2 0 0 0 2 2Z" />
+                  </svg>
+                </div>
+                <p class="text-text-muted font-semibold text-sm">No staff accounts found.</p>
+                <p class="text-text-muted/70 text-xs mt-1">No staff records are currently available.</p>
+              </div>
+            </div>
+          </div>
+          <div class="h-10"></div>
+        </div>
+      </main>
+    </div>
+
+    <div
+      id="modalContainer"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+    >
+      <div class="bg-white dark:bg-surface-dark rounded-2xl shadow-2xl w-full max-w-lg border border-slate-200 dark:border-gray-700">
+        <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-gray-800">
+          <h2 id="modalTitle" class="text-lg font-bold text-text-main dark:text-white"></h2>
+          <button
+            onclick="closeModal()"
+            class="size-9 flex items-center justify-center rounded-full text-text-muted hover:bg-slate-100 dark:hover:bg-gray-800 transition-colors"
+          >
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div id="modalBody" class="px-6 py-5"></div>
+      </div>
+    </div>
+
+    <script src="../assets/js/common.js"></script>
+    <script src="../assets/js/admin/staff.js"></script>
+  </body>
+</html>

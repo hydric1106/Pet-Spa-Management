@@ -10,6 +10,7 @@ SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- Drop tables in order of dependency
+DROP TABLE IF EXISTS booking_staff_assignments;
 DROP TABLE IF EXISTS booking_details;
 DROP TABLE IF EXISTS bookings;
 DROP TABLE IF EXISTS staff_schedule;
@@ -84,10 +85,11 @@ CREATE TABLE staff_schedule (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     staff_id BIGINT NOT NULL,
     shift_type_id INT NOT NULL,
+    schedule_date DATE NOT NULL,
     day_of_week INT NOT NULL,
     FOREIGN KEY (staff_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (shift_type_id) REFERENCES shift_types(id) ON DELETE CASCADE,
-    UNIQUE KEY unique_schedule (staff_id, day_of_week, shift_type_id)
+    UNIQUE KEY unique_schedule (staff_id, schedule_date, shift_type_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Bảng Bookings
@@ -100,7 +102,6 @@ CREATE TABLE bookings (
     booking_date DATE NOT NULL,
     booking_time TIME NOT NULL,
     status VARCHAR(20) DEFAULT 'PENDING', 
-    cancel_reason TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
     
     total_price DECIMAL(10, 2) DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -121,29 +122,41 @@ CREATE TABLE booking_details (
     FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Bảng Booking Staff Assignments
+CREATE TABLE booking_staff_assignments (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    booking_id BIGINT NOT NULL,
+    staff_id BIGINT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE,
+    FOREIGN KEY (staff_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_booking_staff_assignment (booking_id, staff_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- 3. SEED DATA
 -- ---------------------------------------------------------------------------------
 
 -- Tạo Account Login (Chỉ Admin và Staff)
 INSERT INTO users (email, password, full_name, phone_number, role) VALUES 
-('admin@petspa.com', '123456', 'Quản Trị Viên', '0901234567', 'ADMIN'),
-('staff1@petspa.com', '123456', 'Nhân Viên A (Cắt Tỉa)', '0909999999', 'STAFF'),
-('staff2@petspa.com', '123456', 'Nhân Viên B (Tắm)', '0908888888', 'STAFF');
+('admin@gmail.com', '123456', 'ADMIN', '0901234567', 'ADMIN'),
+('minhquang@gmail.com', '123456', 'Minh Quang', '0909999999', 'STAFF'),
+('ducmanh@gmail.com', '123456', 'Duc Manh', '0908888888', 'STAFF');
 
 -- Tạo Khách hàng mẫu (Không có login info)
 INSERT INTO customers (full_name, phone_number, email, address) VALUES 
-('Nguyễn Văn Khách', '0912345678', 'khach@gmail.com', '123 Đường ABC, Đà Nẵng'),
-('Trần Thị B', '0987654321', NULL, '456 Đường XYZ, Đà Nẵng');
+('Van Do', '0912345678', 'vando@gmail.com', '123 Nguyễn Lương Bằng, Đà Nẵng'),
+('Le Thi B', '0987654321', NULL, '456 Âu Cơ, Đà Nẵng');
 
 -- Tạo Dịch vụ
 INSERT INTO services (name, description, price, duration_minutes) VALUES 
-('Tắm Thú Cưng', 'Tắm sạch, sấy khô', 150000, 45),
-('Cắt Tỉa Lông', 'Cắt tạo kiểu', 300000, 90),
-('Combo Tắm + Cắt', 'Tiết kiệm hơn', 400000, 120);
+('Bath', 'Tắm sạch, sấy khô', 150000, 45),
+('Grooming', 'Cắt tạo kiểu', 300000, 90),
+('Combo Bath & Grooming', 'Tiết kiệm hơn', 400000, 120);
 
 -- Tạo Thú cưng (Gắn với Customer ID = 1)
 INSERT INTO pets (owner_id, name, species, breed, age, weight) VALUES 
-(1, 'Milu', 'Dog', 'Poodle', 2, 5.5),
+(1, 'Puddle', 'Dog', 'Poodle', 2, 5.5),
 (1, 'Mimi', 'Cat', 'Anh Lông Ngắn', 1, 3.2);
 
 -- Phân lịch làm việc cho Staff
@@ -151,14 +164,17 @@ INSERT INTO shift_types (name, start_time, end_time) VALUES
 ('Morning', '08:00:00', '12:00:00'),
 ('Afternoon', '13:00:00', '17:00:00');
 
-INSERT INTO staff_schedule (staff_id, shift_type_id, day_of_week) VALUES 
-(2, 1, 2); -- Staff A làm sáng Thứ 2
+INSERT INTO staff_schedule (staff_id, shift_type_id, schedule_date, day_of_week) VALUES 
+(2, 1, CURDATE() + INTERVAL 1 DAY, WEEKDAY(CURDATE() + INTERVAL 1 DAY) + 1); -- Staff A sample exact-date shift
 
 -- Tạo Booking mẫu
 -- Khách hàng ID=1, Pet ID=1, Staff ID=2
 INSERT INTO bookings (customer_id, pet_id, staff_id, booking_date, booking_time, status, total_price) VALUES 
-(1, 1, 2, CURDATE() + INTERVAL 1 DAY, '09:00:00', 'CONFIRMED', 450000); 
+(1, 1, 2, CURDATE() + INTERVAL 1 DAY, '09:00:00', 'CONFIRMED', 150000); 
 
 INSERT INTO booking_details (booking_id, service_id, price) VALUES 
-(1, 1, 150000), 
-(1, 2, 300000);
+(1, 1, 150000);
+
+INSERT INTO booking_staff_assignments (booking_id, staff_id) VALUES
+(1, 2),
+(1, 3);

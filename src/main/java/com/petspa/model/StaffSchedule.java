@@ -3,18 +3,21 @@ package com.petspa.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 /**
  * StaffSchedule Entity - Assigns shifts to staff members.
  * 
- * This creates a weekly recurring schedule:
- * - day_of_week: 1 (Monday) to 7 (Sunday)
+ * This stores an exact scheduled date:
+ * - schedule_date: the specific calendar date for this shift
+ * - day_of_week: ISO weekday value derived from schedule_date
  * - shift_type_id: References the ShiftType (Morning, Afternoon, etc.)
  */
 @Entity
 @Table(name = "staff_schedule", 
        uniqueConstraints = @UniqueConstraint(
            name = "unique_schedule",
-           columnNames = {"staff_id", "day_of_week", "shift_type_id"}
+           columnNames = {"staff_id", "schedule_date", "shift_type_id"}
        ))
 @Getter
 @Setter
@@ -42,8 +45,13 @@ public class StaffSchedule {
     private ShiftType shiftType;
 
     /**
-     * Day of the week (1 = Monday, 7 = Sunday).
-     * Following ISO-8601 standard.
+     * Exact date of this shift assignment.
+     */
+    @Column(name = "schedule_date", nullable = false)
+    private LocalDate scheduleDate;
+
+    /**
+     * Day of the week (1 = Monday, 7 = Sunday), denormalized for compatibility.
      */
     @Column(name = "day_of_week", nullable = false)
     private Integer dayOfWeek;

@@ -8,6 +8,7 @@ let schedules = [];
 let staffList = [];
 let shiftTypes = [];
 let componentsInitialized = false;
+let selectedSchedule = null;
 
 // Current calendar state
 let currentYear = new Date().getFullYear();
@@ -153,26 +154,34 @@ async function loadShiftTypes() {
 
 async function loadSchedules() {
     try {
-        // Load schedules for current month
-        const startDate = new Date(currentYear, currentMonth, 1);
-        const endDate = new Date(currentYear, currentMonth + 1, 0);
-        
-        // For now, we'll load all staff schedules
-        // You may need to add a bridge method for date range filtering
-        schedules = [];
-        
-        for (const staff of staffList) {
-            const result = await callBridge('getStaffSchedule', staff.id);
-            if (result.success && result.data) {
-                result.data.forEach(schedule => {
-                    schedules.push({
-                        ...schedule,
-                        staffName: staff.fullName
-                    });
-                });
-            }
-        }
-        
+        const scheduleRequests = staffList
+            .map(staff => ({
+                staff,
+                staffId: parseEntityId(staff.id)
+            }))
+            .filter(item => item.staffId)
+            .map(async ({ staff, staffId }) => {
+                const result = await callBridge('getStaffSchedule', String(staffId));
+                if (!result.success || !Array.isArray(result.data)) {
+                    console.warn(`Failed to load schedule for staff ${staffId}:`, result.message || 'Unknown error');
+                    return [];
+                }
+
+                return result.data.map(schedule => ({
+                    ...schedule,
+                    id: parseEntityId(schedule.id),
+                    staffId: parseEntityId(schedule.staffId) || staffId,
+                    scheduleDate: normalizeScheduleDate(schedule.scheduleDate),
+                    dayOfWeek: Number(schedule.dayOfWeek),
+                    staffName: schedule.staffName || staff.fullName
+                }));
+            });
+
+        const scheduleGroups = await Promise.all(scheduleRequests);
+        schedules = scheduleGroups
+            .flat()
+            .filter(schedule => schedule.id && !!schedule.scheduleDate);
+
         renderSchedulesOnCalendar();
         
     } catch (error) {
@@ -288,14 +297,12 @@ function renderSchedulesOnCalendar() {
 
     if (schedules.length === 0) return;
 
-    // Iterate every day in the current month and match schedules by dayOfWeek
+    // Iterate days in the current month and match schedules by exact scheduleDate
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
     for (let day = 1; day <= daysInMonth; day++) {
-        const jsDoW = new Date(currentYear, currentMonth, day).getDay(); // 0=Sun … 6=Sat
-        const isoDoW = jsDoW === 0 ? 7 : jsDoW; // Mon=1 … Sun=7 (ISO 8601)
-
-        const matching = schedules.filter(s => Number(s.dayOfWeek) === isoDoW);
+        const dateKey = getDateString(currentYear, currentMonth, day);
+        const matching = schedules.filter(s => s.scheduleDate === dateKey);
         if (matching.length === 0) continue;
 
         const containers = document.querySelectorAll(`.shifts-container[data-day="${day}"]`);
@@ -323,6 +330,7 @@ function createShiftBadge(schedule) {
     badge.className = `${colorClass} text-white text-[10px] px-2 py-1 rounded font-semibold truncate cursor-pointer hover:opacity-80 transition-opacity`;
     badge.textContent = schedule.staffName || 'Staff';
     badge.title = `${schedule.staffName || ''} — ${schedule.shiftName || 'Shift'}`;
+    badge.addEventListener('click', () => openShiftDetailModal(schedule));
 
     return badge;
 }
@@ -366,11 +374,23 @@ function setupEventListeners() {
     document.getElementById('closeModalBtn')?.addEventListener('click', closeShiftModal);
     document.getElementById('cancelShiftBtn')?.addEventListener('click', closeShiftModal);
     document.getElementById('saveShiftBtn')?.addEventListener('click', saveShift);
+
+    // Shift detail modal controls
+    document.getElementById('closeDetailModalBtn')?.addEventListener('click', closeShiftDetailModal);
+    document.getElementById('cancelDetailBtn')?.addEventListener('click', closeShiftDetailModal);
+    document.getElementById('saveDetailBtn')?.addEventListener('click', saveShiftDetail);
+    document.getElementById('deleteShiftBtn')?.addEventListener('click', deleteShiftDetail);
     
     // Close modal on backdrop click
     document.getElementById('shiftModal')?.addEventListener('click', (e) => {
         if (e.target.id === 'shiftModal') {
             closeShiftModal();
+        }
+    });
+
+    document.getElementById('shiftDetailModal')?.addEventListener('click', (e) => {
+        if (e.target.id === 'shiftDetailModal') {
+            closeShiftDetailModal();
         }
     });
     
@@ -426,15 +446,10 @@ async function saveShift() {
     }
     
     try {
-        // Convert date string to Java DayOfWeek (1=Mon, 2=Tue, ..., 7=Sun)
-        const dateObj = new Date(shiftDate + 'T00:00:00');
-        const jsDow = dateObj.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
-        const dayOfWeek = jsDow === 0 ? 7 : jsDow;
-
         const scheduleData = {
             staffId: parseInt(staffId),
             shiftTypeId: parseInt(shiftTypeId),
-            dayOfWeek: dayOfWeek
+            scheduleDate: shiftDate
         };
         
         const result = await callBridge('assignShift', JSON.stringify(scheduleData));
@@ -448,6 +463,126 @@ async function saveShift() {
     } catch (error) {
         console.error('Error saving shift:', error);
         alert('Error saving shift assignment');
+    }
+}
+
+function openShiftDetailModal(schedule) {
+    if (!schedule) {
+        return;
+    }
+
+    const scheduleId = parseEntityId(schedule.id);
+    if (!scheduleId) {
+        alert('Unable to open shift details: invalid schedule ID.');
+        return;
+    }
+
+    selectedSchedule = { ...schedule, id: scheduleId };
+
+    const modal = document.getElementById('shiftDetailModal');
+    if (!modal) {
+        return;
+    }
+
+    const staffInput = document.getElementById('detailStaffName');
+    const dayInput = document.getElementById('detailDayName');
+    const shiftTypeSelect = document.getElementById('detailShiftType');
+
+    if (staffInput) {
+        staffInput.value = selectedSchedule.staffName || '—';
+    }
+
+    if (dayInput) {
+        dayInput.value = formatScheduleDateForDisplay(selectedSchedule.scheduleDate);
+    }
+
+    if (shiftTypeSelect) {
+        shiftTypeSelect.innerHTML = '<option value="">Select shift type...</option>';
+        shiftTypes.forEach(shift => {
+            const option = document.createElement('option');
+            option.value = shift.id;
+            option.textContent = `${shift.name} (${shift.startTime} - ${shift.endTime})`;
+            if (Number(shift.id) === Number(selectedSchedule.shiftTypeId)) {
+                option.selected = true;
+            }
+            shiftTypeSelect.appendChild(option);
+        });
+    }
+
+    modal.classList.remove('hidden');
+}
+
+function closeShiftDetailModal() {
+    const modal = document.getElementById('shiftDetailModal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+    selectedSchedule = null;
+}
+
+async function saveShiftDetail() {
+    if (!selectedSchedule) {
+        return;
+    }
+
+    const selectedShiftTypeId = parseEntityId(document.getElementById('detailShiftType')?.value);
+    if (!selectedShiftTypeId) {
+        alert('Please select a valid shift type.');
+        return;
+    }
+
+    if (Number(selectedShiftTypeId) === Number(selectedSchedule.shiftTypeId)) {
+        closeShiftDetailModal();
+        return;
+    }
+
+    try {
+        const newSchedulePayload = {
+            staffId: Number(selectedSchedule.staffId),
+            shiftTypeId: Number(selectedShiftTypeId),
+            scheduleDate: selectedSchedule.scheduleDate
+        };
+
+        const createResult = await callBridge('assignShift', JSON.stringify(newSchedulePayload));
+        if (!createResult.success) {
+            alert('Error: ' + (createResult.message || 'Failed to update shift.'));
+            return;
+        }
+
+        const removeResult = await callBridge('removeSchedule', String(selectedSchedule.id));
+        if (!removeResult.success) {
+            alert('Shift update partially succeeded. New shift created, but old shift removal failed: ' + (removeResult.message || 'Unknown error'));
+        }
+
+        closeShiftDetailModal();
+        await loadSchedules();
+    } catch (error) {
+        console.error('Error updating shift detail:', error);
+        alert('Error updating shift detail.');
+    }
+}
+
+async function deleteShiftDetail() {
+    if (!selectedSchedule) {
+        return;
+    }
+
+    if (!confirm('Are you sure you want to remove this shift assignment?')) {
+        return;
+    }
+
+    try {
+        const removeResult = await callBridge('removeSchedule', String(selectedSchedule.id));
+        if (!removeResult.success) {
+            alert('Error: ' + (removeResult.message || 'Failed to remove shift.'));
+            return;
+        }
+
+        closeShiftDetailModal();
+        await loadSchedules();
+    } catch (error) {
+        console.error('Error removing shift:', error);
+        alert('Error removing shift assignment.');
     }
 }
 
@@ -468,6 +603,55 @@ function setupLogout() {
             }
         });
     }
+}
+
+function getDayOfWeekLabel(dayOfWeek) {
+    const labels = {
+        1: 'Monday',
+        2: 'Tuesday',
+        3: 'Wednesday',
+        4: 'Thursday',
+        5: 'Friday',
+        6: 'Saturday',
+        7: 'Sunday'
+    };
+    return labels[Number(dayOfWeek)] || 'Unknown';
+}
+
+function getDateString(year, month, day) {
+    const mm = String(month + 1).padStart(2, '0');
+    const dd = String(day).padStart(2, '0');
+    return `${year}-${mm}-${dd}`;
+}
+
+function normalizeScheduleDate(value) {
+    if (!value) return null;
+    if (typeof value === 'string') {
+        return value.slice(0, 10);
+    }
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return null;
+    return date.toISOString().slice(0, 10);
+}
+
+function formatScheduleDateForDisplay(value) {
+    const normalized = normalizeScheduleDate(value);
+    if (!normalized) return '—';
+
+    const date = new Date(`${normalized}T00:00:00`);
+    if (Number.isNaN(date.getTime())) return normalized;
+
+    return date.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
+}
+
+function parseEntityId(value) {
+    const parsed = Number.parseInt(value, 10);
+    return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
 }
 
 console.log('Workshifts Admin JS loaded');

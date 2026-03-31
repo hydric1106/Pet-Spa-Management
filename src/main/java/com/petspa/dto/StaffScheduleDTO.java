@@ -24,6 +24,7 @@ public class StaffScheduleDTO {
     private String endTime;
     
     // Schedule
+    private String scheduleDate; // ISO date string (yyyy-MM-dd)
     private Integer dayOfWeek;
     private String dayName;  // "Monday", "Tuesday", etc.
 }

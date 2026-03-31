@@ -62,11 +62,8 @@ public class ScheduleService {
     public List<UserDTO> getAvailableStaff(String dateStr, String timeStr) {
         LocalDate date = LocalDate.parse(dateStr, DateTimeFormatter.ISO_LOCAL_DATE);
         LocalTime time = LocalTime.parse(timeStr, TIME_FORMATTER);
-        
-        // Get day of week (1 = Monday, 7 = Sunday)
-        int dayOfWeek = date.getDayOfWeek().getValue();
-        
-        List<StaffSchedule> schedules = scheduleRepository.findAvailableStaff(dayOfWeek, time);
+
+        List<StaffSchedule> schedules = scheduleRepository.findAvailableStaffByDate(date, time);
         
         return schedules.stream()
                 .map(schedule -> toUserDTO(schedule.getStaff()))
@@ -88,10 +85,13 @@ public class ScheduleService {
      */
     @Transactional
     public StaffScheduleDTO assignShift(StaffScheduleDTO dto) {
+        LocalDate scheduleDate = resolveScheduleDate(dto);
+        int dayOfWeek = scheduleDate.getDayOfWeek().getValue();
+
         // Check if schedule already exists
-        if (scheduleRepository.existsByStaffIdAndDayOfWeekAndShiftTypeId(
-                dto.getStaffId(), dto.getDayOfWeek(), dto.getShiftTypeId())) {
-            throw new RuntimeException("Schedule already exists for this staff, day, and shift");
+        if (scheduleRepository.existsByStaffIdAndScheduleDateAndShiftTypeId(
+                dto.getStaffId(), scheduleDate, dto.getShiftTypeId())) {
+            throw new RuntimeException("Schedule already exists for this staff, date, and shift");
         }
 
         User staff = userRepository.findById(dto.getStaffId())
@@ -103,7 +103,8 @@ public class ScheduleService {
         StaffSchedule schedule = StaffSchedule.builder()
                 .staff(staff)
                 .shiftType(shiftType)
-                .dayOfWeek(dto.getDayOfWeek())
+            .scheduleDate(scheduleDate)
+            .dayOfWeek(dayOfWeek)
                 .build();
 
         StaffSchedule saved = scheduleRepository.save(schedule);
@@ -133,7 +134,11 @@ public class ScheduleService {
      * Converts StaffSchedule entity to DTO.
      */
     private StaffScheduleDTO toDTO(StaffSchedule schedule) {
-        String dayName = DayOfWeek.of(schedule.getDayOfWeek())
+        int normalizedDayOfWeek = schedule.getScheduleDate() != null
+                ? schedule.getScheduleDate().getDayOfWeek().getValue()
+                : schedule.getDayOfWeek();
+
+        String dayName = DayOfWeek.of(normalizedDayOfWeek)
                 .getDisplayName(TextStyle.FULL, Locale.ENGLISH);
         
         return StaffScheduleDTO.builder()
@@ -144,9 +149,28 @@ public class ScheduleService {
                 .shiftName(schedule.getShiftType().getName())
                 .startTime(schedule.getShiftType().getStartTime().format(TIME_FORMATTER))
                 .endTime(schedule.getShiftType().getEndTime().format(TIME_FORMATTER))
-                .dayOfWeek(schedule.getDayOfWeek())
+                .scheduleDate(schedule.getScheduleDate() != null ? schedule.getScheduleDate().format(DateTimeFormatter.ISO_LOCAL_DATE) : null)
+                .dayOfWeek(normalizedDayOfWeek)
                 .dayName(dayName)
                 .build();
+    }
+
+    /**
+     * Resolves the exact schedule date from DTO input.
+     */
+    private LocalDate resolveScheduleDate(StaffScheduleDTO dto) {
+        if (dto.getScheduleDate() != null && !dto.getScheduleDate().isBlank()) {
+            return LocalDate.parse(dto.getScheduleDate(), DateTimeFormatter.ISO_LOCAL_DATE);
+        }
+
+        if (dto.getDayOfWeek() == null || dto.getDayOfWeek() < 1 || dto.getDayOfWeek() > 7) {
+            throw new RuntimeException("Schedule date is required");
+        }
+
+        LocalDate now = LocalDate.now();
+        int currentIso = now.getDayOfWeek().getValue();
+        int delta = (dto.getDayOfWeek() - currentIso + 7) % 7;
+        return now.plusDays(delta);
     }
 
     /**

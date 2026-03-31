@@ -113,7 +113,7 @@ async function loadServices() {
         const result = await callBridge('getAllServices');
         
         if (result.success && result.data) {
-            services = result.data;
+            services = (result.data || []).filter(service => service.isActive !== false);
             renderServicesTable(services);
         } else {
             // Show empty state if no services
@@ -148,22 +148,11 @@ function renderServicesTable(servicesList) {
 }
 
 function createServiceRow(service) {
-    const statusClass = service.isActive !== false
-        ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-        : 'bg-slate-100 text-slate-600 dark:bg-gray-700 dark:text-gray-400';
-    
-    const statusText = service.isActive !== false ? 'Active' : 'Inactive';
-    
     return `
         <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50 transition-colors" data-service-id="${service.id}">
             <td class="px-6 py-4 font-bold text-sm text-text-main dark:text-white">${escapeHtml(service.name)}</td>
             <td class="px-6 py-4 text-sm text-text-muted">${service.durationMinutes ? service.durationMinutes + ' mins' : '-'}</td>
             <td class="px-6 py-4 text-sm font-bold text-text-main dark:text-white">${formatCurrency(service.price)}</td>
-            <td class="px-6 py-4">
-                <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded ${statusClass}">
-                    ${statusText}
-                </span>
-            </td>
             <td class="px-6 py-4 text-right">
                 <div class="flex justify-end gap-2">
                     <button 
@@ -221,16 +210,30 @@ function attachRowEventListeners() {
     // Edit buttons
     document.querySelectorAll('.edit-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            const id = e.currentTarget.dataset.id;
-            editService(id);
+            const rawId = e.currentTarget.dataset.id || e.currentTarget.closest('tr')?.dataset.serviceId;
+            const serviceId = parseEntityId(rawId);
+            if (!serviceId) {
+                alert('Unable to edit service: invalid ID. Please refresh and try again.');
+                return;
+            }
+            editService(serviceId);
         });
     });
     
     // Delete buttons
     document.querySelectorAll('.delete-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const id = e.currentTarget.dataset.id;
-            deleteService(id);
+        btn.addEventListener('click', async (e) => {
+            const rawId = e.currentTarget.dataset.id || e.currentTarget.closest('tr')?.dataset.serviceId;
+            const serviceId = parseEntityId(rawId);
+            if (!serviceId) {
+                alert('Unable to delete service: invalid ID. Please refresh and try again.');
+                return;
+            }
+
+            if (!(await confirmAction('Are you sure you want to delete this service?'))) {
+                return;
+            }
+            deleteService(serviceId);
         });
     });
 }
@@ -324,7 +327,7 @@ function openServiceModal(service = null) {
 async function handleServiceSubmit(e) {
     e.preventDefault();
     
-    const serviceId = document.getElementById('serviceId').value;
+    const serviceId = parseEntityId(document.getElementById('serviceId').value);
     const serviceData = {
         name: document.getElementById('serviceName').value.trim(),
         durationMinutes: parseInt(document.getElementById('serviceDuration').value) || 0,
@@ -335,6 +338,9 @@ async function handleServiceSubmit(e) {
     try {
         let result;
         if (serviceId) {
+            if (!(await confirmAction('Save changes to this service?'))) {
+                return;
+            }
             serviceData.id = serviceId;
             result = await callBridge('updateService', JSON.stringify(serviceData));
         } else {
@@ -354,15 +360,27 @@ async function handleServiceSubmit(e) {
 }
 
 async function editService(id) {
-    const service = services.find(s => s.id == id);
+    const serviceId = parseEntityId(id);
+    if (!serviceId) {
+        alert('Unable to edit service: invalid ID.');
+        return;
+    }
+
+    const service = services.find(s => Number(s.id) === serviceId);
     if (service) {
         openServiceModal(service);
     }
 }
 
 async function deleteService(id) {
+    const serviceId = parseEntityId(id);
+    if (!serviceId) {
+        alert('Unable to delete service: invalid ID.');
+        return;
+    }
+
     try {
-        const result = await callBridge('deleteService', parseInt(id));
+        const result = await callBridge('deleteService', String(serviceId));
         
         if (result.success) {
             await loadServices();
@@ -403,6 +421,11 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+function parseEntityId(value) {
+    const parsed = Number.parseInt(value, 10);
+    return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
 }
 
 console.log('Services Admin JS loaded');

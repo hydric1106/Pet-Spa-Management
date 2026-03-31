@@ -172,7 +172,6 @@ function createClientRow(client) {
         ? client.pets.map(p => escapeHtml(p.name)).join(', ')
         : '—';
     const petCount = client.pets ? client.pets.length : 0;
-    const memberSince = formatDate(client.createdAt);
 
     return `
         <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50 transition-colors" data-client-id="${client.id}">
@@ -183,7 +182,6 @@ function createClientRow(client) {
                     </div>
                     <div>
                         <p class="font-bold text-sm text-text-main dark:text-white">${escapeHtml(client.fullName || '—')}</p>
-                        ${memberSince ? `<p class="text-[11px] text-text-muted">Member since ${memberSince}</p>` : ''}
                     </div>
                 </div>
             </td>
@@ -199,9 +197,6 @@ function createClientRow(client) {
                     <span class="size-6 flex items-center justify-center bg-primary/10 text-primary rounded-full text-[10px] font-bold flex-shrink-0">${petCount}</span>
                     <span class="text-sm text-text-main dark:text-gray-300 truncate max-w-[140px]" title="${pets}">${pets}</span>
                 </div>
-            </td>
-            <td class="px-6 py-4 text-sm text-text-muted">
-                ${memberSince || '—'}
             </td>
             <td class="px-6 py-4 text-right">
                 <div class="flex justify-end gap-2">
@@ -304,11 +299,31 @@ function setupEventListeners() {
 
 function attachRowEventListeners() {
     document.querySelectorAll('.edit-btn').forEach(btn => {
-        btn.addEventListener('click', e => editClient(e.currentTarget.dataset.id));
+        btn.addEventListener('click', e => {
+            const rawId = e.currentTarget.dataset.id || e.currentTarget.closest('tr')?.dataset.clientId;
+            const clientId = parseEntityId(rawId);
+            if (!clientId) {
+                alert('Unable to edit client: invalid ID. Please refresh and try again.');
+                return;
+            }
+            editClient(clientId);
+        });
     });
 
     document.querySelectorAll('.delete-btn').forEach(btn => {
-        btn.addEventListener('click', e => deleteClient(e.currentTarget.dataset.id));
+        btn.addEventListener('click', async e => {
+            const rawId = e.currentTarget.dataset.id || e.currentTarget.closest('tr')?.dataset.clientId;
+            const clientId = parseEntityId(rawId);
+            if (!clientId) {
+                alert('Unable to delete client: invalid ID. Please refresh and try again.');
+                return;
+            }
+
+            if (!(await confirmAction('Are you sure you want to delete this client?'))) {
+                return;
+            }
+            deleteClient(clientId);
+        });
     });
 }
 
@@ -366,6 +381,9 @@ async function handleClientSubmit(e) {
     try {
         let result;
         if (clientId) {
+            if (!(await confirmAction('Save changes to this client?'))) {
+                return;
+            }
             clientData.id = parseInt(clientId);
             result = await callBridge('updateCustomer', JSON.stringify(clientData));
         } else {
@@ -385,13 +403,25 @@ async function handleClientSubmit(e) {
 }
 
 function editClient(id) {
-    const client = allClients.find(c => String(c.id) === String(id));
+    const clientId = parseEntityId(id);
+    if (!clientId) {
+        alert('Unable to edit client: invalid ID.');
+        return;
+    }
+
+    const client = allClients.find(c => Number(c.id) === clientId);
     if (client) openClientModal(client);
 }
 
 async function deleteClient(id) {
+    const clientId = parseEntityId(id);
+    if (!clientId) {
+        alert('Unable to delete client: invalid ID.');
+        return;
+    }
+
     try {
-        const result = await callBridge('deleteCustomer', parseInt(id));
+        const result = await callBridge('deleteCustomer', clientId);
         if (result.success) {
             await loadClients();
         } else {
@@ -446,4 +476,9 @@ function formatDate(dateStr) {
     } catch {
         return null;
     }
+}
+
+function parseEntityId(value) {
+    const parsed = Number.parseInt(value, 10);
+    return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
 }
