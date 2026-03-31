@@ -109,6 +109,46 @@ function hideError(elementId = 'errorMessage') {
 }
 
 /**
+ * Shows a transient in-app toast notification.
+ * @param {string} message - Message to display
+ * @param {'success'|'error'|'info'} type - Toast type
+ * @param {number} durationMs - Auto-hide duration in milliseconds
+ */
+function showToast(message, type = 'info', durationMs = 3000) {
+    const safeMessage = String(message || '').trim() || 'Notification';
+
+    let container = document.getElementById('globalToastContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'globalToastContainer';
+        container.className = 'fixed top-4 right-4 z-[9999] flex flex-col gap-2';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.setAttribute('role', 'status');
+    toast.className = 'min-w-[280px] max-w-[420px] rounded-xl px-4 py-3 text-sm font-semibold shadow-lg border';
+
+    if (type === 'success') {
+        toast.classList.add('bg-emerald-50', 'text-emerald-700', 'border-emerald-100', 'dark:bg-emerald-900/30', 'dark:text-emerald-400', 'dark:border-emerald-900/40');
+    } else if (type === 'error') {
+        toast.classList.add('bg-red-50', 'text-red-700', 'border-red-200', 'dark:bg-red-900/20', 'dark:text-red-400', 'dark:border-red-900/30');
+    } else {
+        toast.classList.add('bg-slate-100', 'text-slate-800', 'border-slate-200', 'dark:bg-gray-800', 'dark:text-gray-200', 'dark:border-gray-700');
+    }
+
+    toast.textContent = safeMessage;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.remove();
+        if (!container.hasChildNodes()) {
+            container.remove();
+        }
+    }, Math.max(1200, durationMs));
+}
+
+/**
  * Shows a confirmation popup and resolves to the user's decision.
  * This uses an in-app modal to avoid WebView native confirm limitations.
  * @param {string} message - Confirmation message
@@ -466,9 +506,57 @@ function setLinkActive(link, isActive) {
     }
 }
 
+/**
+ * Initializes profile dropdown hover behavior in the admin header.
+ * @param {Element|Document} root - Root element containing header markup
+ */
+function initAdminHeaderProfileMenu(root = document) {
+    const userMenu = root.querySelector('#userMenu');
+    const dropdown = root.querySelector('#profileDropdown');
+
+    if (!userMenu || !dropdown) {
+        return;
+    }
+
+    if (userMenu.dataset.menuBound === 'true') {
+        return;
+    }
+    userMenu.dataset.menuBound = 'true';
+
+    let hideTimer = null;
+
+    const openMenu = () => {
+        if (hideTimer) {
+            clearTimeout(hideTimer);
+            hideTimer = null;
+        }
+        dropdown.classList.remove('hidden');
+    };
+
+    const closeMenu = () => {
+        hideTimer = setTimeout(() => {
+            dropdown.classList.add('hidden');
+        }, 120);
+    };
+
+    userMenu.addEventListener('mouseenter', openMenu);
+    userMenu.addEventListener('mouseleave', closeMenu);
+}
+
 // =============================================================================
 // INITIALIZATION
 // =============================================================================
+
+// Initialize profile dropdown when shared header component is injected.
+document.addEventListener('componentLoaded', (event) => {
+    const detail = event.detail || {};
+    const path = String(detail.path || '');
+    if (!path.includes('admin_header.html')) {
+        return;
+    }
+
+    initAdminHeaderProfileMenu(detail.target || document);
+});
 
 // Set current date on page load
 document.addEventListener('DOMContentLoaded', () => {
@@ -476,6 +564,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (dateEl) {
         dateEl.textContent = getCurrentDateDisplay();
     }
+
+    // Safety init in case header already exists at DOM ready.
+    initAdminHeaderProfileMenu(document);
 });
 
 // Close modal when clicking outside

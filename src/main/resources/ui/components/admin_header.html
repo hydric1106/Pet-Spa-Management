@@ -84,13 +84,29 @@
         Loading...
       </p>
     </div>
-    <div
-      id="userAvatar"
-      class="size-10 rounded-full bg-primary/20 flex items-center justify-center border-2 border-white dark:border-gray-700 shadow-sm cursor-pointer hover:ring-2 hover:ring-primary transition-all"
-    >
-      <svg class="w-5 h-5 text-primary" viewBox="-3 0 19 19" fill="currentColor">
-        <path d="M12.517 12.834v1.9a1.27 1.27 0 0 1-1.267 1.267h-9.5a1.27 1.27 0 0 1-1.267-1.267v-1.9A3.176 3.176 0 0 1 3.65 9.667h5.7a3.176 3.176 0 0 1 3.167 3.167zM3.264 5.48A3.236 3.236 0 1 1 6.5 8.717a3.236 3.236 0 0 1-3.236-3.236z"/>
-      </svg>
+    <div id="userMenu" class="relative">
+      <div
+        id="userAvatar"
+        class="size-10 rounded-full bg-primary/20 flex items-center justify-center border-2 border-white dark:border-gray-700 shadow-sm cursor-pointer hover:ring-2 hover:ring-primary transition-all"
+      >
+        <svg class="w-5 h-5 text-primary" viewBox="-3 0 19 19" fill="currentColor">
+          <path d="M12.517 12.834v1.9a1.27 1.27 0 0 1-1.267 1.267h-9.5a1.27 1.27 0 0 1-1.267-1.267v-1.9A3.176 3.176 0 0 1 3.65 9.667h5.7a3.176 3.176 0 0 1 3.167 3.167zM3.264 5.48A3.236 3.236 0 1 1 6.5 8.717a3.236 3.236 0 0 1-3.236-3.236z"/>
+        </svg>
+      </div>
+
+      <div
+        id="profileDropdown"
+        class="hidden absolute right-0 mt-2 z-50 min-w-[140px] rounded-xl bg-white dark:bg-surface-dark border border-slate-200 dark:border-gray-700 shadow-lg overflow-hidden"
+        style="top: 100%;"
+      >
+        <button
+          id="logoutBtn"
+          type="button"
+          class="w-full text-left px-4 py-2.5 text-sm font-semibold text-text-main dark:text-white hover:bg-slate-100 dark:hover:bg-gray-700 transition-colors"
+        >
+          Logout
+        </button>
+      </div>
     </div>
   </div>
 </div>

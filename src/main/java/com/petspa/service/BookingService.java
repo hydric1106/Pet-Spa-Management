@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -119,8 +120,13 @@ public class BookingService {
                 .build();
 
         Long serviceId = resolveSingleServiceId(dto, true);
-        applySingleService(booking, serviceId);
-        booking.setAssignedStaff(resolveAssignedStaff(dto));
+        com.petspa.model.Service selectedService = findServiceById(serviceId);
+        List<User> assignedStaff = resolveAssignedStaff(dto);
+
+        validateStaffAvailability(null, booking.getBookingDate(), booking.getBookingTime(), selectedService, assignedStaff);
+
+        applySingleService(booking, selectedService);
+        booking.setAssignedStaff(assignedStaff);
 
         Booking saved = bookingRepository.save(booking);
         return toDTO(saved);
@@ -169,12 +175,30 @@ public class BookingService {
         }
 
         Long serviceId = resolveSingleServiceId(dto, false);
+        com.petspa.model.Service selectedService = null;
         if (serviceId != null) {
-            applySingleService(booking, serviceId);
+            selectedService = findServiceById(serviceId);
+        } else {
+            selectedService = getPrimaryService(booking);
+        }
+
+        List<User> assignedStaff = null;
+        if (dto.getStaffIds() != null || dto.getStaffId() != null) {
+            assignedStaff = resolveAssignedStaff(dto);
+        } else {
+            assignedStaff = getAssignedStaffForValidation(booking);
+        }
+
+        if (booking.getStatus() != Booking.BookingStatus.CANCELLED) {
+            validateStaffAvailability(booking.getId(), booking.getBookingDate(), booking.getBookingTime(), selectedService, assignedStaff);
+        }
+
+        if (selectedService != null && serviceId != null) {
+            applySingleService(booking, selectedService);
         }
 
         if (dto.getStaffIds() != null || dto.getStaffId() != null) {
-            booking.setAssignedStaff(resolveAssignedStaff(dto));
+            booking.setAssignedStaff(assignedStaff);
         }
 
         Booking saved = bookingRepository.save(booking);
@@ -208,6 +232,17 @@ public class BookingService {
     }
 
     /**
+     * Deletes a booking permanently.
+     */
+    @Transactional
+    public void deleteBooking(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found: " + bookingId));
+
+        bookingRepository.delete(booking);
+    }
+
+    /**
      * Resolves the single selected service ID from legacy/new payload fields.
      */
     private Long resolveSingleServiceId(BookingDTO dto, boolean required) {
@@ -238,9 +273,7 @@ public class BookingService {
     /**
      * Replaces booking service details with one selected service.
      */
-    private void applySingleService(Booking booking, Long serviceId) {
-        com.petspa.model.Service service = serviceRepository.findById(serviceId)
-                .orElseThrow(() -> new RuntimeException("Service not found: " + serviceId));
+    private void applySingleService(Booking booking, com.petspa.model.Service service) {
 
         booking.getBookingDetails().clear();
 
@@ -249,6 +282,30 @@ public class BookingService {
                 .price(service.getPrice())
                 .build();
         booking.addBookingDetail(detail);
+    }
+
+    /**
+     * Gets service by ID with not-found validation.
+     */
+    private com.petspa.model.Service findServiceById(Long serviceId) {
+        return serviceRepository.findById(serviceId)
+                .orElseThrow(() -> new RuntimeException("Service not found: " + serviceId));
+    }
+
+    /**
+     * Gets the primary selected service from an existing booking.
+     */
+    private com.petspa.model.Service getPrimaryService(Booking booking) {
+        if (booking.getBookingDetails() == null || booking.getBookingDetails().isEmpty()) {
+            throw new RuntimeException("Booking must contain one service");
+        }
+
+        BookingDetail detail = booking.getBookingDetails().get(0);
+        if (detail.getService() == null) {
+            throw new RuntimeException("Booking service is missing");
+        }
+
+        return detail.getService();
     }
 
     /**
@@ -281,6 +338,82 @@ public class BookingService {
             resolved.add(staff);
         }
         return resolved;
+    }
+
+    /**
+     * Returns assigned staff from booking relation with legacy fallback.
+     */
+    private List<User> getAssignedStaffForValidation(Booking booking) {
+        List<User> assigned = booking.getStaffAssignments().stream()
+                .map(assignment -> assignment.getStaff())
+                .filter(staff -> staff != null)
+                .collect(Collectors.toList());
+
+        if (assigned.isEmpty() && booking.getStaff() != null) {
+            assigned = List.of(booking.getStaff());
+        }
+
+        return assigned;
+    }
+
+    /**
+     * Validates that assigned staff are not occupied by overlapping bookings.
+     */
+    private void validateStaffAvailability(Long currentBookingId,
+                                           LocalDate bookingDate,
+                                           LocalTime bookingTime,
+                                           com.petspa.model.Service selectedService,
+                                           List<User> assignedStaff) {
+        if (bookingDate == null || bookingTime == null || selectedService == null || assignedStaff == null || assignedStaff.isEmpty()) {
+            return;
+        }
+
+        int durationMinutes = selectedService.getDurationMinutes() != null
+                ? Math.max(1, selectedService.getDurationMinutes())
+                : 1;
+        LocalTime requestedEnd = bookingTime.plusMinutes(durationMinutes);
+
+        for (User staff : assignedStaff) {
+            if (staff == null || staff.getId() == null) {
+                continue;
+            }
+
+            List<Booking> existingBookings = bookingRepository.findByAssignedStaffIdAndBookingDate(staff.getId(), bookingDate);
+            for (Booking existing : existingBookings) {
+                if (existing.getId() == null) {
+                    continue;
+                }
+
+                if (currentBookingId != null && currentBookingId.equals(existing.getId())) {
+                    continue;
+                }
+
+                if (existing.getStatus() == Booking.BookingStatus.CANCELLED) {
+                    continue;
+                }
+
+                com.petspa.model.Service existingService = getPrimaryService(existing);
+                int existingDuration = existingService.getDurationMinutes() != null
+                        ? Math.max(1, existingService.getDurationMinutes())
+                        : 1;
+
+                LocalTime existingStart = existing.getBookingTime();
+                LocalTime existingEnd = existingStart.plusMinutes(existingDuration);
+
+                if (isOverlappingRange(bookingTime, requestedEnd, existingStart, existingEnd)) {
+                    throw new RuntimeException("Staff " + staff.getFullName() +
+                            " is already assigned from " + existingStart + " to " + existingEnd +
+                            " on " + bookingDate);
+                }
+            }
+        }
+    }
+
+    /**
+     * Determines whether two time windows overlap. Ranges are [start, end).
+     */
+    private boolean isOverlappingRange(LocalTime startA, LocalTime endA, LocalTime startB, LocalTime endB) {
+        return startA.isBefore(endB) && startB.isBefore(endA);
     }
 
     /**

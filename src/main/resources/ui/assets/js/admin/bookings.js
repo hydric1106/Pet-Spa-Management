@@ -234,7 +234,7 @@ function createBookingBlock(booking) {
 async function openBookingDetailsModal(bookingId) {
     const normalizedBookingId = parseEntityId(bookingId);
     if (!normalizedBookingId) {
-        alert('Unable to open booking details: invalid booking ID.');
+        showToast('Unable to open booking details: invalid booking ID.', 'error');
         return;
     }
 
@@ -247,7 +247,7 @@ async function openBookingDetailsModal(bookingId) {
         ]);
 
         if (!bookingResult.success || !bookingResult.data) {
-            alert('Failed to load booking details: ' + (bookingResult.message || 'Unknown error'));
+            showToast('Failed to load booking details: ' + (bookingResult.message || 'Unknown error'), 'error');
             return;
         }
 
@@ -348,15 +348,21 @@ async function openBookingDetailsModal(bookingId) {
                     </div>
                 </div>
 
-                <div class="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-gray-800">
-                    <button type="button" onclick="closeModal()"
-                        class="px-5 py-2.5 bg-slate-100 dark:bg-gray-700 text-text-main dark:text-white rounded-xl font-semibold text-sm hover:bg-slate-200 dark:hover:bg-gray-600 transition-colors">
-                        Close
+                <div class="flex justify-between gap-3 pt-4 border-t border-slate-200 dark:border-gray-800">
+                    <button type="button" id="deleteBookingBtn"
+                        class="px-5 py-2.5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl font-semibold text-sm hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors">
+                        Delete Booking
                     </button>
-                    <button type="submit"
-                        class="px-5 py-2.5 bg-primary text-white rounded-xl font-semibold text-sm hover:bg-primary-content transition-colors">
-                        Save Changes
-                    </button>
+                    <div class="flex gap-3">
+                        <button type="button" onclick="closeModal()"
+                            class="px-5 py-2.5 bg-slate-100 dark:bg-gray-700 text-text-main dark:text-white rounded-xl font-semibold text-sm hover:bg-slate-200 dark:hover:bg-gray-600 transition-colors">
+                            Close
+                        </button>
+                        <button type="submit"
+                            class="px-5 py-2.5 bg-primary text-white rounded-xl font-semibold text-sm hover:bg-primary-content transition-colors">
+                            Save Changes
+                        </button>
+                    </div>
                 </div>
             </form>
         `;
@@ -386,10 +392,11 @@ async function openBookingDetailsModal(bookingId) {
             });
 
             form?.addEventListener('submit', (event) => handleBookingDetailsSubmit(event, normalizedBookingId));
+            document.getElementById('deleteBookingBtn')?.addEventListener('click', () => handleDeleteBooking(normalizedBookingId));
         }, 50);
     } catch (error) {
         console.error('Error opening booking details modal:', error);
-        alert('Failed to open booking details. Please try again.');
+        showToast('Failed to open booking details. Please try again.', 'error');
     }
 }
 
@@ -398,7 +405,7 @@ async function handleBookingDetailsSubmit(event, bookingId) {
 
     const normalizedBookingId = parseEntityId(bookingId);
     if (!normalizedBookingId) {
-        alert('Unable to update booking: invalid booking ID.');
+        showToast('Unable to update booking: invalid booking ID.', 'error');
         return;
     }
 
@@ -413,7 +420,7 @@ async function handleBookingDetailsSubmit(event, bookingId) {
         .filter(Boolean);
 
     if (!customerId || !petId || !bookingDate || !bookingTime || !serviceId || !status) {
-        alert('Please complete all required booking fields.');
+        showToast('Please complete all required booking fields.', 'info');
         return;
     }
 
@@ -432,14 +439,41 @@ async function handleBookingDetailsSubmit(event, bookingId) {
         const result = await callBridge('updateBooking', JSON.stringify(payload));
 
         if (result.success) {
+            showToast('Booking updated successfully.', 'success');
             closeModal();
             await loadBookings();
         } else {
-            alert('Failed to update booking: ' + (result.message || 'Unknown error'));
+            showToast('Failed to update booking: ' + (result.message || 'Unknown error'), 'error', 4500);
         }
     } catch (error) {
         console.error('Error updating booking:', error);
-        alert('Unexpected error while updating booking.');
+        showToast('Unexpected error while updating booking.', 'error');
+    }
+}
+
+async function handleDeleteBooking(bookingId) {
+    const normalizedBookingId = parseEntityId(bookingId);
+    if (!normalizedBookingId) {
+        showToast('Unable to delete booking: invalid booking ID.', 'error');
+        return;
+    }
+
+    if (!(await confirmAction('Are you sure you want to delete this booking?'))) {
+        return;
+    }
+
+    try {
+        const result = await callBridge('deleteBooking', String(normalizedBookingId));
+        if (result.success) {
+            showToast('Booking deleted successfully.', 'success');
+            closeModal();
+            await loadBookings();
+        } else {
+            showToast('Failed to delete booking: ' + (result.message || 'Unknown error'), 'error');
+        }
+    } catch (error) {
+        console.error('Error deleting booking:', error);
+        showToast('Unexpected error while deleting booking.', 'error');
     }
 }
 
@@ -573,7 +607,7 @@ async function openBookingModal() {
         if (usersRes.success) staffList = (usersRes.data || []).filter(u => u.role === 'STAFF' && u.isActive !== false);
         if (svcRes.success) servicesList = (svcRes.data || []).filter(s => s.isActive !== false);
     } catch (e) {
-        alert('Failed to load form data: ' + e.message);
+        showToast('Failed to load form data: ' + e.message, 'error');
         return;
     }
 
@@ -695,7 +729,7 @@ async function handleNewBookingSubmit(e) {
         .filter(Boolean);
 
     if (!customerId || !petId || !bookingDate || !bookingTime || !serviceId) {
-        alert('Please fill in all required fields.');
+        showToast('Please fill in all required fields.', 'info');
         return;
     }
 
@@ -714,14 +748,15 @@ async function handleNewBookingSubmit(e) {
     try {
         const result = await callBridge('createBooking', JSON.stringify(bookingData));
         if (result.success) {
+            showToast('Booking created successfully.', 'success');
             closeModal();
             await loadBookings();
         } else {
-            alert('Error: ' + result.message);
+            showToast('Failed to create booking: ' + (result.message || 'Unknown error'), 'error', 4500);
             if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Create Booking'; }
         }
     } catch (err) {
-        alert('Unexpected error: ' + err.message);
+        showToast('Unexpected error: ' + err.message, 'error');
         if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Create Booking'; }
     }
 }

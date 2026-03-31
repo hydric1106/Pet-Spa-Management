@@ -379,6 +379,19 @@ public class JavaBridge {
     }
 
     /**
+     * Deletes a booking by ID.
+     */
+    public String deleteBooking(Object bookingIdRaw) {
+        try {
+            Long bookingId = parsePositiveLongId(bookingIdRaw, "bookingId");
+            bookingService.deleteBooking(bookingId);
+            return createSuccessResponse("Booking deleted successfully");
+        } catch (Exception e) {
+            return createErrorResponse("Failed to delete booking: " + e.getMessage());
+        }
+    }
+
+    /**
      * Gets all bookings for a specific date.
      */
     public String getBookingsByDate(String dateStr) {
