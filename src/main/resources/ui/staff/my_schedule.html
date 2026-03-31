@@ -1,0 +1,168 @@
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>My Schedule - Pawradise Spa</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/css/output.css" />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <link rel="stylesheet" href="../assets/css/admin-dashboard.css" />
+    <style>
+      .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+      }
+
+      .calendar-day {
+        min-height: 120px;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark text-text-main dark:text-white transition-colors duration-200"
+  >
+    <div class="flex h-screen w-full overflow-hidden">
+      <aside
+        id="sidebar"
+        class="w-64 flex-shrink-0 border-r border-slate-200 dark:border-gray-800 bg-white dark:bg-surface-dark flex flex-col h-full z-20 transition-all duration-300"
+      ></aside>
+
+      <main
+        class="flex-1 flex flex-col h-full overflow-hidden bg-background-light dark:bg-background-dark relative"
+      >
+        <header
+          id="header"
+          class="flex-shrink-0 h-20 bg-white/80 dark:bg-surface-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-gray-800 flex items-center justify-between px-8 z-10 sticky top-0"
+        ></header>
+
+        <div class="flex-1 overflow-y-auto p-8 scroll-smooth">
+          <div class="max-w-[1400px] mx-auto flex flex-col gap-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div>
+                <h1 class="text-3xl font-bold text-text-main dark:text-white tracking-tight">
+                  My Schedule
+                </h1>
+                <p class="text-text-muted mt-1 font-medium">
+                  Monthly workshift calendar with visibility controls.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-light dark:bg-surface-dark p-4 rounded-2xl border border-slate-200/50 dark:border-gray-800">
+              <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2">
+                  <button
+                    id="prevMonthBtn"
+                    class="p-2 hover:bg-slate-100 dark:hover:bg-gray-700 rounded-xl text-text-muted hover:text-text-main dark:hover:text-white transition-colors"
+                  >
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                    </svg>
+                  </button>
+                  <span id="currentMonth" class="text-lg font-bold min-w-[160px] text-center text-text-main dark:text-white">
+                    Loading...
+                  </span>
+                  <button
+                    id="nextMonthBtn"
+                    class="p-2 hover:bg-slate-100 dark:hover:bg-gray-700 rounded-xl text-text-muted hover:text-text-main dark:hover:text-white transition-colors"
+                  >
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                    </svg>
+                  </button>
+                </div>
+                <button
+                  id="todayBtn"
+                  class="px-4 py-1.5 text-sm font-semibold border border-slate-200 dark:border-gray-700 rounded-xl hover:bg-slate-50 dark:hover:bg-gray-800 transition-colors"
+                >
+                  Today
+                </button>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <div class="p-1 rounded-xl bg-slate-100 dark:bg-gray-800/70 flex items-center gap-1">
+                  <button
+                    id="showMineBtn"
+                    type="button"
+                    class="px-4 py-1.5 text-sm font-semibold rounded-lg bg-white dark:bg-gray-700 text-text-main dark:text-white shadow-sm transition-colors"
+                  >
+                    Show only me
+                  </button>
+                  <button
+                    id="showEveryoneBtn"
+                    type="button"
+                    class="px-4 py-1.5 text-sm font-semibold rounded-lg text-text-muted hover:text-text-main dark:hover:text-white transition-colors"
+                  >
+                    Show everyone
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap gap-4 items-center bg-surface-light dark:bg-surface-dark p-4 rounded-2xl border border-slate-200/50 dark:border-gray-800">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-blue-500"></span>
+                <span class="text-xs font-medium text-text-muted">Morning Shift</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-orange-500"></span>
+                <span class="text-xs font-medium text-text-muted">Afternoon Shift</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                <span class="text-xs font-medium text-text-muted">Full Day Shift</span>
+              </div>
+            </div>
+
+            <div class="bg-surface-light dark:bg-surface-dark rounded-2xl border border-slate-200/50 dark:border-gray-800 overflow-hidden shadow-card">
+              <div class="calendar-grid border-b border-slate-200 dark:border-gray-800 bg-slate-50 dark:bg-gray-800/50">
+                <div class="py-3 text-center text-[11px] font-bold text-text-muted uppercase tracking-widest">Sun</div>
+                <div class="py-3 text-center text-[11px] font-bold text-text-muted uppercase tracking-widest">Mon</div>
+                <div class="py-3 text-center text-[11px] font-bold text-text-muted uppercase tracking-widest">Tue</div>
+                <div class="py-3 text-center text-[11px] font-bold text-text-muted uppercase tracking-widest">Wed</div>
+                <div class="py-3 text-center text-[11px] font-bold text-text-muted uppercase tracking-widest">Thu</div>
+                <div class="py-3 text-center text-[11px] font-bold text-text-muted uppercase tracking-widest">Fri</div>
+                <div class="py-3 text-center text-[11px] font-bold text-text-muted uppercase tracking-widest">Sat</div>
+              </div>
+              <div id="calendarGrid" class="calendar-grid divide-x divide-y divide-slate-100 dark:divide-gray-800"></div>
+            </div>
+          </div>
+
+          <div class="h-10"></div>
+        </div>
+      </main>
+    </div>
+
+    <div id="scheduleDetailModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" id="scheduleDetailBackdrop"></div>
+      <div class="relative bg-white dark:bg-surface-dark rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+        <div class="p-6 border-b border-slate-200 dark:border-gray-800 flex items-center justify-between">
+          <h3 class="text-lg font-bold text-text-main dark:text-white">Shift Details</h3>
+          <button id="closeScheduleDetailBtn" class="size-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-gray-800 transition-colors text-text-muted">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="p-6 space-y-3">
+          <p id="detailStaffName" class="text-sm text-text-main dark:text-white"></p>
+          <p id="detailShiftName" class="text-sm text-text-main dark:text-white"></p>
+          <p id="detailShiftDate" class="text-sm text-text-muted"></p>
+          <p id="detailShiftTime" class="text-sm text-text-muted"></p>
+        </div>
+        <div class="p-6 bg-slate-50 dark:bg-gray-800/50 flex justify-end">
+          <button id="closeScheduleDetailFooterBtn" class="px-5 py-2.5 text-sm font-semibold text-text-main dark:text-white bg-slate-200 dark:bg-gray-700 rounded-xl hover:bg-slate-300 dark:hover:bg-gray-600 transition-colors">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="../assets/js/common.js"></script>
+    <script src="../assets/js/staff/my-schedule.js"></script>
+  </body>
+</html>
