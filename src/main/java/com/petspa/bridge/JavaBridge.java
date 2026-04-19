@@ -35,6 +35,8 @@ public class JavaBridge {
     private final ServiceService serviceService;
     private final BookingService bookingService;
     private final ScheduleService scheduleService;
+    private final ProductService productService;
+    private final SalesOrderService salesOrderService;
     
     // Current logged-in user session
     private UserDTO currentUser;
@@ -46,7 +48,9 @@ public class JavaBridge {
                       PetService petService,
                       ServiceService serviceService,
                       BookingService bookingService,
-                      ScheduleService scheduleService) {
+                      ScheduleService scheduleService,
+                      ProductService productService,
+                      SalesOrderService salesOrderService) {
         this.gson = gson;
         this.authService = authService;
         this.userService = userService;
@@ -55,6 +59,8 @@ public class JavaBridge {
         this.serviceService = serviceService;
         this.bookingService = bookingService;
         this.scheduleService = scheduleService;
+        this.productService = productService;
+        this.salesOrderService = salesOrderService;
     }
 
     // =============================================================================
@@ -270,6 +276,99 @@ public class JavaBridge {
             return createSuccessResponse("Service deleted successfully");
         } catch (Exception e) {
             return createErrorResponse("Failed to delete service: " + e.getMessage());
+        }
+    }
+
+    // =============================================================================
+    // RETAIL PRODUCT MANAGEMENT
+    // =============================================================================
+
+    /**
+     * Gets all retail products.
+     */
+    public String getAllProducts() {
+        try {
+            return createSuccessResponse(productService.getAllProducts());
+        } catch (Exception e) {
+            return createErrorResponse("Failed to get products: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Creates a retail product.
+     */
+    public String createProduct(String productJson) {
+        try {
+            ProductItemDTO dto = gson.fromJson(productJson, ProductItemDTO.class);
+            ProductItemDTO created = productService.createProduct(dto);
+            return createSuccessResponse(created);
+        } catch (Exception e) {
+            return createErrorResponse("Failed to create product: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Updates a retail product.
+     */
+    public String updateProduct(String productJson) {
+        try {
+            ProductItemDTO dto = gson.fromJson(productJson, ProductItemDTO.class);
+            ProductItemDTO updated = productService.updateProduct(dto);
+            return createSuccessResponse(updated);
+        } catch (Exception e) {
+            return createErrorResponse("Failed to update product: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Deactivates a retail product.
+     */
+    public String deactivateProduct(Object productIdRaw) {
+        try {
+            Long productId = parsePositiveLongId(productIdRaw, "productId");
+            productService.deactivateProduct(productId);
+            return createSuccessResponse("Product deactivated successfully");
+        } catch (Exception e) {
+            return createErrorResponse("Failed to deactivate product: " + e.getMessage());
+        }
+    }
+
+    // =============================================================================
+    // RETAIL SALES MANAGEMENT
+    // =============================================================================
+
+    /**
+     * Creates a sales order (retail checkout).
+     */
+    public String createSalesOrder(String orderJson) {
+        try {
+            SalesOrderCreateRequestDTO request = gson.fromJson(orderJson, SalesOrderCreateRequestDTO.class);
+            SalesOrderDTO created = salesOrderService.createSalesOrder(request);
+            return createSuccessResponse(created);
+        } catch (Exception e) {
+            return createErrorResponse("Failed to create sales order: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Gets sales orders by date.
+     */
+    public String getSalesByDate(String dateStr) {
+        try {
+            return createSuccessResponse(salesOrderService.getSalesByDate(dateStr));
+        } catch (Exception e) {
+            return createErrorResponse("Failed to get sales orders: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Gets today's retail and combined revenue summary.
+     */
+    public String getTodayRevenueSummary() {
+        try {
+            return createSuccessResponse(salesOrderService.getTodayRevenueSummary());
+        } catch (Exception e) {
+            return createErrorResponse("Failed to get revenue summary: " + e.getMessage());
         }
     }
 

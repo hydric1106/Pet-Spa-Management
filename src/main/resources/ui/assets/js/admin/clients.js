@@ -91,6 +91,7 @@ function handleNavigation(page) {
         'bookings': 'bookings.html',
         'pets': 'pets.html',
         'services': 'services.html',
+        'sales': 'store.html',
         'clients': 'clients.html',
         'staff': 'staff.html',
         'workshifts': 'workshifts.html'

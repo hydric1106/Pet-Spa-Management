@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -56,4 +57,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
            "WHERE b.bookingDate = :date AND ((b.staff IS NOT NULL AND b.staff.id = :staffId) OR sa.staff.id = :staffId) " +
            "ORDER BY b.bookingTime")
     List<Booking> findTodayBookingsForStaff(@Param("staffId") Long staffId, @Param("date") LocalDate date);
+
+        /**
+         * Sum booking revenue for a day excluding a given status.
+         */
+        @Query("SELECT COALESCE(SUM(b.totalPrice), 0) FROM Booking b WHERE b.bookingDate = :date AND b.status <> :excludedStatus")
+        BigDecimal sumRevenueByDateExcludingStatus(@Param("date") LocalDate date,
+                                                                                           @Param("excludedStatus") Booking.BookingStatus excludedStatus);
 }

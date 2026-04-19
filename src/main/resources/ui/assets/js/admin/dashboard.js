@@ -51,6 +51,7 @@ function handleNavigation(page) {
         'bookings': 'bookings.html',
         'pets': 'pets.html',
         'services': 'services.html',
+        'sales': 'store.html',
         'clients': 'clients.html',
         'staff': 'staff.html',
         'workshifts': 'workshifts.html'
@@ -99,8 +100,10 @@ async function loadDashboardData() {
         const bookingsResult = await callBridge('getBookingsByDate', today);
         
         if (bookingsResult.success) {
-            document.getElementById('todayBookings').textContent = 
-                bookingsResult.data ? bookingsResult.data.length : 0;
+            const todayBookingsEl = document.getElementById('todayBookings');
+            if (todayBookingsEl) {
+                todayBookingsEl.textContent = bookingsResult.data ? bookingsResult.data.length : 0;
+            }
             
             // Update schedule display
             updateTodaySchedule(bookingsResult.data || []);
@@ -109,8 +112,10 @@ async function loadDashboardData() {
         // Load customers count
         const customersResult = await callBridge('getAllCustomers');
         if (customersResult.success) {
-            document.getElementById('totalCustomers').textContent = 
-                customersResult.data ? customersResult.data.length : 0;
+            const totalCustomersEl = document.getElementById('totalCustomers');
+            if (totalCustomersEl) {
+                totalCustomersEl.textContent = customersResult.data ? customersResult.data.length : 0;
+            }
         }
         
         // Load services
@@ -123,7 +128,31 @@ async function loadDashboardData() {
         const staffResult = await callBridge('getAllUsers');
         if (staffResult.success) {
             const staff = staffResult.data.filter(u => u.role === 'STAFF' && u.isActive);
-            document.getElementById('activeStaff').textContent = staff.length;
+            const activeStaffEl = document.getElementById('activeStaff');
+            if (activeStaffEl) {
+                activeStaffEl.textContent = staff.length;
+            }
+        }
+
+        // Load retail + combined revenue summary
+        const revenueResult = await callBridge('getTodayRevenueSummary');
+        if (revenueResult.success && revenueResult.data) {
+            const summary = revenueResult.data;
+
+            const retailRevenueEl = document.getElementById('retailRevenueToday');
+            if (retailRevenueEl) {
+                retailRevenueEl.textContent = formatCurrency(summary.retailRevenue || 0);
+            }
+
+            const combinedRevenueEl = document.getElementById('combinedRevenueToday');
+            if (combinedRevenueEl) {
+                combinedRevenueEl.textContent = formatCurrency(summary.combinedRevenue || 0);
+            }
+
+            const salesOrdersTodayEl = document.getElementById('totalSalesOrdersToday');
+            if (salesOrdersTodayEl) {
+                salesOrdersTodayEl.textContent = summary.totalSalesOrders || 0;
+            }
         }
         
     } catch (error) {

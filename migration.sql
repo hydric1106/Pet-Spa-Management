@@ -10,9 +10,12 @@ SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- Drop tables in order of dependency
+DROP TABLE IF EXISTS sales_order_items;
+DROP TABLE IF EXISTS sales_orders;
 DROP TABLE IF EXISTS booking_staff_assignments;
 DROP TABLE IF EXISTS booking_details;
 DROP TABLE IF EXISTS bookings;
+DROP TABLE IF EXISTS product_items;
 DROP TABLE IF EXISTS staff_schedule;
 DROP TABLE IF EXISTS shift_types;
 DROP TABLE IF EXISTS pets;
@@ -44,6 +47,18 @@ CREATE TABLE customers (
     phone_number VARCHAR(20) NOT NULL, -- Dùng SĐT để tra cứu khách
     email VARCHAR(100), -- Có thể null nếu khách không cung cấp
     address TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Bảng Product Items (Hàng hóa bán lẻ)
+CREATE TABLE product_items (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    category VARCHAR(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    sku VARCHAR(50) UNIQUE,
+    price DECIMAL(10, 2) NOT NULL,
+    stock_qty INT NOT NULL DEFAULT 0,
+    is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -134,6 +149,44 @@ CREATE TABLE booking_staff_assignments (
     UNIQUE KEY unique_booking_staff_assignment (booking_id, staff_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Bảng Sales Orders (Hóa đơn bán hàng)
+CREATE TABLE sales_orders (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_no VARCHAR(30) NOT NULL UNIQUE,
+    sold_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    sold_by_user_id BIGINT NOT NULL,
+    customer_id BIGINT NULL,
+    subtotal DECIMAL(10, 2) NOT NULL,
+    discount DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    total_amount DECIMAL(10, 2) NOT NULL,
+    payment_method VARCHAR(20) NOT NULL DEFAULT 'CASH',
+    note TEXT,
+
+    FOREIGN KEY (sold_by_user_id) REFERENCES users(id) ON DELETE RESTRICT,
+    FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE SET NULL,
+    INDEX idx_sales_orders_sold_at (sold_at),
+    INDEX idx_sales_orders_sold_by (sold_by_user_id),
+    INDEX idx_sales_orders_customer (customer_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Bảng Sales Order Items (Chi tiết hàng hóa trong hóa đơn)
+CREATE TABLE sales_order_items (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_id BIGINT NOT NULL,
+    product_id BIGINT NOT NULL,
+    quantity INT NOT NULL,
+    unit_price DECIMAL(10, 2) NOT NULL,
+    line_total DECIMAL(10, 2) NOT NULL,
+
+    FOREIGN KEY (order_id) REFERENCES sales_orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES product_items(id) ON DELETE RESTRICT,
+    INDEX idx_sales_items_order_id (order_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Bổ sung index cho sản phẩm
+CREATE INDEX idx_product_items_name ON product_items(name);
+CREATE INDEX idx_product_items_sku ON product_items(sku);
+
 -- 3. SEED DATA
 -- ---------------------------------------------------------------------------------
 
@@ -153,6 +206,13 @@ INSERT INTO services (name, description, price, duration_minutes) VALUES
 ('Bath', 'Tắm sạch, sấy khô', 150000, 45),
 ('Grooming', 'Cắt tạo kiểu', 300000, 90),
 ('Combo Bath & Grooming', 'Tiết kiệm hơn', 400000, 120);
+
+-- Tạo hàng hóa bán lẻ mẫu
+INSERT INTO product_items (name, category, sku, price, stock_qty) VALUES
+('NutriBoost Dog Kibble 15lb', 'Food', 'FOOD-DOG-001', 459900, 24),
+('Feather Teaser Wand', 'Toy', 'TOY-CAT-001', 125000, 112),
+('Reflective Nylon Collar', 'Accessory', 'ACC-DOG-001', 180000, 3),
+('Organic Beef Treats 8oz', 'Food', 'FOOD-DOG-002', 99900, 85);
 
 -- Tạo Thú cưng (Gắn với Customer ID = 1)
 INSERT INTO pets (owner_id, name, species, breed, age, weight) VALUES 

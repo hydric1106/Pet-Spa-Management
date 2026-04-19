@@ -76,9 +76,10 @@
                     Today's Appointments
                   </p>
                   <h3
+                    id="todayBookings"
                     class="text-7xl font-bold text-text-main dark:text-white mt-4 group-hover:translate-x-2 transition-transform"
                   >
-                    12
+                    0
                   </h3>
                 </div>
               </div>
@@ -110,9 +111,10 @@
                     Active Staff
                   </p>
                   <h3
+                    id="activeStaff"
                     class="text-7xl font-bold text-text-main dark:text-white mt-4 group-hover:translate-x-2 transition-transform"
                   >
-                    8
+                    0
                   </h3>
                 </div>
               </div>
@@ -138,12 +140,13 @@
                   <p
                     class="text-slate-400 text-sm font-bold uppercase tracking-widest"
                   >
-                    New Clients
+                    Total Clients
                   </p>
                   <h3
+                    id="totalCustomers"
                     class="text-7xl font-bold text-text-main dark:text-white mt-4 group-hover:translate-x-2 transition-transform"
                   >
-                    3
+                    0
                   </h3>
                 </div>
               </div>
@@ -169,13 +172,48 @@
                   <p
                     class="text-slate-400 text-sm font-bold uppercase tracking-widest"
                   >
-                    Daily Revenue
+                    Combined Revenue Today
                   </p>
                   <h3
+                    id="combinedRevenueToday"
                     class="text-7xl font-bold text-text-main dark:text-white mt-4 group-hover:translate-x-2 transition-transform"
                   >
-                    $1,240
+                    0
                   </h3>
+                </div>
+              </div>
+              <div
+                class="bg-surface-light dark:bg-surface-dark p-10 rounded-2xl shadow-card flex flex-col justify-center gap-8 border border-transparent hover:border-slate-200 dark:hover:border-gray-700 transition-all group min-h-[300px]"
+              >
+                <div class="flex justify-between items-start">
+                  <div
+                    class="bg-cyan-50 dark:bg-cyan-900/20 p-5 rounded-2xl text-cyan-600 dark:text-cyan-400"
+                  >
+                    <svg class="w-10 h-10" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M17 18c1.11 0 1.99.9 1.99 2S18.11 22 17 22s-2-.9-2-2 .89-2 2-2zM7 18c1.11 0 1.99.9 1.99 2S8.11 22 7 22s-2-.9-2-2 .89-2 2-2zM7.17 14h9.95c.75 0 1.41-.41 1.75-1.03L22 6.5V5H6.21l-.94-2H1v2h3l3.6 7.59-1.35 2.44C5.52 16.37 6.48 18 8 18h12v-2H8l1.1-2z"/>
+                    </svg>
+                  </div>
+                </div>
+                <div>
+                  <p class="text-slate-400 text-sm font-bold uppercase tracking-widest">Retail Revenue Today</p>
+                  <h3 id="retailRevenueToday" class="text-7xl font-bold text-text-main dark:text-white mt-4 group-hover:translate-x-2 transition-transform">0</h3>
+                </div>
+              </div>
+              <div
+                class="bg-surface-light dark:bg-surface-dark p-10 rounded-2xl shadow-card flex flex-col justify-center gap-8 border border-transparent hover:border-slate-200 dark:hover:border-gray-700 transition-all group min-h-[300px]"
+              >
+                <div class="flex justify-between items-start">
+                  <div
+                    class="bg-indigo-50 dark:bg-indigo-900/20 p-5 rounded-2xl text-indigo-600 dark:text-indigo-400"
+                  >
+                    <svg class="w-10 h-10" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M19 3H5c-1.1 0-2 .9-2 2v14a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                    </svg>
+                  </div>
+                </div>
+                <div>
+                  <p class="text-slate-400 text-sm font-bold uppercase tracking-widest">Sales Orders Today</p>
+                  <h3 id="totalSalesOrdersToday" class="text-7xl font-bold text-text-main dark:text-white mt-4 group-hover:translate-x-2 transition-transform">0</h3>
                 </div>
               </div>
             </div>
