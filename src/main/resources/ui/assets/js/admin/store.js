@@ -293,6 +293,7 @@ function renderCart() {
 function updateSummary() {
     const subtotalEl = document.getElementById('subtotalValue');
     const discountEl = document.getElementById('discountValue');
+    const discountSummaryLabel = document.getElementById('discountSummaryLabel');
     const totalEl = document.getElementById('totalValue');
     const discountInput = document.getElementById('discountInput');
 
@@ -300,14 +301,20 @@ function updateSummary() {
         return sum + toNumber(entry.product.price) * entry.quantity;
     }, 0);
 
-    const discountRaw = toNumber(discountInput?.value || 0);
-    const discount = Math.max(0, Math.min(discountRaw, subtotal));
+    const discountPercent = normalizeDiscountPercent(discountInput?.value);
+    const discount = roundMoney((subtotal * discountPercent) / 100);
     const total = Math.max(0, subtotal - discount);
 
-    if (discountInput && toNumber(discountInput.value) !== discount) {
-        discountInput.value = String(Math.floor(discount));
+    if (discountInput && discountInput.value.trim() !== '') {
+        const normalizedText = String(discountPercent);
+        if (discountInput.value !== normalizedText) {
+            discountInput.value = normalizedText;
+        }
     }
 
+    if (discountSummaryLabel) {
+        discountSummaryLabel.textContent = discountPercent > 0 ? `Discount (${discountPercent}%)` : 'Discount';
+    }
     if (subtotalEl) subtotalEl.textContent = formatCurrency(subtotal);
     if (discountEl) discountEl.textContent = formatCurrency(discount);
     if (totalEl) totalEl.textContent = formatCurrency(total);
@@ -396,7 +403,7 @@ async function handleCheckout() {
 
 function buildCheckoutPreviewData() {
     const customerId = parseEntityId(document.getElementById('salesCustomerSelect')?.value);
-    const discountInputValue = toNumber(document.getElementById('discountInput')?.value || 0);
+    const discountPercent = normalizeDiscountPercent(document.getElementById('discountInput')?.value);
     const note = (document.getElementById('salesNoteInput')?.value || '').trim();
 
     const previewItems = Array.from(cart.values()).map((entry) => {
@@ -419,7 +426,7 @@ function buildCheckoutPreviewData() {
     }
 
     const subtotal = previewItems.reduce((sum, item) => sum + item.lineTotal, 0);
-    const discount = Math.max(0, Math.min(discountInputValue, subtotal));
+    const discount = roundMoney((subtotal * discountPercent) / 100);
     const totalAmount = Math.max(0, subtotal - discount);
 
     const selectedCustomer = customerId
@@ -443,6 +450,7 @@ function buildCheckoutPreviewData() {
         soldAt: new Date().toISOString(),
         soldByName: currentUser.fullName || currentUser.email || 'Admin',
         customerName: selectedCustomer?.fullName || 'Walk-in Customer',
+        discountPercent,
         items: previewItems,
         subtotal,
         discount,
@@ -534,7 +542,7 @@ function openInvoiceModal(order, showConfirmButton = false) {
 
             <div class="space-y-1 text-sm">
                 <div class="flex items-center justify-between"><span class="text-text-muted">Subtotal</span><span class="font-semibold">${formatCurrency(order.subtotal || 0)}</span></div>
-                <div class="flex items-center justify-between"><span class="text-text-muted">Discount</span><span class="font-semibold">${formatCurrency(order.discount || 0)}</span></div>
+                <div class="flex items-center justify-between"><span class="text-text-muted">Discount${order.discountPercent ? ` (${order.discountPercent}%)` : ''}</span><span class="font-semibold">${formatCurrency(order.discount || 0)}</span></div>
                 <div class="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-gray-800"><span class="font-bold">Total</span><span class="font-extrabold text-primary">${formatCurrency(order.totalAmount || 0)}</span></div>
             </div>
 
@@ -601,6 +609,24 @@ function setupLogout() {
 function toNumber(value) {
     const num = Number(value);
     return Number.isFinite(num) ? num : 0;
+}
+
+function normalizeDiscountPercent(value) {
+    if (value === null || value === undefined) {
+        return 0;
+    }
+
+    const text = String(value).trim();
+    if (!text.length) {
+        return 0;
+    }
+
+    const percent = Math.floor(toNumber(text));
+    return Math.max(1, Math.min(percent, 99));
+}
+
+function roundMoney(value) {
+    return Number(toNumber(value).toFixed(2));
 }
 
 function parseEntityId(value) {

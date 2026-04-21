@@ -139,19 +139,9 @@ async function loadDashboardData() {
         if (revenueResult.success && revenueResult.data) {
             const summary = revenueResult.data;
 
-            const retailRevenueEl = document.getElementById('retailRevenueToday');
-            if (retailRevenueEl) {
-                retailRevenueEl.textContent = formatCurrency(summary.retailRevenue || 0);
-            }
-
             const combinedRevenueEl = document.getElementById('combinedRevenueToday');
             if (combinedRevenueEl) {
                 combinedRevenueEl.textContent = formatCurrency(summary.combinedRevenue || 0);
-            }
-
-            const salesOrdersTodayEl = document.getElementById('totalSalesOrdersToday');
-            if (salesOrdersTodayEl) {
-                salesOrdersTodayEl.textContent = summary.totalSalesOrders || 0;
             }
         }
         

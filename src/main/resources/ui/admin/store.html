@@ -70,7 +70,7 @@
                 <input
                   id="productSearchInput"
                   type="text"
-                  placeholder="Search products by name, category, or SKU"
+                  placeholder="Search products by name, category, or product code"
                   class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 text-text-main dark:text-white"
                 />
                 <select
@@ -107,14 +107,23 @@
                   </div>
                   <div>
                     <label for="discountInput" class="block text-xs font-semibold uppercase tracking-wide text-text-muted mb-1">Discount</label>
-                    <input
-                      id="discountInput"
-                      type="number"
-                      min="0"
-                      step="1000"
-                      value="0"
-                      class="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-lg text-sm"
-                    />
+                    <div class="relative">
+                      <input
+                        id="discountInput"
+                        type="number"
+                        min="1"
+                        max="99"
+                        step="1"
+                        value=""
+                        placeholder="0-99"
+                        class="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-lg text-sm"
+                        style="padding-right: 2rem;"
+                      />
+                      <span
+                        class="pointer-events-none text-sm text-text-muted"
+                        style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%);"
+                      >&#37;</span>
+                    </div>
                   </div>
                 </div>
 
@@ -134,7 +143,7 @@
                     <span id="subtotalValue" class="font-semibold text-text-main dark:text-white">0</span>
                   </div>
                   <div class="flex items-center justify-between">
-                    <span class="text-text-muted">Discount</span>
+                    <span id="discountSummaryLabel" class="text-text-muted">Discount</span>
                     <span id="discountValue" class="font-semibold text-text-main dark:text-white">0</span>
                   </div>
                   <div class="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-gray-700">
