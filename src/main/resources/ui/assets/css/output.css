@@ -945,6 +945,14 @@ input:where([type='file']):focus {
   top: 1rem;
 }
 
+.right-1 {
+  right: 0.25rem;
+}
+
+.top-1 {
+  top: 0.25rem;
+}
+
 .z-10 {
   z-index: 10;
 }
@@ -1043,6 +1051,18 @@ input:where([type='file']):focus {
   margin-top: auto;
 }
 
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.ml-2 {
+  margin-left: 0.5rem;
+}
+
+.mt-5 {
+  margin-top: 1.25rem;
+}
+
 .block {
   display: block;
 }
@@ -1053,6 +1073,10 @@ input:where([type='file']):focus {
 
 .flex {
   display: flex;
+}
+
+.inline-flex {
+  display: inline-flex;
 }
 
 .table {
@@ -1324,6 +1348,14 @@ input:where([type='file']):focus {
 
 .max-w-md {
   max-width: 28rem;
+}
+
+.max-w-5xl {
+  max-width: 64rem;
+}
+
+.max-w-3xl {
+  max-width: 48rem;
 }
 
 .flex-1 {
@@ -2059,6 +2091,11 @@ input:where([type='file']):focus {
   padding-bottom: 15px;
 }
 
+.px-2\.5 {
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+}
+
 .pb-5 {
   padding-bottom: 1.25rem;
 }
@@ -2119,6 +2156,10 @@ input:where([type='file']):focus {
   font-family: Plus Jakarta Sans, sans-serif;
 }
 
+.font-\[\'Plus_Jakarta_Sans\'\] {
+  font-family: 'Plus Jakarta Sans';
+}
+
 .text-3xl {
   font-size: 1.875rem;
   line-height: 2.25rem;
@@ -2169,6 +2210,26 @@ input:where([type='file']):focus {
 .text-xs {
   font-size: 0.75rem;
   line-height: 1rem;
+}
+
+.text-\[12px\] {
+  font-size: 12px;
+}
+
+.text-\[13px\] {
+  font-size: 13px;
+}
+
+.text-\[14px\] {
+  font-size: 14px;
+}
+
+.text-\[16px\] {
+  font-size: 16px;
+}
+
+.text-\[18px\] {
+  font-size: 18px;
 }
 
 .font-black {
@@ -3097,6 +3158,11 @@ input:where([type='file']):focus {
   color: rgb(82 82 91 / var(--tw-text-opacity, 1));
 }
 
+.dark\:text-emerald-300:is(.dark *) {
+  --tw-text-opacity: 1;
+  color: rgb(110 231 183 / var(--tw-text-opacity, 1));
+}
+
 .dark\:hover\:border-gray-700:hover:is(.dark *) {
   --tw-border-opacity: 1;
   border-color: rgb(55 65 81 / var(--tw-border-opacity, 1));
@@ -3138,6 +3204,10 @@ input:where([type='file']):focus {
   background-color: rgb(30 41 59 / var(--tw-bg-opacity, 1));
 }
 
+.dark\:hover\:bg-gray-800\/40:hover:is(.dark *) {
+  background-color: rgb(31 41 55 / 0.4);
+}
+
 .dark\:hover\:text-white:hover:is(.dark *) {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
@@ -3151,11 +3221,23 @@ input:where([type='file']):focus {
   .sm\:flex-row {
     flex-direction: row;
   }
+
+  .sm\:items-end {
+    align-items: flex-end;
+  }
 }
 
 @media (min-width: 768px) {
+  .md\:ml-64 {
+    margin-left: 16rem;
+  }
+
   .md\:block {
     display: block;
+  }
+
+  .md\:flex {
+    display: flex;
   }
 
   .md\:grid-cols-2 {

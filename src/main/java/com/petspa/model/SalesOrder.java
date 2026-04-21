@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * SalesOrder Entity - Retail checkout bill/invoice header.
+ * SalesOrder Entity - Retail checkout bill/receipt header.
  */
 @Entity
 @Table(name = "sales_orders")

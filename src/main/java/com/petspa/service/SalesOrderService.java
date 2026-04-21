@@ -221,7 +221,7 @@ public class SalesOrderService {
         for (int attempt = 0; attempt < 5; attempt++) {
             LocalDateTime now = LocalDateTime.now();
             int random = ThreadLocalRandom.current().nextInt(100, 1000);
-            String orderNo = String.format("INV-%s-%03d", now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")), random);
+            String orderNo = String.format("RCP-%s-%03d", now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")), random);
             if (!salesOrderRepository.existsByOrderNo(orderNo)) {
                 return orderNo;
             }

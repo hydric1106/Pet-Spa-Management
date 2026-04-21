@@ -96,7 +96,8 @@ function handleNavigation(page) {
         clients: 'clients.html',
         staff: 'staff.html',
         workshifts: 'workshifts.html',
-        sales: 'store.html'
+        sales: 'store.html',
+        'billing-history': 'billing_history.html',
     };
 
     const route = pageRoutes[page];
@@ -398,7 +399,7 @@ async function handleCheckout() {
     }
 
     pendingCheckoutPayload = previewData.payload;
-    openInvoiceModal(previewData.previewOrder, true);
+    openReceiptModal(previewData.previewOrder, true);
 }
 
 function buildCheckoutPreviewData() {
@@ -466,7 +467,7 @@ async function confirmSalesOrder() {
         return;
     }
 
-    const confirmBtn = document.getElementById('confirmInvoiceBtn');
+    const confirmBtn = document.getElementById('confirmReceiptBtn');
     if (confirmBtn) {
         confirmBtn.disabled = true;
         confirmBtn.textContent = 'Confirming...';
@@ -493,7 +494,7 @@ async function confirmSalesOrder() {
     }
 }
 
-function openInvoiceModal(order, showConfirmButton = false) {
+function openReceiptModal(order, showConfirmButton = false) {
     const itemsRows = (order.items || []).map((item) => `
         <tr>
             <td class="py-2 pr-3 text-sm text-text-main dark:text-white">${escapeHtml(item.productName || 'Product')}</td>
@@ -507,7 +508,7 @@ function openInvoiceModal(order, showConfirmButton = false) {
         <div class="space-y-4">
             <div class="grid grid-cols-2 gap-3">
                 <div class="p-3 rounded-xl bg-slate-50 dark:bg-gray-800/50">
-                    <p class="text-xs uppercase tracking-wide text-text-muted font-bold">Invoice No</p>
+                    <p class="text-xs uppercase tracking-wide text-text-muted font-bold">Receipt No</p>
                     <p class="text-sm font-semibold text-text-main dark:text-white mt-1">${escapeHtml(order.orderNo || '—')}</p>
                 </div>
                 <div class="p-3 rounded-xl bg-slate-50 dark:bg-gray-800/50">
@@ -548,15 +549,15 @@ function openInvoiceModal(order, showConfirmButton = false) {
 
             <div class="flex justify-end gap-3 pt-2">
                 <button type="button" onclick="closeModal()" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-gray-700 text-sm font-semibold hover:bg-slate-200 dark:hover:bg-gray-600">Close</button>
-                ${showConfirmButton ? '<button id="confirmInvoiceBtn" type="button" class="px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-content">Confirm</button>' : ''}
+                ${showConfirmButton ? '<button id="confirmReceiptBtn" type="button" class="px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-content">Confirm</button>' : ''}
             </div>
         </div>
     `;
 
-    openModal('Invoice Form', content);
+    openModal('Receipt Preview', content);
 
     if (showConfirmButton) {
-        const confirmBtn = document.getElementById('confirmInvoiceBtn');
+        const confirmBtn = document.getElementById('confirmReceiptBtn');
         confirmBtn?.addEventListener('click', confirmSalesOrder);
     }
 }
