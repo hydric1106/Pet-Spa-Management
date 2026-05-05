@@ -94,6 +94,7 @@ function handleNavigation(page) {
         'pets': 'pets.html',
         'services': 'services.html',
         'sales': 'store.html',
+        'stock': 'stock.html',
         'billing-history': 'billing_history.html',
         'clients': 'clients.html',
         'staff': 'staff.html',

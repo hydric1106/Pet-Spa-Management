@@ -97,6 +97,7 @@ function handleNavigation(page) {
         staff: 'staff.html',
         workshifts: 'workshifts.html',
         sales: 'store.html',
+        stock: 'stock.html',
         'billing-history': 'billing_history.html',
     };
 
@@ -271,7 +272,7 @@ function renderCart() {
             <div class="flex-1 min-w-0">
                 <p class="text-sm font-bold text-text-main dark:text-white truncate">${escapeHtml(product.name || 'Product')}</p>
                 <p class="text-xs text-text-muted">${formatCurrency(product.price || 0)} each</p>
-                <p class="text-xs font-semibold text-primary mt-1">${formatCurrency(lineTotal)}</p>
+                <p class="text-xs font-bold text-red-600 dark:text-red-400 mt-1">${formatCurrency(lineTotal)}</p>
             </div>
             <div class="flex items-center gap-1 bg-white dark:bg-gray-800 rounded-lg p-1 border border-slate-200 dark:border-gray-700">
                 <button class="qty-minus size-7 rounded-md hover:bg-slate-100 dark:hover:bg-gray-700 text-sm font-bold" data-product-id="${productId}">-</button>
@@ -495,8 +496,9 @@ async function confirmSalesOrder() {
 }
 
 function openReceiptModal(order, showConfirmButton = false) {
-    const itemsRows = (order.items || []).map((item) => `
+    const itemsRows = (order.items || []).map((item, index) => `
         <tr>
+            <td class="py-2 px-3 text-sm text-text-muted">${index + 1}</td>
             <td class="py-2 pr-3 text-sm text-text-main dark:text-white">${escapeHtml(item.productName || 'Product')}</td>
             <td class="py-2 px-3 text-sm text-right text-text-main dark:text-white">${item.quantity || 0}</td>
             <td class="py-2 px-3 text-sm text-right text-text-main dark:text-white">${formatCurrency(item.unitPrice || 0)}</td>
@@ -529,6 +531,7 @@ function openReceiptModal(order, showConfirmButton = false) {
                 <table class="min-w-full">
                     <thead class="bg-slate-50 dark:bg-gray-800/50">
                         <tr>
+                            <th class="py-2 px-3 text-left text-xs uppercase tracking-wide text-text-muted">No.</th>
                             <th class="py-2 px-3 text-left text-xs uppercase tracking-wide text-text-muted">Item</th>
                             <th class="py-2 px-3 text-right text-xs uppercase tracking-wide text-text-muted">Qty</th>
                             <th class="py-2 px-3 text-right text-xs uppercase tracking-wide text-text-muted">Price</th>
@@ -536,7 +539,7 @@ function openReceiptModal(order, showConfirmButton = false) {
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-gray-800">
-                        ${itemsRows || '<tr><td colspan="4" class="py-3 text-center text-sm text-text-muted">No items</td></tr>'}
+                        ${itemsRows || '<tr><td colspan="5" class="py-3 text-center text-sm text-text-muted">No items</td></tr>'}
                     </tbody>
                 </table>
             </div>
