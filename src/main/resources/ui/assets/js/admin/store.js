@@ -532,8 +532,8 @@ function openReceiptModal(order, showConfirmButton = false) {
                     <thead class="bg-slate-50 dark:bg-gray-800/50">
                         <tr>
                             <th class="py-2 px-3 text-left text-xs uppercase tracking-wide text-text-muted">No.</th>
-                            <th class="py-2 px-3 text-left text-xs uppercase tracking-wide text-text-muted">Item</th>
-                            <th class="py-2 px-3 text-right text-xs uppercase tracking-wide text-text-muted">Qty</th>
+                            <th class="py-2 px-3 text-left text-xs uppercase tracking-wide text-text-muted">Items</th>
+                            <th class="py-2 px-3 text-right text-xs uppercase tracking-wide text-text-muted">Quantity</th>
                             <th class="py-2 px-3 text-right text-xs uppercase tracking-wide text-text-muted">Price</th>
                             <th class="py-2 px-3 text-right text-xs uppercase tracking-wide text-text-muted">Total</th>
                         </tr>
