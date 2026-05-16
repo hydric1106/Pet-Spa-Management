@@ -333,6 +333,19 @@ public class JavaBridge {
         }
     }
 
+    /**
+     * Deletes a retail product (hard delete).
+     */
+    public String deleteProduct(Object productIdRaw) {
+        try {
+            Long productId = parsePositiveLongId(productIdRaw, "productId");
+            productService.deleteProduct(productId);
+            return createSuccessResponse("Product deleted successfully");
+        } catch (Exception e) {
+            return createErrorResponse("Failed to delete product: " + e.getMessage());
+        }
+    }
+
     // =============================================================================
     // RETAIL SALES MANAGEMENT
     // =============================================================================

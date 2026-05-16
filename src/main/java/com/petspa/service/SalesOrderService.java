@@ -215,7 +215,7 @@ public class SalesOrderService {
 
             LocalDate start = monthStart.withDayOfMonth(startDay);
             LocalDate end = monthStart.withDayOfMonth(endDay);
-            String label = "W" + (weekIndex + 1);
+            String label = "Week " + (weekIndex + 1);
 
             points.add(buildRevenuePoint(label, start, end));
         }

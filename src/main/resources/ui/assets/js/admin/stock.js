@@ -176,6 +176,7 @@ function renderProducts() {
 
         const stockQty = Number.isInteger(product.stockQty) ? product.stockQty : Number.parseInt(product.stockQty || '0', 10) || 0;
         const lowStock = stockQty > 0 && stockQty <= 5;
+        const badgeConfig = getStockBadgeConfig(stockQty, lowStock);
         const imageCandidates = buildProductImageCandidates(product);
 
         const card = document.createElement('article');
@@ -189,7 +190,7 @@ function renderProducts() {
                     alt="${escapeHtml(product.name || 'Product image')}"
                     loading="lazy"
                 />
-                <span class="absolute top-2 right-2 text-xs font-semibold px-2 py-1 rounded-lg ${lowStock ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' : 'bg-primary/10 text-primary'}">${stockQty <= 0 ? 'Out of stock' : lowStock ? `Low Stock: ${stockQty}` : `${stockQty} in stock`}</span>
+                <span class="absolute top-2 right-2 text-xs font-bold px-2 py-1 rounded-lg ${badgeConfig.className}">${badgeConfig.label}</span>
             </div>
             <div class="space-y-1">
                 <h3 class="font-bold text-sm text-text-main dark:text-white">${escapeHtml(product.name || 'Product')}</h3>
@@ -199,6 +200,7 @@ function renderProducts() {
                 <span class="font-extrabold text-primary">${formatCurrency(product.price || 0)}</span>
                 <div class="flex items-center gap-2">
                     <button class="edit-product-btn px-3 py-2 rounded-xl border border-slate-200 dark:border-gray-700 text-xs font-bold text-text-main dark:text-white hover:bg-slate-50 dark:hover:bg-gray-800 transition-colors" data-product-id="${productId}">Edit</button>
+                    <button class="delete-product-btn px-3 py-2 rounded-xl border border-red-200 dark:border-red-800 text-xs font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" data-product-id="${productId}">Delete</button>
                 </div>
             </div>
         `;
@@ -206,11 +208,33 @@ function renderProducts() {
         const editBtn = card.querySelector('.edit-product-btn');
         editBtn?.addEventListener('click', () => setEditMode(product));
 
+        const deleteBtn = card.querySelector('.delete-product-btn');
+        deleteBtn?.addEventListener('click', () => handleDeleteProduct(product));
+
         const productImage = card.querySelector('.product-image');
         bindProductImageFallback(productImage);
 
         productGrid.appendChild(card);
     });
+}
+
+async function handleDeleteProduct(product) {
+    const productId = parseEntityId(product?.id);
+    if (!productId) return;
+
+    const name = product?.name ? `"${product.name}"` : 'this product';
+    const confirmed = await confirmAction(`Are you sure you want to permanently delete ${name}?`);
+    if (!confirmed) return;
+
+    const result = await callBridge('deleteProduct', productId);
+    if (!result.success) {
+        showToast(result.message || 'Failed to delete product.', 'error');
+        return;
+    }
+
+    showToast('Product deleted successfully.', 'success');
+    await loadProducts();
+    renderProducts();
 }
 
 // =============================================================================
@@ -413,6 +437,27 @@ function toNumber(value) {
 function parseEntityId(value) {
     const parsed = Number.parseInt(value, 10);
     return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
+}
+
+function getStockBadgeConfig(stockQty, lowStock) {
+    if (stockQty <= 0) {
+        return {
+            label: 'Out of stock',
+            className: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+        };
+    }
+
+    if (lowStock) {
+        return {
+            label: `Low stock: ${stockQty}`,
+            className: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+        };
+    }
+
+    return {
+        label: `${stockQty} in stock`,
+        className: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
+    };
 }
 
 function escapeHtml(text) {

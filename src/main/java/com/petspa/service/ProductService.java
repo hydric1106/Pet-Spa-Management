@@ -101,6 +101,17 @@ public class ProductService {
     }
 
     /**
+     * Deletes a product (hard delete).
+     */
+    @Transactional
+    public void deleteProduct(Long productId) {
+        ProductItem item = productItemRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
+
+        productItemRepository.delete(item);
+    }
+
+    /**
      * Gets a product by ID.
      */
     @Transactional(readOnly = true)
