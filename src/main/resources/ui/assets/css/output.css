@@ -945,10 +945,6 @@ input:where([type='file']):focus {
   top: 1rem;
 }
 
-.left-2 {
-  left: 0.5rem;
-}
-
 .z-10 {
   z-index: 10;
 }
@@ -1182,6 +1178,14 @@ input:where([type='file']):focus {
   height: 100vh;
 }
 
+.h-auto {
+  height: auto;
+}
+
+.h-64 {
+  height: 16rem;
+}
+
 .max-h-40 {
   max-height: 10rem;
 }
@@ -1340,6 +1344,10 @@ input:where([type='file']):focus {
 
 .max-w-md {
   max-width: 28rem;
+}
+
+.max-w-4xl {
+  max-width: 56rem;
 }
 
 .flex-1 {
@@ -1715,6 +1723,11 @@ input:where([type='file']):focus {
   border-color: rgb(255 255 255 / 0.1);
 }
 
+.border-green-100 {
+  --tw-border-opacity: 1;
+  border-color: rgb(220 252 231 / var(--tw-border-opacity, 1));
+}
+
 .bg-amber-50 {
   --tw-bg-opacity: 1;
   background-color: rgb(255 251 235 / var(--tw-bg-opacity, 1));
@@ -1859,6 +1872,15 @@ input:where([type='file']):focus {
   background-color: rgb(255 255 255 / 0.8);
 }
 
+.bg-green-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(240 253 244 / var(--tw-bg-opacity, 1));
+}
+
+.bg-white\/70 {
+  background-color: rgb(255 255 255 / 0.7);
+}
+
 .bg-\[radial-gradient\(circle_at_top_right\2c _var\(--tw-gradient-stops\)\)\] {
   background-image: radial-gradient(circle at top right, var(--tw-gradient-stops));
 }
@@ -1909,6 +1931,11 @@ input:where([type='file']):focus {
 
 .bg-center {
   background-position: center;
+}
+
+.object-contain {
+  -o-object-fit: contain;
+     object-fit: contain;
 }
 
 .object-cover {
@@ -2119,6 +2146,10 @@ input:where([type='file']):focus {
   padding-top: 1rem;
 }
 
+.pb-8 {
+  padding-bottom: 2rem;
+}
+
 .text-left {
   text-align: left;
 }
@@ -2185,6 +2216,14 @@ input:where([type='file']):focus {
 .text-xs {
   font-size: 0.75rem;
   line-height: 1rem;
+}
+
+.text-\[20px\] {
+  font-size: 20px;
+}
+
+.text-\[22px\] {
+  font-size: 22px;
 }
 
 .font-black {
@@ -2405,6 +2444,16 @@ input:where([type='file']):focus {
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
 }
 
+.text-green-700 {
+  --tw-text-opacity: 1;
+  color: rgb(21 128 61 / var(--tw-text-opacity, 1));
+}
+
+.text-slate-200 {
+  --tw-text-opacity: 1;
+  color: rgb(226 232 240 / var(--tw-text-opacity, 1));
+}
+
 .accent-primary {
   accent-color: #13daec;
 }
@@ -2423,6 +2472,10 @@ input:where([type='file']):focus {
 
 .opacity-80 {
   opacity: 0.8;
+}
+
+.mix-blend-multiply {
+  mix-blend-mode: multiply;
 }
 
 .shadow-2xl {
@@ -2873,6 +2926,16 @@ input:where([type='file']):focus {
   border-color: rgb(39 39 42 / var(--tw-border-opacity, 1));
 }
 
+.dark\:border-green-800:is(.dark *) {
+  --tw-border-opacity: 1;
+  border-color: rgb(22 101 52 / var(--tw-border-opacity, 1));
+}
+
+.dark\:border-emerald-800:is(.dark *) {
+  --tw-border-opacity: 1;
+  border-color: rgb(6 95 70 / var(--tw-border-opacity, 1));
+}
+
 .dark\:bg-background-dark:is(.dark *) {
   --tw-bg-opacity: 1;
   background-color: rgb(16 34 32 / var(--tw-bg-opacity, 1));
@@ -2991,6 +3054,14 @@ input:where([type='file']):focus {
   background-color: rgb(24 24 27 / 0.5);
 }
 
+.dark\:bg-green-900\/20:is(.dark *) {
+  background-color: rgb(20 83 45 / 0.2);
+}
+
+.dark\:bg-surface-dark\/60:is(.dark *) {
+  background-color: rgb(26 44 46 / 0.6);
+}
+
 .dark\:from-primary\/5:is(.dark *) {
   --tw-gradient-from: rgb(19 218 236 / 0.05) var(--tw-gradient-from-position);
   --tw-gradient-to: rgb(19 218 236 / 0) var(--tw-gradient-to-position);
@@ -3104,6 +3175,34 @@ input:where([type='file']):focus {
   color: rgb(82 82 91 / var(--tw-text-opacity, 1));
 }
 
+.dark\:text-green-400:is(.dark *) {
+  --tw-text-opacity: 1;
+  color: rgb(74 222 128 / var(--tw-text-opacity, 1));
+}
+
+.dark\:text-slate-300:is(.dark *) {
+  --tw-text-opacity: 1;
+  color: rgb(203 213 225 / var(--tw-text-opacity, 1));
+}
+
+.dark\:text-gray-700:is(.dark *) {
+  --tw-text-opacity: 1;
+  color: rgb(55 65 81 / var(--tw-text-opacity, 1));
+}
+
+.dark\:opacity-90:is(.dark *) {
+  opacity: 0.9;
+}
+
+.dark\:mix-blend-normal:is(.dark *) {
+  mix-blend-mode: normal;
+}
+
+.dark\:invert:is(.dark *) {
+  --tw-invert: invert(100%);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
 .dark\:hover\:border-gray-700:hover:is(.dark *) {
   --tw-border-opacity: 1;
   border-color: rgb(55 65 81 / var(--tw-border-opacity, 1));
@@ -3165,6 +3264,10 @@ input:where([type='file']):focus {
 
   .sm\:items-end {
     align-items: flex-end;
+  }
+
+  .sm\:items-center {
+    align-items: center;
   }
 }
 

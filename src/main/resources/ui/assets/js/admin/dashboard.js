@@ -1,6 +1,8 @@
 let currentUser = null;
 let currentPage = 'dashboard';
 let componentsInitialized = false;
+let revenueRange = 'week';
+let revenueChartInitialized = false;
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
@@ -82,6 +84,7 @@ async function initializeDashboard() {
         
         // Load dashboard data
         await loadDashboardData();
+        initRevenueChart();
         
     } catch (error) {
         console.error('Dashboard initialization error:', error);
@@ -92,6 +95,11 @@ function updateUserDisplay() {
     const userNameEl = document.getElementById('currentUserName');
     if (userNameEl && currentUser) {
         userNameEl.textContent = currentUser.fullName;
+    }
+
+    const welcomeNameEl = document.getElementById('welcomeUserName');
+    if (welcomeNameEl && currentUser) {
+        welcomeNameEl.textContent = currentUser.fullName;
     }
 }
 
@@ -150,6 +158,236 @@ async function loadDashboardData() {
     } catch (error) {
         console.error('Error loading dashboard data:', error);
     }
+}
+
+function initRevenueChart() {
+    if (revenueChartInitialized) return;
+
+    const rangeButtons = document.querySelectorAll('[data-revenue-range]');
+    if (!rangeButtons.length) return;
+
+    revenueChartInitialized = true;
+
+    rangeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const rangeKey = button.dataset.revenueRange || 'week';
+            setRevenueRange(rangeKey);
+        });
+    });
+
+    setRevenueRange(revenueRange);
+}
+
+async function setRevenueRange(rangeKey) {
+    revenueRange = rangeKey || 'week';
+    updateRevenueRangeButtons(revenueRange);
+    await loadRevenueChart(revenueRange);
+}
+
+function updateRevenueRangeButtons(activeRange) {
+    const rangeButtons = document.querySelectorAll('[data-revenue-range]');
+    const activeClasses = ['bg-white', 'dark:bg-surface-dark', 'text-text-main', 'dark:text-white', 'shadow-sm'];
+    const inactiveClasses = ['text-text-muted', 'dark:text-gray-300'];
+
+    rangeButtons.forEach(button => {
+        const isActive = button.dataset.revenueRange === activeRange;
+        button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+
+        activeClasses.forEach(className => button.classList.toggle(className, isActive));
+        inactiveClasses.forEach(className => button.classList.toggle(className, !isActive));
+    });
+}
+
+async function loadRevenueChart(rangeKey) {
+    try {
+        const result = await callBridge('getRevenueSeries', rangeKey);
+        if (result.success) {
+            renderRevenueChart(result.data || []);
+        } else {
+            renderRevenueChart([]);
+        }
+    } catch (error) {
+        console.error('Error loading revenue chart:', error);
+        renderRevenueChart([]);
+    }
+}
+
+function renderRevenueChart(points) {
+    const svg = document.getElementById('revenueChartSvg');
+    const line = document.getElementById('revenueChartLine');
+    const area = document.getElementById('revenueChartArea');
+    const xAxis = document.getElementById('revenueChartXAxis');
+    const dots = document.getElementById('revenueChartDots');
+    const valueLabels = document.getElementById('revenueChartValueLabels');
+    const grid = document.getElementById('revenueChartGrid');
+    const emptyState = document.getElementById('revenueChartEmpty');
+    const totalEl = document.getElementById('revenueChartTotal');
+
+    if (!svg || !line || !area || !xAxis || !dots || !grid || !valueLabels) return;
+
+    const safePoints = Array.isArray(points) ? points : [];
+    if (safePoints.length === 0) {
+        line.setAttribute('d', '');
+        area.setAttribute('d', '');
+        xAxis.innerHTML = '';
+        dots.innerHTML = '';
+        valueLabels.innerHTML = '';
+        grid.innerHTML = '';
+        if (totalEl) totalEl.textContent = '--';
+        if (emptyState) emptyState.classList.remove('hidden');
+        return;
+    }
+
+    if (emptyState) emptyState.classList.add('hidden');
+
+    const normalizedPoints = safePoints.map(point => ({
+        label: String(point.label || ''),
+        value: Number(point.combinedRevenue || 0),
+        startDate: point.startDate || '',
+        endDate: point.endDate || ''
+    }));
+
+    const total = normalizedPoints.reduce((sum, point) => sum + point.value, 0);
+    if (totalEl) totalEl.textContent = formatCurrency(total);
+
+    const bounds = svg.getBoundingClientRect();
+    const width = Math.max(Math.round(bounds.width), 1);
+    const height = Math.max(Math.round(bounds.height), 1);
+    svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    const padding = {
+        top: 36,
+        right: 24,
+        bottom: 36,
+        left: 24
+    };
+
+    const maxValue = Math.max(...normalizedPoints.map(point => point.value), 1);
+    const availableWidth = width - padding.left - padding.right;
+    const availableHeight = height - padding.top - padding.bottom;
+    const xStep = normalizedPoints.length > 1 ? availableWidth / (normalizedPoints.length - 1) : 0;
+
+    const chartPoints = normalizedPoints.map((point, index) => {
+        const x = padding.left + (xStep * index);
+        const ratio = point.value / maxValue;
+        const y = padding.top + ((1 - ratio) * availableHeight);
+        return {
+            ...point,
+            x,
+            y
+        };
+    });
+
+    const linePath = chartPoints
+        .map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`)
+        .join(' ');
+
+    const areaPath = [
+        `M ${chartPoints[0].x} ${height - padding.bottom}`,
+        ...chartPoints.map(point => `L ${point.x} ${point.y}`),
+        `L ${chartPoints[chartPoints.length - 1].x} ${height - padding.bottom}`,
+        'Z'
+    ].join(' ');
+
+    line.setAttribute('d', linePath);
+    area.setAttribute('d', areaPath);
+
+    grid.innerHTML = '';
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const gridLines = 4;
+    const isDark = document.documentElement.classList.contains('dark');
+    const gridColor = isDark ? '#334155' : '#e2e8f0';
+    for (let i = 0; i <= gridLines; i++) {
+        const y = padding.top + (availableHeight * i / gridLines);
+        const gridLine = document.createElementNS(svgNS, 'line');
+        gridLine.setAttribute('x1', padding.left);
+        gridLine.setAttribute('x2', width - padding.right);
+        gridLine.setAttribute('y1', y);
+        gridLine.setAttribute('y2', y);
+        gridLine.setAttribute('stroke', gridColor);
+        gridLine.setAttribute('stroke-width', '1');
+        gridLine.setAttribute('stroke-dasharray', '4 6');
+        grid.appendChild(gridLine);
+    }
+
+    dots.innerHTML = '';
+    valueLabels.innerHTML = '';
+    xAxis.innerHTML = '';
+    const valueLabelColor = isDark ? '#cbd5e1' : '#475569';
+    const axisLabelColor = isDark ? '#94a3b8' : '#64748b';
+    chartPoints.forEach(point => {
+        const circle = document.createElementNS(svgNS, 'circle');
+        circle.setAttribute('cx', point.x);
+        circle.setAttribute('cy', point.y);
+        circle.setAttribute('r', '4');
+        circle.setAttribute('fill', '#ffffff');
+        circle.setAttribute('stroke', '#13daec');
+        circle.setAttribute('stroke-width', '2');
+
+        const title = document.createElementNS(svgNS, 'title');
+        title.textContent = `${point.label}: ${formatCurrency(point.value)}`;
+        circle.appendChild(title);
+
+        dots.appendChild(circle);
+
+        const labelText = formatCompactCurrency(point.value);
+        if (labelText) {
+            const text = document.createElementNS(svgNS, 'text');
+            const labelY = Math.max(point.y - 10, 12);
+            text.setAttribute('x', point.x);
+            text.setAttribute('y', labelY);
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('dominant-baseline', 'text-after-edge');
+            text.setAttribute('font-size', '12');
+            text.setAttribute('font-weight', '600');
+            text.setAttribute('fill', valueLabelColor);
+            text.textContent = labelText;
+            valueLabels.appendChild(text);
+        }
+    });
+
+    normalizedPoints.forEach((point, index) => {
+        const text = document.createElementNS(svgNS, 'text');
+        text.setAttribute('x', chartPoints[index].x);
+        text.setAttribute('y', height - 8);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('font-size', '12');
+        text.setAttribute('font-weight', '600');
+        text.setAttribute('fill', axisLabelColor);
+        if (point.startDate) {
+            text.textContent = point.label;
+            text.setAttribute('data-start', point.startDate);
+            text.setAttribute('data-end', point.endDate || '');
+        } else {
+            text.textContent = point.label;
+        }
+        xAxis.appendChild(text);
+    });
+}
+
+function formatCompactCurrency(amount) {
+    const value = Number(amount);
+    if (!Number.isFinite(value)) return '';
+    const abs = Math.abs(value);
+    let formatted;
+
+    if (abs >= 1_000_000_000) {
+        formatted = (value / 1_000_000_000).toFixed(1);
+        formatted = `${trimTrailingZero(formatted)}b`;
+    } else if (abs >= 1_000_000) {
+        formatted = (value / 1_000_000).toFixed(1);
+        formatted = `${trimTrailingZero(formatted)}m`;
+    } else if (abs >= 1_000) {
+        formatted = (value / 1_000).toFixed(1);
+        formatted = `${trimTrailingZero(formatted)}k`;
+    } else {
+        formatted = Math.round(value).toString();
+    }
+
+    return formatted;
+}
+
+function trimTrailingZero(value) {
+    return value.replace(/\.0$/, '');
 }
 
 /**

@@ -372,6 +372,18 @@ public class JavaBridge {
         }
     }
 
+    /**
+     * Gets revenue chart series for the dashboard.
+     * @param rangeKey week | month | year
+     */
+    public String getRevenueSeries(String rangeKey) {
+        try {
+            return createSuccessResponse(salesOrderService.getRevenueSeries(rangeKey));
+        } catch (Exception e) {
+            return createErrorResponse("Failed to get revenue series: " + e.getMessage());
+        }
+    }
+
     // =============================================================================
     // PET MANAGEMENT
     // =============================================================================

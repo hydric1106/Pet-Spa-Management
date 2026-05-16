@@ -64,4 +64,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
         @Query("SELECT COALESCE(SUM(b.totalPrice), 0) FROM Booking b WHERE b.bookingDate = :date AND b.status <> :excludedStatus")
         BigDecimal sumRevenueByDateExcludingStatus(@Param("date") LocalDate date,
                                                                                            @Param("excludedStatus") Booking.BookingStatus excludedStatus);
+
+            /**
+             * Sum booking revenue for a date range excluding a given status.
+             */
+            @Query("SELECT COALESCE(SUM(b.totalPrice), 0) FROM Booking b " +
+                    "WHERE b.bookingDate >= :startDate AND b.bookingDate <= :endDate AND b.status <> :excludedStatus")
+            BigDecimal sumRevenueByDateBetweenExcludingStatus(@Param("startDate") LocalDate startDate,
+                                                                     @Param("endDate") LocalDate endDate,
+                                                                     @Param("excludedStatus") Booking.BookingStatus excludedStatus);
 }

@@ -1,5 +1,6 @@
 package com.petspa.service;
 
+import com.petspa.dto.RevenueSeriesPointDTO;
 import com.petspa.dto.SalesOrderCreateRequestDTO;
 import com.petspa.dto.SalesOrderDTO;
 import com.petspa.dto.SalesOrderItemDTO;
@@ -11,10 +12,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
+import java.time.temporal.TemporalAdjusters;
+import java.time.Month;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -161,6 +168,93 @@ public class SalesOrderService {
                 .serviceRevenue(serviceRevenue)
                 .combinedRevenue(combinedRevenue)
                 .totalSalesOrders(totalSalesOrders)
+                .build();
+    }
+
+    /**
+     * Gets revenue series points for the dashboard chart.
+     */
+    @Transactional(readOnly = true)
+    public List<RevenueSeriesPointDTO> getRevenueSeries(String rangeKey) {
+        if (rangeKey == null || rangeKey.isBlank()) {
+            throw new RuntimeException("Range is required");
+        }
+
+        String normalized = rangeKey.trim().toLowerCase();
+        LocalDate today = LocalDate.now();
+
+        return switch (normalized) {
+            case "week" -> buildWeeklyRevenueSeries(today);
+            case "month" -> buildMonthlyRevenueSeries(today);
+            case "year" -> buildYearlyRevenueSeries(today);
+            default -> throw new RuntimeException("Unsupported range: " + rangeKey);
+        };
+    }
+
+    private List<RevenueSeriesPointDTO> buildWeeklyRevenueSeries(LocalDate today) {
+        LocalDate startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        List<RevenueSeriesPointDTO> points = new ArrayList<>();
+
+        for (int i = 0; i < 7; i++) {
+            LocalDate date = startOfWeek.plusDays(i);
+            String label = date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
+            points.add(buildRevenuePoint(label, date, date));
+        }
+
+        return points;
+    }
+
+    private List<RevenueSeriesPointDTO> buildMonthlyRevenueSeries(LocalDate today) {
+        LocalDate monthStart = today.withDayOfMonth(1);
+        int daysInMonth = monthStart.lengthOfMonth();
+        List<RevenueSeriesPointDTO> points = new ArrayList<>();
+
+        for (int weekIndex = 0; weekIndex < 4; weekIndex++) {
+            int startDay = 1 + (weekIndex * 7);
+            int endDay = weekIndex == 3 ? daysInMonth : Math.min(startDay + 6, daysInMonth);
+
+            LocalDate start = monthStart.withDayOfMonth(startDay);
+            LocalDate end = monthStart.withDayOfMonth(endDay);
+            String label = "W" + (weekIndex + 1);
+
+            points.add(buildRevenuePoint(label, start, end));
+        }
+
+        return points;
+    }
+
+    private List<RevenueSeriesPointDTO> buildYearlyRevenueSeries(LocalDate today) {
+        int year = today.getYear();
+        List<RevenueSeriesPointDTO> points = new ArrayList<>();
+
+        for (int month = 1; month <= 12; month++) {
+            LocalDate start = LocalDate.of(year, month, 1);
+            LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
+            String label = Month.of(month).getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
+
+            points.add(buildRevenuePoint(label, start, end));
+        }
+
+        return points;
+    }
+
+    private RevenueSeriesPointDTO buildRevenuePoint(String label, LocalDate startDate, LocalDate endDate) {
+        LocalDateTime retailStart = startDate.atStartOfDay();
+        LocalDateTime retailEnd = endDate.plusDays(1).atStartOfDay();
+
+        BigDecimal retailRevenue = safeMoney(salesOrderRepository.sumTotalAmountBySoldAtBetween(retailStart, retailEnd));
+        BigDecimal serviceRevenue = safeMoney(
+                bookingRepository.sumRevenueByDateBetweenExcludingStatus(startDate, endDate, Booking.BookingStatus.CANCELLED)
+        );
+        BigDecimal combinedRevenue = retailRevenue.add(serviceRevenue);
+
+        return RevenueSeriesPointDTO.builder()
+                .label(label)
+                .startDate(startDate.format(DATE_FORMATTER))
+                .endDate(endDate.format(DATE_FORMATTER))
+                .retailRevenue(retailRevenue)
+                .serviceRevenue(serviceRevenue)
+                .combinedRevenue(combinedRevenue)
                 .build();
     }
 
