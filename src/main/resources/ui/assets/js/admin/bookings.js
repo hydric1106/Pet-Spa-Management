@@ -308,14 +308,14 @@ async function openBookingDetailsModal(bookingId) {
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
-                    <div>
+                    <div class="relative">
                         <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Date</label>
-                        <input type="date" id="detailDate" required value="${escapeHtml(booking.bookingDate || '')}"
-                            class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 text-text-main dark:text-white" />
+                        <input type="text" id="detailDate" required readonly autocomplete="off" placeholder="Select date" value="${escapeHtml(normalizeDateForInput(booking.bookingDate || ''))}"
+                            class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 text-text-main dark:text-white cursor-pointer" />
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Time</label>
-                        <input type="time" id="detailTime" required value="${escapeHtml(normalizeTimeForInput(booking.bookingTime || ''))}"
+                        <input type="text" id="detailTime" placeholder="HH:mm" autocomplete="off" inputmode="numeric" maxlength="5" required value="${escapeHtml(normalizeTimeForInput(booking.bookingTime || ''))}"
                             class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 text-text-main dark:text-white" />
                     </div>
                 </div>
@@ -373,6 +373,8 @@ async function openBookingDetailsModal(bookingId) {
         openModal(`Booking #${normalizedBookingId}`, content);
 
         setTimeout(() => {
+            setupBookingDateTimePickers(['detailDate', 'detailTime']);
+
             const form = document.getElementById('bookingDetailForm');
             const customerSelect = document.getElementById('detailCustomer');
             const serviceSelect = document.getElementById('detailService');
@@ -414,8 +416,8 @@ async function handleBookingDetailsSubmit(event, bookingId) {
 
     const customerId = parseEntityId(document.getElementById('detailCustomer')?.value);
     const petId = parseEntityId(document.getElementById('detailPet')?.value);
-    const bookingDate = document.getElementById('detailDate')?.value;
-    const bookingTime = document.getElementById('detailTime')?.value;
+    const bookingDate = normalizeDateForInput(document.getElementById('detailDate')?.value);
+    const bookingTime = normalizeTimeForInput(document.getElementById('detailTime')?.value);
     const serviceId = parseEntityId(document.getElementById('detailService')?.value);
     const status = document.getElementById('detailStatus')?.value;
     const staffIds = Array.from(document.querySelectorAll('input[name="detailStaff"]:checked'))
@@ -531,9 +533,64 @@ function parseEntityIdList(ids, fallbackId) {
     return singleId ? [singleId] : [];
 }
 
+function normalizeDateForInput(dateValue) {
+    if (dateValue === null || dateValue === undefined) return '';
+
+    const text = String(dateValue).trim();
+    if (!text.length) return '';
+
+    const normalized = text.slice(0, 10);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(normalized)) return '';
+
+    const date = new Date(`${normalized}T00:00:00`);
+    if (Number.isNaN(date.getTime())) return '';
+
+    const actualYear = String(date.getFullYear());
+    const actualMonth = String(date.getMonth() + 1).padStart(2, '0');
+    const actualDay = String(date.getDate()).padStart(2, '0');
+    return `${actualYear}-${actualMonth}-${actualDay}` === normalized ? normalized : '';
+}
+
 function normalizeTimeForInput(timeValue) {
-    if (!timeValue) return '';
-    return String(timeValue).slice(0, 5);
+    if (timeValue === null || timeValue === undefined) return '';
+
+    const text = String(timeValue).trim();
+    if (!text.length) return '';
+
+    const match = text.match(/^(\d{1,2}):(\d{2})(?::\d{2}(?:\.\d+)?)?$/);
+    if (!match) return '';
+
+    const hours = Number(match[1]);
+    const minutes = Number(match[2]);
+    if (!Number.isInteger(hours) || !Number.isInteger(minutes)) return '';
+    if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) return '';
+
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+}
+
+function setupBookingDateTimePickers(inputIds) {
+    if (!window.DatePicker) {
+        return;
+    }
+
+    inputIds.forEach((inputId) => {
+        const input = document.getElementById(inputId);
+        if (!input || input.dataset.pickerBound === 'true') {
+            return;
+        }
+
+        input.dataset.pickerBound = 'true';
+
+        if (String(inputId).toLowerCase().includes('date')) {
+            window.DatePicker.attachDatePicker(input, {
+                placeholder: 'Select date'
+            });
+        } else {
+            window.DatePicker.attachTimeInput(input, {
+                placeholder: 'HH:mm'
+            });
+        }
+    });
 }
 
 // =============================================================================
@@ -614,7 +671,7 @@ async function openBookingModal() {
         return;
     }
 
-    const today = new Date().toISOString().split('T')[0];
+    const today = getTodayISO();
 
     const customerOptions = customers.map(c =>
         `<option value="${c.id}">${escapeHtml(c.fullName)} — ${escapeHtml(c.phoneNumber || '')}</option>`
@@ -647,12 +704,12 @@ async function openBookingModal() {
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Date <span class="text-red-500">*</span></label>
-                    <input type="date" id="bookingDate" value="${today}" required
-                        class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 text-text-main dark:text-white" />
+                    <input type="text" id="bookingDate" value="${today}" required readonly autocomplete="off" placeholder="Select date"
+                        class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 text-text-main dark:text-white cursor-pointer" />
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-text-main dark:text-white mb-2">Time <span class="text-red-500">*</span></label>
-                    <input type="time" id="bookingTime" required
+                    <input type="text" id="bookingTime" placeholder="HH:mm" autocomplete="off" inputmode="numeric" maxlength="5" required
                         class="w-full px-4 py-2.5 bg-slate-100 dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50 text-text-main dark:text-white" />
                 </div>
             </div>
@@ -691,6 +748,8 @@ async function openBookingModal() {
 
     // Cascade: load pets when customer changes
     setTimeout(() => {
+        setupBookingDateTimePickers(['bookingDate', 'bookingTime']);
+
         const customerSelect = document.getElementById('bookingCustomer');
         const serviceSelect = document.getElementById('bookingService');
         if (customerSelect) {
@@ -724,8 +783,8 @@ async function handleNewBookingSubmit(e) {
 
     const customerId = parseEntityId(document.getElementById('bookingCustomer').value);
     const petId = parseEntityId(document.getElementById('bookingPet').value);
-    const bookingDate = document.getElementById('bookingDate').value;
-    const bookingTime = document.getElementById('bookingTime').value;
+    const bookingDate = normalizeDateForInput(document.getElementById('bookingDate')?.value);
+    const bookingTime = normalizeTimeForInput(document.getElementById('bookingTime')?.value);
     const serviceId = parseEntityId(document.getElementById('bookingService').value);
     const staffIds = Array.from(document.querySelectorAll('input[name="bookingStaff"]:checked'))
         .map(input => parseEntityId(input.value))
