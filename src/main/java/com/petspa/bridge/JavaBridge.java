@@ -356,6 +356,11 @@ public class JavaBridge {
     public String createSalesOrder(String orderJson) {
         try {
             SalesOrderCreateRequestDTO request = gson.fromJson(orderJson, SalesOrderCreateRequestDTO.class);
+            if (currentUser == null || currentUser.getId() == null) {
+                return createErrorResponse("No user logged in");
+            }
+
+            request.setSoldByUserId(currentUser.getId());
             SalesOrderDTO created = salesOrderService.createSalesOrder(request);
             return createSuccessResponse(created);
         } catch (Exception e) {

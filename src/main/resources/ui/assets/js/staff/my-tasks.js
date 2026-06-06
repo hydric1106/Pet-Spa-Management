@@ -55,7 +55,8 @@ function handleNavigation(page) {
     const routes = {
         dashboard: 'dashboard.html',
         'my-tasks': 'my_tasks.html',
-        'my-schedule': 'my_schedule.html'
+        'my-schedule': 'my_schedule.html',
+        sales: 'store.html'
     };
 
     const route = routes[page];

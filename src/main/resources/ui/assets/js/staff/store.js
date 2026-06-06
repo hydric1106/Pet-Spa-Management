@@ -16,23 +16,21 @@ const PRODUCT_IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'svg'];
 // =============================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    initStorePage();
+    initStaffStorePage();
 });
 
 document.addEventListener('bridgeReady', () => {
-    initStorePage();
+    initStaffStorePage();
 });
 
-async function initStorePage() {
-    if (componentsInitialized) return;
-    if (!window.javaBridge) return;
-
+async function initStaffStorePage() {
+    if (componentsInitialized || !window.javaBridge) return;
     componentsInitialized = true;
 
     try {
         await loadComponents([
             {
-                path: '../components/admin_sidebar.html',
+                path: '../components/staff_sidebar.html',
                 target: 'sidebar',
                 callback: () => initSidebarNavigation('sales', handleNavigation)
             },
@@ -46,7 +44,7 @@ async function initStorePage() {
         setupEventListeners();
         setupLogout();
     } catch (error) {
-        console.error('Error initializing store page:', error);
+        console.error('Error initializing staff store page:', error);
     }
 }
 
@@ -79,7 +77,7 @@ async function initializePage() {
 function updateUserDisplay() {
     const userNameEl = document.getElementById('currentUserName');
     if (userNameEl && currentUser) {
-        userNameEl.textContent = currentUser.fullName || currentUser.email || 'Admin';
+        userNameEl.textContent = currentUser.fullName || currentUser.email || 'Staff';
     }
 }
 
@@ -90,20 +88,14 @@ function updateUserDisplay() {
 function handleNavigation(page) {
     const pageRoutes = {
         dashboard: 'dashboard.html',
-        bookings: 'bookings.html',
-        pets: 'pets.html',
-        services: 'services.html',
-        clients: 'clients.html',
-        staff: 'staff.html',
-        workshifts: 'workshifts.html',
-        sales: 'store.html',
-        stock: 'stock.html',
-        'billing-history': 'billing_history.html',
+        'my-tasks': 'my_tasks.html',
+        'my-schedule': 'my_schedule.html',
+        sales: 'store.html'
     };
 
     const route = pageRoutes[page];
     if (route && window.javaBridge) {
-        window.javaBridge.navigateTo(`admin/${route}`);
+        window.javaBridge.navigateTo(`staff/${route}`);
     }
 }
 
@@ -436,8 +428,9 @@ function buildCheckoutPreviewData() {
         ? customers.find((customer) => parseEntityId(customer.id) === customerId)
         : null;
 
+    const cashierId = parseEntityId(currentUser.id);
     const payload = {
-        soldByUserId: parseEntityId(currentUser.id),
+        soldByUserId: cashierId,
         customerId: customerId || undefined,
         paymentMethod: 'CASH',
         discount,
@@ -451,7 +444,7 @@ function buildCheckoutPreviewData() {
     const previewOrder = {
         orderNo: 'Pending confirmation',
         soldAt: new Date().toISOString(),
-        soldByName: currentUser.fullName || currentUser.email || 'Admin',
+        soldByName: currentUser.fullName || currentUser.email || 'Staff',
         customerName: selectedCustomer?.fullName || 'Walk-in Customer',
         discountPercent,
         items: previewItems,
