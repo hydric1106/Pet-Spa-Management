@@ -552,7 +552,7 @@ public class JavaBridge {
             BookingDTO created = bookingService.createBooking(bookingDTO);
             return createSuccessResponse(created);
         } catch (Exception e) {
-            return createErrorResponse("Failed to create booking: " + e.getMessage());
+            return createErrorResponse(e.getMessage());
         }
     }
 
